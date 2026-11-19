@@ -97,6 +97,27 @@ var _kick_strength := 1.0
 
 # Used for floating idle animations
 var _tk_time := 0.0
+
+# Cycle 8A: responsive movement + tactical dash
+const COYOTE_TIME := 0.12
+const JUMP_BUFFER_TIME := 0.12
+const DASH_TIME := 0.26
+const DASH_COOLDOWN := 2.4
+const DASH_SPEED := 17.0
+const ACCEL := 46.0
+const DECEL := 38.0
+const BANK_MAX := deg_to_rad(5.0)
+const DASH_LEAN := deg_to_rad(16.0)
+var move_vel := Vector3.ZERO  # horizontal momentum owned by Main.drive()
+var coyote_t := 0.0
+var jump_buf_t := 0.0
+var dash_t := 0.0
+var dash_cd := 0.0
+var dash_dir := Vector3.ZERO
+var _bank := 0.0
+var _dash_lean := 0.0
+var _breath := 0.0
+var _prev_heading := 0.0
 var _tk_hand := Vector3.ZERO  # palm position in actor space, updated by the pose modifier
 var _tk_hand_valid := false
 var _tk_radius := 0.0  # horizontal radius of the carried piece
@@ -216,6 +237,7 @@ func animate(dt: float, speed: float, working := "", _carrying := false) -> void
 	elif role != 1:
 		body_holder.position.y = stand_y
 	_update_tactile_feel(dt, speed, body_holder)
+	_update_expressive(dt, speed, body_holder)
 	if is_downed:
 		set_weapon_drawn(false)
 		working = "hit"
@@ -255,7 +277,7 @@ func _update_tactile_feel(dt: float, speed: float, body_holder: Node3D) -> void:
 	var lean_target := SPRINT_LEAN_MAX * clampf((speed - 4.0) / 3.0, 0.0, 1.0) if sprinting else 0.0
 	_lean = lerpf(_lean, lean_target, clampf(dt * 8.0, 0.0, 1.0))
 	# The holder is yawed by PI, so a positive local X rotation pitches the body forward.
-	body_holder.rotation.x = _lean
+	body_holder.rotation.x = _lean + _dash_lean
 	_land_t = maxf(0.0, _land_t - dt)
 	var f := 0.0 if is_downed else smoothstep(0.0, 1.0, _land_t / LAND_SETTLE_TIME)
 	body_holder.scale = _holder_base_scale * Vector3(1.0 + 0.04 * f, 1.0 - 0.08 * f, 1.0 + 0.04 * f)
@@ -263,6 +285,74 @@ func _update_tactile_feel(dt: float, speed: float, body_holder: Node3D) -> void:
 	if held_weapon:
 		var k := smoothstep(0.0, 1.0, _kick_t / WEAPON_KICK_TIME) * _kick_strength
 		held_weapon.position = _weapon_rest_pos + Vector3(0.0, 0.02, 0.14) * k
+
+
+func dash_ready() -> bool:
+	return dash_cd <= 0.0 and dash_t <= 0.0 and not is_downed
+
+
+func dash_active() -> bool:
+	return dash_t > 0.0
+
+
+## Tactical boost-dash: 0.26s burst along world_dir (facing forward if zero), 2.4s cooldown.
+## Main.drive() integrates the motion through the world's collide(), so blockers and bounds hold.
+func trigger_dash(world_dir: Vector3) -> bool:
+	if not dash_ready():
+		return false
+	var d := Vector3(world_dir.x, 0.0, world_dir.z)
+	if d.length() < 0.01:
+		d = Vector3(-sin(heading), 0.0, -cos(heading))
+	dash_dir = d.normalized()
+	dash_t = DASH_TIME
+	dash_cd = DASH_COOLDOWN
+	move_vel = dash_dir * DASH_SPEED
+	heading = atan2(-dash_dir.x, -dash_dir.z)
+	rotation.y = heading
+	var world := get_parent()
+	if world is Node3D and is_inside_tree():
+		CombatFX.dust_puff(world as Node3D, global_position)
+	return true
+
+
+## Advances dash timers; call once per frame from the driver.
+func tick_motion(dt: float) -> void:
+	dash_t = maxf(0.0, dash_t - dt)
+	dash_cd = maxf(0.0, dash_cd - dt)
+	coyote_t = maxf(0.0, coyote_t - dt)
+	jump_buf_t = maxf(0.0, jump_buf_t - dt)
+
+
+## Idle breathing sway, turn banking roll and dash pose. All pivots sit at the feet (holder origin), so feet never lift.
+func _update_expressive(dt: float, speed: float, body_holder: Node3D) -> void:
+	var k := clampf(dt * 9.0, 0.0, 1.0)
+	var live := not is_downed and down_blend <= 0.0
+	var airborne := position.y > 0.05
+	var dash_target := DASH_LEAN * smoothstep(0.0, 1.0, dash_t / DASH_TIME) if live else 0.0
+	_dash_lean = lerpf(_dash_lean, dash_target, k)
+	body_holder.rotation.x = _lean + _dash_lean
+	# Banking: yaw rate scaled by speed, clamped to +-5 deg.
+	var yaw_rate := angle_difference(_prev_heading, heading) / maxf(dt, 0.0001)
+	_prev_heading = heading
+	var bank_target := 0.0
+	if live and speed > 1.5:
+		bank_target = clampf(yaw_rate * 0.05, -1.0, 1.0) * BANK_MAX * clampf(speed / 6.0, 0.0, 1.0)
+	_bank = lerpf(_bank, bank_target, k)
+	# Breathing: tiny chest sway only when standing still; scale/roll about the feet pivot.
+	var still := live and speed < 0.4 and not airborne
+	_breath = lerpf(_breath, 1.0 if still else 0.0, clampf(dt * 4.0, 0.0, 1.0))
+	if _breath > 0.001:
+		_tk_time_breath(dt)
+	var sway := sin(_breath_clock) * _breath
+	body_holder.rotation.z = body_holder.rotation.z + _bank + sway * deg_to_rad(0.6)
+	body_holder.rotation.x += sway * deg_to_rad(0.5)
+	var s := body_holder.scale
+	body_holder.scale = Vector3(s.x, s.y * (1.0 + 0.006 * sway), s.z)
+
+
+var _breath_clock := 0.0
+func _tk_time_breath(dt: float) -> void:
+	_breath_clock = fmod(_breath_clock + dt * 2.1, TAU)
 
 
 ## Snappy 3D kickback of the held weapon visual; recovers over 0.10s. Rotation and bone attachment are untouched.

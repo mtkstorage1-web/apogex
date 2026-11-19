@@ -48,6 +48,10 @@ var carry_vis: Array = ["", "", "", ""]
 var last_stage := {}
 var blockers: Array = []
 var rng := RandomNumberGenerator.new()
+const KB_MAX := 14.0
+const KB_FRICTION := 4.5   # lunar regolith ground friction (1/s exponential decay)
+const FLAG_DROP_GRAVITY := -3.8
+const FLAG_REST_Y := 0.7
 var fx_rng := RandomNumberGenerator.new()
 var camera_obstacles: Array = []
 var navigation := preload("res://scripts/arena_navigation.gd").new()
@@ -284,7 +288,7 @@ func _rival_actors() -> void:
 		fill.material_override.render_priority = 1
 		bar.add_child(fill)
 		rivals[t] = {"actor": a, "hp": 100.0, "max_hp": 100.0, "last": Vector3.ZERO, "sight": sight,
-			"bar": bar, "bar_fill": fill, "bar_frac": 1.0, "bar_flash": 0.0}
+			"bar": bar, "bar_fill": fill, "bar_frac": 1.0, "bar_flash": 0.0, "kb_vel": Vector3.ZERO}
 
 
 func _bar_quad(size: Vector2, col: Color, alpha: float) -> MeshInstance3D:
@@ -837,7 +841,7 @@ func _shoot() -> void:
 	if hit_team > 0:
 		var impact_point := end_pt
 		var headshot: bool = impact_point.y - rivals[hit_team]["actor"].position.y > 1.9
-		_damage_rival(hit_team, Sim.field_damage(role, hit_t, headshot) * (1.25 if g.sim.overdrive > 0.0 else 1.0), impact_point)
+		_damage_rival(hit_team, Sim.field_damage(role, hit_t, headshot) * (1.25 if g.sim.overdrive > 0.0 else 1.0), impact_point, actor_node.position, role)
 		g.sim.metrics["hits"] += 1
 		preload("res://scripts/combat_fx.gd").impact(self, end_pt, Sim.faction_color(hit_team), 0.65, 12)
 	elif hit_t < 119.5:
@@ -863,13 +867,22 @@ func _register_ko_streak() -> void:
 	_feed(title, col)
 
 
-func _damage_rival(t: int, dmg: float, hit_pos: Variant = null) -> void:
+func _damage_rival(t: int, dmg: float, hit_pos: Variant = null, from_pos: Variant = null, role := 0) -> void:
 	var s: Sim = g.sim
 	var rv: Dictionary = rivals[t]
 	if s.teams[t]["stun"] > 0.0 or dmg <= 0.0: return
 	rv["hp"] -= dmg
 	rv["bar_flash"] = 0.10
 	var lethal: bool = rv["hp"] <= 0.0
+	# Knockback: horizontal shove away from the shooter (Scattergun hits hardest, KOs punch extra).
+	var shooter: Vector3 = from_pos if from_pos is Vector3 else actors[s.selected].position
+	var away: Vector3 = rv["actor"].position - shooter
+	away.y = 0.0
+	away = away.normalized() if away.length() > 0.01 else Vector3(0, 0, 1)
+	var impulse := 7.5 if role == 2 else (2.6 if role == 1 else 3.8)
+	if lethal: impulse = impulse * 1.5 + 2.0
+	rv["kb_vel"] = (rv["kb_vel"] as Vector3) + away * impulse
+	if (rv["kb_vel"] as Vector3).length() > KB_MAX: rv["kb_vel"] = (rv["kb_vel"] as Vector3).normalized() * KB_MAX
 	if combat_hud != null and combat_hud.has_method("spawn_damage_number"):
 		var pos: Vector3 = hit_pos if hit_pos is Vector3 else rv["actor"].position + Vector3.UP * 1.6
 		combat_hud.call("spawn_damage_number", pos, dmg, lethal, Sim.faction_color(t))
@@ -1011,7 +1024,7 @@ func _bot(i: int, dt: float) -> void:
 						_tracer(bot_from, bot_end, Color("#ffd29a"))
 						g.sfx_3d("shot_carbine", a.global_position, -16)
 					if rng.randf() < 0.55:
-						_damage_rival(t, 25.0)
+						_damage_rival(t, 25.0, null, a.position, i)
 					a.face(ra.position - a.position, dt, 30.0)
 					break
 	var bstep := a.poll_step(dt, a.vel.length())
@@ -1038,8 +1051,22 @@ func _rivals_tick(dt: float) -> void:
 		if not vis:
 			continue
 		var p: Vector3 = team["bot_position"]
-		var moved: Vector3 = p - rv["last"]
-		rv["last"] = p
+		var kb: Vector3 = rv["kb_vel"]
+		var kb_step := Vector3.ZERO
+		if kb.length() > 0.05:
+			var wanted := p + kb * dt
+			var pushed := collide(wanted)  # rocks, cover and arena bounds stop the slide
+			if pushed.distance_to(wanted) > 0.001:
+				kb *= 0.35
+			kb_step = pushed - p
+			p = pushed
+			team["bot_position"] = p
+			kb *= exp(-KB_FRICTION * dt)
+			rv["kb_vel"] = kb
+		else:
+			rv["kb_vel"] = Vector3.ZERO
+		var moved: Vector3 = p - rv["last"] - kb_step
+		rv["last"] = p - kb_step
 		ra.position = Vector3(p.x, 0, p.z)
 		var spd := moved.length() / maxf(dt, 0.001)
 		if spd > 0.2:
@@ -1153,9 +1180,33 @@ func _visuals(dt: float) -> void:
 							scan_beam.scale = Vector3(1.0, delta.length(), 1.0)
 							scan_beam.material_override = Gfx.unshaded(stage_col, 0.72)
 			"ground":
-				cr.position = f["position"] - site + Vector3(0, 0.7, 0)
+				var base: Vector3 = f["position"] - site
+				var off := Vector3.ZERO
+				if fn.get("vs", st) == "carried":
+					# Knockout drop: lob the crystal up and outward under lunar gravity.
+					var ang := rng.randf() * TAU
+					fn["drop"] = {"h": 2.7, "vh": 2.6, "off": Vector3(cos(ang), 0, sin(ang)) * 1.5, "bounces": 0}
+				if fn.has("drop"):
+					var d: Dictionary = fn["drop"]
+					d["vh"] += FLAG_DROP_GRAVITY * dt
+					d["h"] += d["vh"] * dt
+					d["off"] = (d["off"] as Vector3).move_toward(Vector3.ZERO, 0.8 * dt)
+					if d["h"] <= 0.0:
+						d["h"] = 0.0
+						CombatFX.dust_puff(self, site + base + d["off"], Color("#c9c5ba"), 0.8 if d["bounces"] == 0 else 0.5)
+						if d["bounces"] == 0:
+							d["bounces"] = 1
+							d["vh"] = -d["vh"] * 0.3
+						else:
+							d["vh"] = 0.0
+							d["off"] = Vector3.ZERO
+					if d["bounces"] >= 1 and d["h"] == 0.0 and d["vh"] == 0.0 and (d["off"] as Vector3).length() < 0.01:
+						fn.erase("drop")
+					else:
+						off = (d["off"] as Vector3) + Vector3(0, d["h"], 0)
+				cr.position = base + Vector3(0, FLAG_REST_Y, 0) + off
 				cr.rotation.y += dt * 2.0
-				fn["label"].position = f["position"] - site + Vector3(0, 2.0, 0)
+				fn["label"].position = base + Vector3(0, 2.0, 0)
 				fn["label"].modulate = Color("#ffffff")
 				fn["label"].text = "◆ DROPPED FLAG %d" % (f["id"] + 1)
 				col = Color("#ffffff")
@@ -1166,6 +1217,8 @@ func _visuals(dt: float) -> void:
 					cr.position = actors[f["carrier"]].position - site + Vector3(0, 3.4, 0)
 				elif rivals.has(flag_team):
 					cr.position = rivals[flag_team]["actor"].position - site + Vector3(0, 3.4, 0)
+		if st != "ground": fn.erase("drop")
+		fn["vs"] = st
 		var key := col.to_html()
 		if not materials.has(key): materials[key] = [Gfx.mat(col, 0.2, 2.5), Gfx.mat(col, 0.6)]
 		fn["gem"].material_override = materials[key][0]

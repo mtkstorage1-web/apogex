@@ -49,7 +49,7 @@ var autotest := false
 var pressed_now := {}
 var lmb := false
 var touch_pressed := {}
-const TOUCH_ACTION_KEYS := {"jump": KEY_SPACE, "interact": KEY_E, "reload": KEY_R, "weapon": KEY_B, "map": KEY_M, "order": KEY_C, "priority": KEY_Z}
+const TOUCH_ACTION_KEYS := {"jump": KEY_SPACE, "interact": KEY_E, "reload": KEY_R, "weapon": KEY_B, "map": KEY_M, "order": KEY_C, "priority": KEY_Z, "dash": KEY_ALT}
 var rmb := false
 var wheel := 0
 var event_index := 0
@@ -513,9 +513,27 @@ func drive(a: Actor, dt: float, gravity := 22.0, speed_mul := 1.0) -> float:
 		if dir.length() > 0.0:
 			dir = dir.normalized()
 	var speed := (8.4 if held(KEY_SHIFT) else 5.4) * speed_mul
-	a.position += dir * speed * dt
-	if pressed(KEY_SPACE) and a.position.y <= 0.001:
+	a.tick_motion(dt)
+	if pressed(KEY_ALT) and sim != null and sim.phase == "surface":
+		if a.trigger_dash(dir):
+			sfx("reload_click", -4.0, 0.15)
+			hud.toast("DASH", 0.5)
+	if a.dash_active():
+		a.move_vel = a.dash_dir * Actor.DASH_SPEED
+	else:
+		var want := dir * speed
+		var rate := Actor.ACCEL if want.length() > a.move_vel.length() * 0.98 or want.length() > 0.01 else Actor.DECEL
+		a.move_vel = a.move_vel.move_toward(want, rate * dt)
+	a.position += a.move_vel * dt
+	var grounded := a.position.y <= 0.001
+	if grounded:
+		a.coyote_t = Actor.COYOTE_TIME
+	if pressed(KEY_SPACE):
+		a.jump_buf_t = Actor.JUMP_BUFFER_TIME
+	if a.jump_buf_t > 0.0 and (grounded or a.coyote_t > 0.0) and a.vy <= 0.001:
 		a.vy = 8.0
+		a.jump_buf_t = 0.0
+		a.coyote_t = 0.0
 	a.vy -= gravity * dt
 	a.position.y = maxf(0.0, a.position.y + a.vy * dt)
 	if a.position.y <= 0.0:
@@ -527,7 +545,7 @@ func drive(a: Actor, dt: float, gravity := 22.0, speed_mul := 1.0) -> float:
 		a.rotation.y = yaw
 	elif dir.length() > 0.0:
 		a.face(dir, dt, 12.0)
-	return dir.length() * speed
+	return Vector2(a.move_vel.x, a.move_vel.z).length()
 
 
 func follow_cam(a: Actor, dist := 6.8) -> void:

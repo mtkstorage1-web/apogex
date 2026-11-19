@@ -58,6 +58,9 @@ var _rumble_t := 0.0
 var done := false
 var warning_clock := 0.0
 var bank_target := 0.0
+const BANK_MAX := deg_to_rad(18.0)
+var _prev_yaw := 0.0
+var _yaw_rate_smooth := 0.0
 var rng := RandomNumberGenerator.new()
 
 
@@ -326,7 +329,12 @@ func _pilot(dt: float, human: bool) -> void:
 	flight_speed = move_toward(flight_speed, target_speed, dt * acceleration)
 	strafe_speed = move_toward(strafe_speed, strafe * (42.0 if sprinting else 30.0), dt * 100.0 * s.handling_mult)
 	transform.basis = Basis.from_euler(Vector3(_heading.x, _heading.y, 0.0))
-	bank_target = clampf(strafe_speed * -0.009 - (tx - sx) / maxf(dt, 0.001) * 0.013, -0.28, 0.28)
+	# Visual-only roll: strafe/dodge bank plus a roll into yaw turns (max ±18°), levelling out when straight.
+	var yaw_rate := wrapf(_heading.y - _prev_yaw, -PI, PI) / maxf(dt, 0.001)
+	_prev_yaw = _heading.y
+	_yaw_rate_smooth = lerpf(_yaw_rate_smooth, yaw_rate, 1.0 - exp(-dt * 8.0))
+	var strafe_bank := clampf(strafe_speed * -0.009 - (tx - sx) / maxf(dt, 0.001) * 0.013, -0.28, 0.28)
+	bank_target = clampf(strafe_bank + clampf(_yaw_rate_smooth * 0.5, -0.2, 0.2), -BANK_MAX, BANK_MAX)
 	sx = clampf(tx, -16.0, 16.0)
 	sy = clampf(ty, -9.0, 9.0)
 	rig.position = Vector3(sx, sy, 0)

@@ -23,10 +23,11 @@ const SATELLITES := [
 	["weapon", "B", 247.5],
 	["map", "MAP", 270.0],
 ]
-## Squad quick-command buttons above the arc: name, label, x offset from FIRE.
+## Squad quick-command & dash buttons above the arc: name, label, x offset from FIRE.
 const CMD_BUTTONS := [
-	["order", "CMD", -34.0],
-	["priority", "PING", 34.0],
+	["dash", "DASH", -68.0],
+	["order", "CMD", 0.0],
+	["priority", "PING", 68.0],
 ]
 const CMD_RADIUS := 27.0
 const CMD_RISE := 222.0
