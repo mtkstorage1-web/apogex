@@ -79,6 +79,71 @@ static func impact(parent: Node3D, at: Vector3, color: Color, size := 1.0, count
 	tween.tween_callback(_release.bind(particles))
 
 
+## Pooled jump-land dust ring. Capped DustPool of reusable emitters (no per-puff allocation once warm).
+const MAX_DUST := 16
+const DUST_LIFETIME := 0.45
+
+static func _acquire_dust(world: Node3D) -> CPUParticles3D:
+	var pool: Node3D = world.get_node_or_null("DustPool")
+	if pool == null:
+		pool = Node3D.new()
+		pool.name = "DustPool"
+		world.add_child(pool)
+	var now := Time.get_ticks_msec()
+	var oldest: CPUParticles3D = null
+	for child in pool.get_children():
+		if now >= int(child.get_meta("free_at", 0)):
+			return child as CPUParticles3D
+		if oldest == null or int(child.get_meta("free_at", 0)) < int(oldest.get_meta("free_at", 0)):
+			oldest = child as CPUParticles3D
+	if pool.get_child_count() >= MAX_DUST and oldest != null:
+		return oldest
+	var particles := CPUParticles3D.new()
+	particles.emitting = false
+	particles.one_shot = true
+	particles.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	pool.add_child(particles)
+	return particles
+
+
+static func dust_puff(world: Node3D, pos: Vector3, color := Color("#c9c5ba"), scale := 1.0) -> void:
+	if not is_instance_valid(world) or not world.is_inside_tree():
+		return
+	var particles := _acquire_dust(world)
+	particles.name = "DustPuff"
+	particles.set_meta("free_at", Time.get_ticks_msec() + int(DUST_LIFETIME * 1000.0) + 60)
+	particles.position = pos + Vector3(0, 0.05, 0)
+	preload("res://scripts/graphics_settings.gd").set_particle_count(particles, 11)
+	particles.lifetime = DUST_LIFETIME
+	particles.one_shot = true
+	particles.explosiveness = 1.0
+	particles.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
+	particles.emission_ring_axis = Vector3.UP
+	particles.emission_ring_radius = 0.28 * scale
+	particles.emission_ring_inner_radius = 0.18 * scale
+	particles.emission_ring_height = 0.02
+	particles.direction = Vector3(0, 0.25, 0)
+	particles.spread = 25.0
+	particles.gravity = Vector3(0, -0.4, 0)
+	particles.radial_accel_min = 1.2 * scale
+	particles.radial_accel_max = 2.0 * scale
+	particles.damping_min = 2.5
+	particles.damping_max = 4.0
+	particles.initial_velocity_min = 0.4 * scale
+	particles.initial_velocity_max = 1.1 * scale
+	particles.scale_amount_min = 0.14 * scale
+	particles.scale_amount_max = 0.3 * scale
+	var fade := Gradient.new()
+	fade.set_color(0, Color(color, 0.55))
+	fade.set_color(1, Color(color, 0.0))
+	particles.color_ramp = fade
+	if particles.mesh == null:
+		particles.mesh = preload("res://scripts/exhaust_fx.gd").soft_quad()
+		particles.material_override = particles.mesh.material
+	particles.restart()
+	particles.emitting = true
+
+
 static func ring_pulse(parent: Node3D, at: Vector3, color: Color, radius := 6.0, duration := 0.45) -> void:
 	if not is_instance_valid(parent) or UI.reduced_motion or not preload("res://scripts/graphics_settings.gd").motion_effects:
 		return

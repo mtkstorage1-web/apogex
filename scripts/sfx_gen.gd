@@ -17,7 +17,51 @@ static func build_all() -> Dictionary:
 	_cache["alarm_warn"] = _pulsed_tone(0.18, 960.0, 2.0, 0.28)
 	_cache["scan_hum"] = _harmonic_pulse(0.20, 440.0, 660.0, 0.22)
 	_cache["ability_cast"] = _tone_sweep(0.18, 320.0, 960.0, 0.30, "sine")
+	_cache["ko_chime"] = _chord_seq(0.18, [[1318.5, 1976.0]], 0.30, true)
+	_cache["streak_chord_2"] = _chord_seq(0.35, [[392.0, 493.9, 587.3]], 0.30, false)
+	_cache["streak_chord_3"] = _chord_seq(0.35, [[523.3, 659.3, 784.0]], 0.30, false)
+	_cache["streak_chord_4"] = _chord_seq(0.35, [[659.3, 830.6, 987.8, 1318.5]], 0.30, false)
+	_cache["flag_fanfare"] = _chord_seq(0.42, [[523.3], [659.3], [784.0, 1046.5]], 0.30, false)
 	return _cache
+
+
+## Cached hit-confirm ding (two-tone metallic).
+static func ko_chime() -> AudioStreamWAV:
+	return build_all()["ko_chime"]
+
+
+## Cached rising triad; streak 2 = Double, 3 = Triple, 4+ = Unstoppable.
+static func streak_chord(streak: int) -> AudioStreamWAV:
+	return build_all()["streak_chord_%d" % clampi(streak, 2, 4)]
+
+
+## Cached bright 3-note rising arpeggio for flag capture / ramp extraction.
+static func flag_fanfare() -> AudioStreamWAV:
+	return build_all()["flag_fanfare"]
+
+
+## Sequence of steps; each step is a list of simultaneous frequencies. metallic adds inharmonic partial.
+static func _chord_seq(dur: float, steps: Array, amp: float, metallic: bool) -> AudioStreamWAV:
+	var count := maxi(1, int(dur * MIX_RATE))
+	var data := PackedByteArray()
+	data.resize(count * 2)
+	var n := steps.size()
+	var chord_mode := n == 1 and not metallic
+	var seg := float(count) / float(n)
+	for i in count:
+		var idx := mini(n - 1, int(float(i) / seg))
+		var lt := (float(i) - seg * idx) / seg
+		var t := float(i) / float(count)
+		var env := minf(1.0, lt * 40.0) * pow(maxf(0.0, 1.0 - (t if chord_mode else lt) * (0.9 if chord_mode else 0.6)), 1.5)
+		var time := float(i) / float(MIX_RATE)
+		var v := 0.0
+		var freqs: Array = steps[idx]
+		for f in freqs:
+			v += sin(time * TAU * f) + 0.3 * sin(time * TAU * f * (2.76 if metallic else 2.0))
+		v = v / float(freqs.size()) * (0.5 if chord_mode else 0.8)
+		var s := clampf(v * amp * env, -1.0, 1.0)
+		data.encode_s16(i * 2, roundi(s * 32767.0))
+	return _make_wav(data)
 
 
 static func _make_wav(samples: PackedByteArray) -> AudioStreamWAV:

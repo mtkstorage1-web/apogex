@@ -310,7 +310,7 @@ func _build() -> void:
 	# Toast + banner.
 	toast_label = UI.label("", 14, UI.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
 	toast_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	toast_label.position = Vector2(-400, 132)
+	toast_label.position = Vector2(-400, 240)
 	toast_label.size = Vector2(800, 30)
 	toast_label.add_theme_stylebox_override("normal", UI.component("toast"))
 	add_child(toast_label)
@@ -532,10 +532,10 @@ func toast(t: String, seconds := 3.2) -> void:
 	if _toast_tween: _toast_tween.kill()
 	toast_label.modulate.a = 1.0 if UI.reduced_motion else 0.0
 	if not UI.reduced_motion:
-		toast_label.position.y = 140
+		toast_label.position.y = 248
 		_toast_tween = create_tween().set_parallel().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		_toast_tween.tween_property(toast_label, "modulate:a", 1.0, 0.18)
-		_toast_tween.tween_property(toast_label, "position:y", 132.0, 0.18)
+		_toast_tween.tween_property(toast_label, "position:y", 240.0, 0.18)
 
 func confirm_hit() -> void:
 	hit_time = 0.18
@@ -687,6 +687,13 @@ func update_common(sim: Sim, selected: int) -> void:
 		var row = board_rows[i]
 		row["phase"].text = t["phase"].to_upper()
 		row["score"].text = str(t["delivered"]) + ("  +%d" % t["onboard"] if t["onboard"] > 0 else "")
+	var chud := get_tree().get_first_node_in_group("combat_hud") if is_inside_tree() else null
+	if chud != null and chud.has_method("set_team_scores"):
+		var scores: Array = []
+		for i in 4:
+			var ft: Dictionary = Sim.FACTIONS[i]
+			scores.append({"name": ft["name"], "color": Color(ft["color"]), "delivered": sim.teams[i]["delivered"], "onboard": sim.teams[i]["onboard"]})
+		chud.set_team_scores(scores)
 	var flag_counts := sim.flag_counts(0)
 	board_rows[4]["pool"].text = "AT SITES %d · LOOSE %d · ONBOARD %d/%d" % [flag_counts["sites"], flag_counts["loose"], flag_counts["onboard"], sim.cargo_capacity]
 

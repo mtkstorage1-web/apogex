@@ -423,9 +423,19 @@ func tick(dt: float) -> void:
 		if step != "":
 			g.sfx_3d(step, a.global_position, -14)
 	combat_hud.set_crosshair_visible(down_t <= 0.0 and r != 3 and a.weapon_drawn)
+	var locked := false
+	if down_t <= 0.0 and r != 3 and a.weapon_drawn:
+		locked = not _aim_target(g.cam.global_position, g.cam_forward(), 3.5).is_empty()
+	combat_hud.set_target_locked(locked)
 	combat_hud.set_reload_progress(1.0 - reload_t / 1.3 if reload_t > 0.0 else 0.0)
 	combat_hud.set_low_ammo(r != 3 and reload_t <= 0.0 and ammo <= 6)
 	combat_hud.set_compass_markers(_compass_markers(r))
+	if combat_hud != null and combat_hud.has_method("set_team_scores"):
+		var scores: Array = []
+		for ti in 4:
+			var fc := s.flag_counts(ti)
+			scores.append({"name": Sim.FACTIONS[ti]["name"], "color": Sim.faction_color(ti), "delivered": fc["delivered"], "onboard": fc["onboard"]})
+		combat_hud.call("set_team_scores", scores)
 	ko_streak_clock = maxf(0.0, ko_streak_clock - dt)
 	if ko_streak_clock <= 0.0: ko_streak = 0
 	for i in 4:
@@ -669,6 +679,7 @@ func _interact(r: int, a: Actor, dt: float) -> String:
 			if g.pressed(KEY_E):
 				if s.load_flag(0, r, hatch_d):
 					g.sfx("capture_tick", -2)
+					g.sfx("flag_fanfare", -6, 0.0)
 					g.hud.toast("Flag %d on board · loading does not score — bring it home." % (carried["id"] + 1))
 					combat_hud.announce("FLAG EXTRACTED", "Science Flag %d loaded up the ramp" % (carried["id"] + 1), Color("#5fe3ff"))
 					_feed("Science Flag %d extracted up the ramp" % (carried["id"] + 1), Color("#5fe3ff"))
@@ -684,6 +695,7 @@ func _interact(r: int, a: Actor, dt: float) -> String:
 		g.hud.set_prompt("E  RECOVER SCIENCE FLAG %d" % (ground["id"] + 1), "Loose flag on the ground")
 		if g.pressed(KEY_E) and s.recover_flag(ground["id"], 0, r, g.flat_dist(a.position, ground["position"])):
 			g.sfx("capture_tick", -4)
+			g.sfx("flag_fanfare", -6, 0.0)
 			combat_hud.announce("SCIENCE FLAG CAPTURED", "Flag %d recovered" % (ground["id"] + 1), Color("#ffd29a"))
 			_feed("Science Flag %d picked up" % (ground["id"] + 1), Color("#ffd29a"))
 		return ""
@@ -711,6 +723,7 @@ func _interact(r: int, a: Actor, dt: float) -> String:
 						g.sfx("capture_tick", -6)
 						last_stage[f["id"]] = key
 						if f["state"] == "carried":
+							g.sfx("flag_fanfare", -6, 0.0)
 							g.hud.toast("Science Flag %d extracted — carry it to the ship" % (f["id"] + 1))
 							combat_hud.announce("SCIENCE FLAG CAPTURED", "Carry Flag %d to the ship" % (f["id"] + 1), Color("#ffd29a"))
 							_feed("Science Flag %d picked up" % (f["id"] + 1), Color("#ffd29a"))
@@ -745,10 +758,45 @@ func _interact(r: int, a: Actor, dt: float) -> String:
 	return ""
 
 
+## Best live rival within max_angle_deg of the aim ray and unobstructed by cover.
+## Returns {} or {"team", "dir", "angle"}.
+func _aim_target(origin: Vector3, dir: Vector3, max_angle_deg: float) -> Dictionary:
+	var best := {}
+	var best_ang := max_angle_deg
+	for t in rivals:
+		var ra: Actor = rivals[t]["actor"]
+		if not ra.visible or rivals[t]["hp"] <= 0.0 or g.sim.teams[t]["stun"] > 0.0:
+			continue
+		var to: Vector3 = ra.position + Vector3(0, 1.3, 0) - origin
+		var dist := to.length()
+		if dist < 0.5 or dist > 120.0:
+			continue
+		var ang := rad_to_deg(dir.angle_to(to))
+		if ang >= best_ang:
+			continue
+		var d := to / dist
+		var blocked := false
+		for b in blockers:
+			if b.get("cover", false):
+				var ch := _cover_ray(origin, d, b)
+				if ch > 0.0 and ch < dist:
+					blocked = true
+					break
+		if blocked:
+			continue
+		best_ang = ang
+		best = {"team": t, "dir": d, "angle": ang}
+	return best
+
+
 func _shoot() -> void:
 	var actor_node: Actor = actors[g.sim.selected]
 	var from: Vector3 = actor_node.weapon_muzzle.global_position if actor_node.weapon_muzzle else actor_node.position + Vector3.UP * 1.5
 	var dir: Vector3 = (g.cam.global_position + g.cam_forward() * 120.0 - from).normalized()
+	if g.hud != null and g.hud.has_method("touch_ui_visible") and g.hud.touch_ui_visible():
+		var assist := _aim_target(from, dir, 6.5)
+		if not assist.is_empty():
+			dir = dir.slerp(assist["dir"], 0.6).normalized()
 	var hit_t := 120.0
 	for b in blockers:
 		if not b.get("cover", false): continue
@@ -799,7 +847,10 @@ func _shoot() -> void:
 func _register_ko_streak() -> void:
 	ko_streak = ko_streak + 1 if ko_streak_clock > 0.0 else 1
 	ko_streak_clock = 12.0
-	if ko_streak < 2: return
+	if ko_streak < 2:
+		g.sfx("ko_chime", -6, 0.0)
+		return
+	g.sfx("streak_chord_%d" % clampi(ko_streak, 2, 4), -5, 0.0)
 	var title := "DOUBLE KO!"
 	var col := Color("#ffd866")
 	if ko_streak == 3:

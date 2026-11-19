@@ -247,6 +247,9 @@ func _update_tactile_feel(dt: float, speed: float, body_holder: Node3D) -> void:
 	var airborne := position.y > 0.05
 	if _was_airborne and not airborne and not is_downed:
 		_land_t = LAND_SETTLE_TIME
+		var world := get_parent()
+		if world is Node3D and is_inside_tree():
+			CombatFX.dust_puff(world as Node3D, global_position)
 	_was_airborne = airborne
 	var sprinting := speed > 4.0 and not airborne and not is_downed and down_blend <= 0.0
 	var lean_target := SPRINT_LEAN_MAX * clampf((speed - 4.0) / 3.0, 0.0, 1.0) if sprinting else 0.0

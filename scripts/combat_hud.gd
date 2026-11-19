@@ -6,16 +6,22 @@ class_name CombatHUD
 const HIT_TIME := 0.16
 const DAMAGE_TIME := 0.28
 const BANNER_TIME := 2.6
-const BANNER_TOP := 134.0  # below the top phase bar and the compass ribbon
+# Top-center vertical stack (no overlap): phase strip 10-50, crew cards 58-110 (hud.gd),
+# score strip 114-138, compass 142-168, announce banner from 174.
+const SCORE_Y := 114.0
+const SCORE_H := 24.0
 const COMPASS_W := 360.0
 const COMPASS_H := 26.0
-const COMPASS_Y := 96.0
+const COMPASS_Y := 142.0
+const BANNER_TOP := 174.0
+const SCORE_PULSE := 0.6
 const COMPASS_HALF_FOV := 90.0  # degrees visible each side of center
 const SHIELD_COL := Color("#5fe3ff")
 const HULL_COL := Color("#ff3b4e")
 
 var canvas: Control
 var crosshair_visible := false
+var target_locked := false
 var bloom := 0.0          # extra gap in px, recovers toward 0
 var hit_t := 0.0
 var hit_col := Color.WHITE
@@ -41,6 +47,7 @@ var _threats: Array = []  # {pos, shield, age}
 var reload_ratio := 0.0
 var low_ammo := false
 var _compass_markers: Array = []  # {pos, color, label, priority}
+var _team_scores: Array = []      # {name, color, delivered, onboard, pulse, gain}
 
 
 func _ready() -> void:
@@ -75,6 +82,12 @@ func push_feed(text: String, accent: Color = Color("#ffb347")) -> void:
 func set_crosshair_visible(v: bool) -> void:
 	if v != crosshair_visible:
 		crosshair_visible = v
+		canvas.queue_redraw()
+
+
+func set_target_locked(locked: bool) -> void:
+	if locked != target_locked:
+		target_locked = locked
 		canvas.queue_redraw()
 
 
@@ -123,6 +136,32 @@ func set_compass_markers(markers: Array) -> void:
 		canvas.queue_redraw()
 
 
+## scores: [{name: String, color: Color, delivered: int, onboard: int}, ...] (up to 4).
+func set_team_scores(scores: Array) -> void:
+	var changed := scores.size() != _team_scores.size()
+	var next: Array = []
+	for i in scores.size():
+		var s: Dictionary = scores[i]
+		var d := int(s.get("delivered", 0))
+		var o := int(s.get("onboard", 0))
+		var entry := {"name": str(s.get("name", "")), "color": s.get("color", Color.WHITE),
+			"delivered": d, "onboard": o, "pulse": 0.0, "gain": 0}
+		if i < _team_scores.size():
+			var old: Dictionary = _team_scores[i]
+			entry["pulse"] = old["pulse"]
+			entry["gain"] = old["gain"]
+			var gain := maxi(d - int(old["delivered"]), 0) + maxi(o - int(old["onboard"]), 0)
+			if gain > 0:
+				entry["pulse"] = SCORE_PULSE
+				entry["gain"] = gain
+			if d != old["delivered"] or o != old["onboard"] or entry["name"] != old["name"]:
+				changed = true
+		next.append(entry)
+	_team_scores = next
+	if changed:
+		canvas.queue_redraw()
+
+
 func announce(title: String, subtitle := "", accent := Color("#ffd29a")) -> void:
 	banner_title = title
 	banner_sub = subtitle
@@ -133,6 +172,10 @@ func announce(title: String, subtitle := "", accent := Color("#ffd29a")) -> void
 
 func _process(dt: float) -> void:
 	var animating := bloom > 0.0 or hit_t > 0.0 or dmg_t > 0.0 or banner_t > 0.0 or not _popups.is_empty() or not _feed.is_empty() or not _threats.is_empty() or low_ammo
+	for t in _team_scores:
+		if t["pulse"] > 0.0:
+			t["pulse"] = maxf(0.0, t["pulse"] - dt)
+			animating = true
 	if not animating:
 		return
 	for i in range(_popups.size() - 1, -1, -1):
@@ -161,7 +204,7 @@ func _draw_overlay() -> void:
 		_draw_vignette(size, dmg_t / DAMAGE_TIME)
 	if crosshair_visible:
 		var gap := 6.0 + bloom
-		var col := Color(1, 1, 1, 0.9)
+		var col := Color("#ff4757") if target_locked else Color(1, 1, 1, 0.9)
 		var shadow := Color(0, 0, 0, 0.45)
 		for d in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
 			var a: Vector2 = c + d * gap
@@ -181,6 +224,8 @@ func _draw_overlay() -> void:
 		for d in [Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]:
 			var n: Vector2 = d.normalized()
 			canvas.draw_line(c + n * r0, c + n * r1, hc, 2.5)
+	if not _team_scores.is_empty():
+		_draw_score_strip(size)
 	if not _compass_markers.is_empty():
 		_draw_compass(size)
 	if banner_t > 0.0:
@@ -255,10 +300,43 @@ func _draw_vignette(size: Vector2, k: float) -> void:
 		canvas.draw_polygon(PackedVector2Array(q), PackedColorArray([edge, edge, clear, clear]))
 
 
+func _draw_score_strip(size: Vector2) -> void:
+	if not _font:
+		return
+	var n := _team_scores.size()
+	var chip_w := 84.0
+	var gap := 4.0
+	var pad := 8.0
+	var w := n * chip_w + (n - 1) * gap + pad * 2.0
+	var x0 := (size.x - w) * 0.5
+	var y0 := SCORE_Y
+	var slant := 8.0
+	var glass := PackedVector2Array([Vector2(x0 + slant, y0), Vector2(x0 + w - slant, y0), Vector2(x0 + w, y0 + SCORE_H), Vector2(x0, y0 + SCORE_H)])
+	canvas.draw_colored_polygon(glass, Color(0.03, 0.05, 0.09, 0.7))
+	for i in n:
+		var t: Dictionary = _team_scores[i]
+		var col: Color = t["color"]
+		var cx := x0 + pad + i * (chip_w + gap)
+		var k: float = t["pulse"] / SCORE_PULSE
+		if k > 0.0:
+			canvas.draw_rect(Rect2(cx, y0 + 2.0, chip_w, SCORE_H - 4.0), Color(col, 0.35 * k))
+		var dot_r := 4.0 + 1.5 * k
+		canvas.draw_circle(Vector2(cx + 8.0, y0 + SCORE_H * 0.5), dot_r, col)
+		var nm: String = t["name"].left(3).to_upper()
+		var txt := "%s %d" % [nm, t["delivered"]]
+		if t["onboard"] > 0:
+			txt += "+%d" % t["onboard"]
+		canvas.draw_string(_font, Vector2(cx + 17.0, y0 + 16.0), txt, HORIZONTAL_ALIGNMENT_LEFT, chip_w - 18.0, 12, Color(1, 1, 1, 0.95))
+		if k > 0.0:
+			var rise := (1.0 - k) * 8.0
+			canvas.draw_string(_font, Vector2(cx + chip_w - 22.0, y0 + 14.0 - rise), "+%d" % t["gain"], HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(col.lightened(0.3), k))
+	canvas.draw_line(Vector2(x0 + slant, y0 + SCORE_H), Vector2(x0 + w, y0 + SCORE_H), Color(1, 1, 1, 0.12), 1.0)
+
+
 func _draw_banner(size: Vector2) -> void:
 	var life := BANNER_TIME - banner_t
 	var a := clampf(minf(life / 0.22, banner_t / 0.35), 0.0, 1.0)
-	var slide := (1.0 - clampf(life / 0.22, 0.0, 1.0)) * -24.0
+	var slide := (1.0 - clampf(life / 0.22, 0.0, 1.0)) * 12.0  # rises into place; never up into the compass
 	var bw := 440.0
 	var bh := 58.0 if banner_sub != "" else 42.0
 	var x := (size.x - bw) * 0.5
