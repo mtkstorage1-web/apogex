@@ -59,6 +59,12 @@ var dust_mesh: QuadMesh
 var dust_fade: Gradient
 var extract_ring: MeshInstance3D
 var flag_state_prev := {}
+var combat_hud: CombatHUD
+var recoil_pitch := 0.0
+var recoil_yaw := 0.0
+var recoil_t := 0.0
+const RECOIL_RECOVER := 0.12
+const HP_BAR_W := 1.1
 
 
 func actor(i: int) -> Actor:
@@ -119,6 +125,9 @@ func setup(main) -> void:
 	beacon.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(beacon)
 	_build_waypoints()
+	combat_hud = CombatHUD.new()
+	combat_hud.name = "CombatHUD"
+	add_child(combat_hud)
 	g.yaw = 0.0
 	g.pitch = -0.18
 
@@ -261,7 +270,85 @@ func _rival_actors() -> void:
 		sight.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		sight.hide()
 		add_child(sight)
-		rivals[t] = {"actor": a, "hp": 100.0, "last": Vector3.ZERO, "sight": sight}
+		var bar := Node3D.new()
+		bar.name = "RivalHealthBar%d" % t
+		bar.position = Vector3(0, 2.4, 0)
+		a.add_child(bar)
+		var back := _bar_quad(Vector2(HP_BAR_W + 0.08, 0.16), Color("#1e293b"), 0.85)
+		back.name = "Back"
+		bar.add_child(back)
+		var fill := _bar_quad(Vector2(HP_BAR_W, 0.1), Color("#4ade80"), 1.0)
+		fill.name = "Fill"
+		fill.material_override.render_priority = 1
+		bar.add_child(fill)
+		rivals[t] = {"actor": a, "hp": 100.0, "max_hp": 100.0, "last": Vector3.ZERO, "sight": sight,
+			"bar": bar, "bar_fill": fill, "bar_frac": 1.0, "bar_flash": 0.0}
+
+
+func _bar_quad(size: Vector2, col: Color, alpha: float) -> MeshInstance3D:
+	var q := QuadMesh.new()
+	q.size = size
+	var m := MeshInstance3D.new()
+	m.mesh = q
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.albedo_color = Color(col, alpha)
+	m.material_override = mat
+	m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return m
+
+
+func _rival_bars(dt: float) -> void:
+	for t in rivals:
+		var rv: Dictionary = rivals[t]
+		var bar: Node3D = rv["bar"]
+		var ko: bool = rv["hp"] <= 0.0 or g.sim.teams[t]["stun"] > 0.0
+		bar.visible = rv["actor"].visible and not ko
+		if not bar.visible:
+			rv["bar_frac"] = 1.0
+			continue
+		var target := clampf(rv["hp"] / maxf(1.0, rv["max_hp"]), 0.0, 1.0)
+		rv["bar_frac"] = lerpf(rv["bar_frac"], target, minf(1.0, dt * 14.0))
+		rv["bar_flash"] = maxf(0.0, rv["bar_flash"] - dt)
+		var frac: float = maxf(0.001, rv["bar_frac"])
+		var fill: MeshInstance3D = rv["bar_fill"]
+		var qm: QuadMesh = fill.mesh
+		qm.size.x = HP_BAR_W * frac
+		# Left-anchor the fill: billboard pivots at node origin, so shift the mesh center.
+		qm.center_offset = Vector3(-HP_BAR_W * (1.0 - frac) * 0.5, 0, 0.002)
+		var col := Color("#ef4444").lerp(Color("#4ade80"), frac).lerp(Sim.faction_color(t), 0.2)
+		if rv["bar_flash"] > 0.0: col = Color.WHITE
+		(fill.material_override as StandardMaterial3D).albedo_color = col
+
+
+func _recoil_kick(role: int) -> void:
+	if UI.reduced_motion or not GraphicsSettings.motion_effects: return
+	# role 1 sidearm (light), role 2 scattergun (punchy), otherwise carbine (medium)
+	var kick := 0.012 if role == 1 else (0.034 if role == 2 else 0.02)
+	recoil_pitch = minf(recoil_pitch + kick, 0.08)
+	recoil_yaw = randf_range(-1.0, 1.0) * kick * 0.35
+	recoil_t = RECOIL_RECOVER
+
+
+func _apply_recoil(dt: float) -> void:
+	if UI.reduced_motion or not GraphicsSettings.motion_effects:
+		recoil_pitch = 0.0
+		recoil_yaw = 0.0
+		recoil_t = 0.0
+		return
+	if recoil_pitch <= 0.0001 and absf(recoil_yaw) <= 0.0001: return
+	g.cam.rotation.x += recoil_pitch
+	g.cam.rotation.y += recoil_yaw
+	recoil_t = maxf(0.0, recoil_t - dt)
+	var k := minf(1.0, dt * 3.0 / RECOIL_RECOVER)
+	recoil_pitch = lerpf(recoil_pitch, 0.0, k)
+	recoil_yaw = lerpf(recoil_yaw, 0.0, k)
+	if recoil_t <= 0.0:
+		recoil_pitch = 0.0
+		recoil_yaw = 0.0
+
 
 
 # ---------------------------------------------------------------------------
@@ -323,6 +410,7 @@ func tick(dt: float) -> void:
 		var previous_position := a.position
 		var speed: float = g.drive(a, dt, 12.0, (0.82 if s.carried_flag(0, r) != null else 1.0) * (1.45 if s.boost > 0.0 and r == 0 else 1.0))
 		g.follow_cam(a)
+		_apply_recoil(dt)
 		if a.weapon_drawn:
 			a.face(Vector3(-sin(g.yaw), 0, -cos(g.yaw)), dt, 20.0)
 			a.weapon_pitch = g.pitch
@@ -332,6 +420,7 @@ func tick(dt: float) -> void:
 		var step := a.poll_step(dt, speed)
 		if step != "":
 			g.sfx_3d(step, a.global_position, -14)
+	combat_hud.set_crosshair_visible(down_t <= 0.0 and r != 3 and a.weapon_drawn)
 	for i in 4:
 		if i != r:
 			if down_times[i] <= 0.0: _bot(i, dt)
@@ -547,6 +636,8 @@ func _interact(r: int, a: Actor, dt: float) -> String:
 				if s.load_flag(0, r, hatch_d):
 					g.sfx("capture_tick", -2)
 					g.hud.toast("Flag %d on board · loading does not score — bring it home." % (carried["id"] + 1))
+					combat_hud.announce("FLAG EXTRACTED", "Science Flag %d loaded up the ramp" % (carried["id"] + 1), Color("#5fe3ff"))
+					_feed("Science Flag %d extracted up the ramp" % (carried["id"] + 1), Color("#5fe3ff"))
 				else:
 					g.hud.toast("Cargo racks are full.")
 		else:
@@ -559,6 +650,8 @@ func _interact(r: int, a: Actor, dt: float) -> String:
 		g.hud.set_prompt("E  RECOVER SCIENCE FLAG %d" % (ground["id"] + 1), "Loose flag on the ground")
 		if g.pressed(KEY_E) and s.recover_flag(ground["id"], 0, r, g.flat_dist(a.position, ground["position"])):
 			g.sfx("capture_tick", -4)
+			combat_hud.announce("SCIENCE FLAG CAPTURED", "Flag %d recovered" % (ground["id"] + 1), Color("#ffd29a"))
+			_feed("Science Flag %d picked up" % (ground["id"] + 1), Color("#ffd29a"))
 		return ""
 	if r == 3:
 		var f = _nearest_flag(a.position, ["site"])
@@ -585,6 +678,8 @@ func _interact(r: int, a: Actor, dt: float) -> String:
 						last_stage[f["id"]] = key
 						if f["state"] == "carried":
 							g.hud.toast("Science Flag %d extracted — carry it to the ship" % (f["id"] + 1))
+							combat_hud.announce("SCIENCE FLAG CAPTURED", "Carry Flag %d to the ship" % (f["id"] + 1), Color("#ffd29a"))
+							_feed("Science Flag %d picked up" % (f["id"] + 1), Color("#ffd29a"))
 					a.face(to, dt)
 					return "scan"
 				return ""
@@ -635,41 +730,57 @@ func _shoot() -> void:
 			hit_t = tt
 			hit_team = t
 	var muzzle: Vector3 = from
+	combat_hud.trigger_bloom(9.0)
+	_recoil_kick(g.sim.selected)
 	var role: int = g.sim.selected
 	var end_pt: Vector3 = from + dir * hit_t
 	var muzzle_col := Color("#38bdf8") if role == 1 else (Color("#f472b6") if role == 2 else Color(0.5, 0.8, 1.0))
 	preload("res://scripts/combat_fx.gd").impact(self, muzzle, muzzle_col, 0.35, 6)
 	if role == 1:
+		# Sidearm: crisp cyan bolt plus the arc crackle.
 		_arc_beam(muzzle, end_pt, Color("#38bdf8"))
+		CombatFX.tracer(self, muzzle, end_pt, Color("#67e8f9"), 0.05, 0.08)
 	elif role == 2:
+		# Scattergun: fan of bright orange pellet streaks.
 		var side := dir.cross(Vector3.UP)
-		side = side.normalized() * 0.09 if side.length() > 0.01 else Vector3(0.09, 0, 0)
-		_tracer(muzzle + side, end_pt + side, Color("#f472b6"))
-		_tracer(muzzle - side, end_pt - side, Color("#f472b6"))
+		side = side.normalized() if side.length() > 0.01 else Vector3.RIGHT
+		var up := side.cross(dir).normalized()
+		var spread := hit_t * 0.035
+		for p in [Vector2(0, 0), Vector2(1, 0.3), Vector2(-1, 0.2), Vector2(0.4, -0.8), Vector2(-0.5, 0.9)]:
+			CombatFX.tracer(self, muzzle, end_pt + side * p.x * spread + up * p.y * spread, Color("#fb923c"), 0.04, 0.08)
 	else:
-		_tracer(muzzle, end_pt, Color("#ffd29a"))
+		# Carbine: warm golden-amber streak.
+		CombatFX.tracer(self, muzzle, end_pt, Color("#fbbf24"), 0.055, 0.09)
 	if hit_team > 0:
 		var impact_point := end_pt
 		var headshot: bool = impact_point.y - rivals[hit_team]["actor"].position.y > 1.9
-		_damage_rival(hit_team, Sim.field_damage(role, hit_t, headshot) * (1.25 if g.sim.overdrive > 0.0 else 1.0))
+		_damage_rival(hit_team, Sim.field_damage(role, hit_t, headshot) * (1.25 if g.sim.overdrive > 0.0 else 1.0), impact_point)
 		g.sim.metrics["hits"] += 1
 		preload("res://scripts/combat_fx.gd").impact(self, end_pt, Sim.faction_color(hit_team), 0.65, 12)
 	elif hit_t < 119.5:
 		preload("res://scripts/combat_fx.gd").impact(self, end_pt, muzzle_col, 0.4, 8)
 
 
-func _damage_rival(t: int, dmg: float) -> void:
+func _damage_rival(t: int, dmg: float, hit_pos: Variant = null) -> void:
 	var s: Sim = g.sim
 	var rv: Dictionary = rivals[t]
 	if s.teams[t]["stun"] > 0.0 or dmg <= 0.0: return
 	rv["hp"] -= dmg
+	rv["bar_flash"] = 0.10
+	var lethal: bool = rv["hp"] <= 0.0
+	if combat_hud != null and combat_hud.has_method("spawn_damage_number"):
+		var pos: Vector3 = hit_pos if hit_pos is Vector3 else rv["actor"].position + Vector3.UP * 1.6
+		combat_hud.call("spawn_damage_number", pos, dmg, lethal, Sim.faction_color(t))
 	hit_flash = 0.16
 	g.hud.confirm_hit()
+	combat_hud.trigger_hitmarker(rv["hp"] <= 0.0)
 	g.sfx("hitmarker", -6)
 	rv["actor"].flash("hit", 0.4)
 	if rv["hp"] <= 0.0:
 		rv["hp"] = 100.0
 		s.teams[t]["stun"] = 6.0
+		combat_hud.announce("RIVAL KNOCKED OUT", "%s raider stunned · +40" % Sim.FACTIONS[t]["name"], Sim.faction_color(t))
+		_feed("%s raider knocked out · +40" % Sim.FACTIONS[t]["name"], Sim.faction_color(t))
 		preload("res://scripts/combat_fx.gd").impact(self, rv["actor"].position + Vector3.UP, Sim.faction_color(t), 1.3, 28)
 		if s.drop_flag(t, 3, s.teams[t]["bot_position"]):
 			g.hud.toast("%s raider stunned — dropped a Science Flag!" % Sim.FACTIONS[t]["name"])
@@ -857,16 +968,18 @@ func _rivals_tick(dt: float) -> void:
 				rival_shot[t] = 2.8 if s.difficulty == "cadet" else (1.8 if s.difficulty == "expert" else 2.4)
 				var hit := rng.randf() < 0.5
 				g.sfx_3d("shot_carbine", ra.global_position + Vector3(0, 1.5, 0), -10)
-				_tracer(aim_start, aim_end + (Vector3.ZERO if hit else Vector3(rng.randf_range(-2, 2), 1.4, 0)), Sim.faction_color(t))
+				CombatFX.tracer(self, aim_start, aim_end + (Vector3.ZERO if hit else Vector3(rng.randf_range(-2, 2), 1.4, 0)), Sim.faction_color(t), 0.05, 0.09)
 				if hit:
 					if s.shield > 0.0:
 						g.sfx("shield_hit", -8)
+						combat_hud.trigger_damage(true)
 					else:
 						last_hit[s.selected] = 6.0
 						field_hp -= 9.0 * s.armor_mult * Sim.DIFFICULTY[s.difficulty]["damage"]
 						me.flash("hit", 0.28)
 						preload("res://scripts/combat_fx.gd").impact(self, me.position + Vector3.UP * 1.4, Color("#f56d65"), 0.6, 10)
 						g.hud.hurt(0.3)
+						combat_hud.trigger_damage(false)
 						g.sfx("hurt", -8)
 						if field_hp <= 0.0:
 							_downed()
@@ -887,7 +1000,13 @@ func _downed() -> void:
 	actors[s.selected].set_weapon_drawn(false)
 
 
+func _feed(msg: String, accent: Color) -> void:
+	if combat_hud != null and combat_hud.has_method("push_feed"):
+		combat_hud.call("push_feed", msg, accent)
+
+
 func _visuals(dt: float) -> void:
+	_rival_bars(dt)
 	var s: Sim = g.sim
 	var t := s.time
 	var beam_active := false

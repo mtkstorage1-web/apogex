@@ -95,3 +95,86 @@ static func ring_pulse(parent: Node3D, at: Vector3, color: Color, radius := 6.0,
 	tween.tween_property(ring, "scale", Vector3(radius, 0.05, radius), duration)
 	tween.tween_property(mat, "albedo_color:a", 0.0, duration)
 	tween.chain().tween_callback(ring.queue_free)
+
+
+## Pooled glowing tracer beam + brief muzzle flash. Idle beams are reused (no per-shot allocation).
+const MAX_TRACERS := 48
+
+static func _acquire_tracer(world: Node3D) -> MeshInstance3D:
+	var pool: Node3D = world.get_node_or_null("TracerPool")
+	if pool == null:
+		pool = Node3D.new()
+		pool.name = "TracerPool"
+		world.add_child(pool)
+	var oldest: MeshInstance3D = null
+	for child in pool.get_children():
+		if not child.get_meta("busy", false):
+			return child as MeshInstance3D
+		if oldest == null: oldest = child as MeshInstance3D
+	if oldest != null and pool.get_child_count() >= MAX_TRACERS:
+		# Cap reached: recycle the oldest live beam instead of growing.
+		var old_tw: Tween = oldest.get_meta("tween", null)
+		if old_tw != null and old_tw.is_valid(): old_tw.kill()
+		pool.move_child(oldest, -1)
+		return oldest
+	var beam := MeshInstance3D.new()
+	var box := BoxMesh.new()
+	box.size = Vector3.ONE
+	beam.mesh = box
+	beam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	beam.material_override = mat
+	var light := OmniLight3D.new()
+	light.shadow_enabled = false
+	light.omni_attenuation = 1.6
+	pool.add_child(beam)
+	beam.add_child(light)
+	return beam
+
+static func _release_tracer(beam: MeshInstance3D) -> void:
+	if not is_instance_valid(beam): return
+	beam.visible = false
+	beam.set_meta("busy", false)
+	beam.set_meta("tween", null)
+
+static func tracer(world: Node3D, from: Vector3, to: Vector3, color: Color, width := 0.055, duration := 0.09) -> void:
+	if not is_instance_valid(world) or not world.is_inside_tree():
+		return
+	var beam := _acquire_tracer(world)
+	beam.set_meta("busy", true)
+	beam.visible = true
+	var delta := to - from
+	var length := delta.length()
+	var light := beam.get_child(0) as OmniLight3D
+	var mat := beam.material_override as StandardMaterial3D
+	var hot := color.lerp(Color.WHITE, 0.35)
+	mat.albedo_color = Color(hot, 1.0)
+	if length < 0.01:
+		# Degenerate shot: no beam, just the flash.
+		beam.global_transform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.001), from)
+	else:
+		var fwd := delta / length
+		var ref := Vector3.UP if absf(fwd.dot(Vector3.UP)) < 0.95 else Vector3.RIGHT
+		var x := ref.cross(fwd).normalized()
+		var y := fwd.cross(x).normalized()
+		beam.global_transform = Transform3D(Basis(x, y, fwd), from + delta * 0.5)
+		beam.scale = Vector3(width, width, length)
+	# Flash light sits at the muzzle regardless of beam orientation/scale.
+	light.top_level = true
+	light.global_position = from
+	light.light_color = color
+	light.light_energy = 3.5
+	light.omni_range = 4.0
+	light.visible = true
+	var full := beam.scale
+	var thin := Vector3(full.x * 0.1, full.y * 0.1, full.z)
+	var tw := beam.create_tween().set_parallel()
+	tw.tween_property(mat, "albedo_color:a", 0.0, duration)
+	tw.tween_property(beam, "scale", thin, duration)
+	tw.tween_property(light, "light_energy", 0.0, 0.06).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.chain().tween_callback(_release_tracer.bind(beam))
+	beam.set_meta("tween", tw)

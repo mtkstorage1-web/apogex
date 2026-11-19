@@ -96,6 +96,10 @@ func run() -> void:
 	for r in [0, 1, 2]:
 		g.sim.selected = r
 		pb.tracers.clear()
+		var tpool := pb.get_node_or_null("TracerPool")
+		if tpool:
+			for t in tpool.get_children():
+				t.visible = false
 		pb.fire_cd = 0.0
 		pb.actors[r].set_weapon_drawn(true)
 		pb.actors[r].weapon_blend = 1.0
@@ -104,7 +108,14 @@ func run() -> void:
 		g._process(0.05)
 		g.lmb = false
 		var min_tracers := 3 if r == 1 else (2 if r == 2 else 1)
-		check(pb.tracers.size() >= min_tracers, "role %d weapon spawns distinct tracer profile (%d)" % [r, pb.tracers.size()])
+		var tracer_count := pb.tracers.size()
+		if tpool == null:
+			tpool = pb.get_node_or_null("TracerPool")
+		if tpool:
+			for t in tpool.get_children():
+				if t.visible:
+					tracer_count += 1
+		check(tracer_count >= min_tracers, "role %d weapon spawns distinct tracer profile (%d)" % [r, tracer_count])
 	g.sim.selected = 1
 	pb.suit_hp[0] = 60.0
 	pb.actors[0].position = pb.actors[1].position + Vector3(2.0, 0.0, 0.0)

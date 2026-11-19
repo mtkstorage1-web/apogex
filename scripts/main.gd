@@ -48,6 +48,8 @@ var fps_counter: Label
 var autotest := false
 var pressed_now := {}
 var lmb := false
+var touch_pressed := {}
+const TOUCH_ACTION_KEYS := {"jump": KEY_SPACE, "interact": KEY_E, "reload": KEY_R, "weapon": KEY_B, "map": KEY_M}
 var rmb := false
 var wheel := 0
 var event_index := 0
@@ -97,6 +99,7 @@ func _ready() -> void:
 	hud = Hud.new()
 	hud.visible = false
 	hud_layer.add_child(hud)
+	hud.mobile_controls.action_pressed.connect(_on_touch_action)
 	for n in SFX:
 		for ext in ["ogg", "wav"]:
 			var path := "res://assets/audio/%s.%s" % [n, ext]
@@ -211,7 +214,18 @@ func rebind_action(action: String, keycode: int) -> void:
 	_rebound_actions[action] = keycode
 
 
+func _on_touch_action(action_name: String) -> void:
+	if TOUCH_ACTION_KEYS.has(action_name):
+		touch_pressed[TOUCH_ACTION_KEYS[action_name]] = true
+
+
+func touch_ui() -> MobileControls:
+	return hud.mobile_controls if hud != null and hud.touch_ui_visible() else null
+
+
 func pressed(key: int) -> bool:
+	if touch_pressed.has(key):
+		return true
 	var action: String = KEY_ACTIONS.get(key, "")
 	if pressed_now.has(key) and not _rebound_actions.has(action):
 		return true
@@ -221,6 +235,12 @@ func pressed(key: int) -> bool:
 
 
 func held(key: int) -> bool:
+	var t := touch_ui()
+	if t != null:
+		var mv := t.move_vector()
+		if (key == KEY_SHIFT and t.is_sprinting()) or (key == KEY_W and mv.y < -0.5) \
+				or (key == KEY_S and mv.y > 0.5) or (key == KEY_A and mv.x < -0.5) or (key == KEY_D and mv.x > 0.5):
+			return true
 	var action: String = KEY_ACTIONS.get(key, "")
 	if action != "" and InputMap.has_action(action):
 		if _rebound_actions.has(action):
@@ -292,6 +312,8 @@ func capture_mouse(on: bool) -> void:
 		rmb = false
 	if autotest:
 		return
+	if on and touch_ui() != null:
+		return   # touch mode keeps the cursor free for the on-screen controls
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED if on else Input.MOUSE_MODE_VISIBLE
 
 
@@ -309,6 +331,10 @@ func player_actor() -> Actor:
 # Input
 # ============================================================================
 func _input(e: InputEvent) -> void:
+	if e is InputEventKey and e.keycode == KEY_F9 and e.pressed and not e.echo:
+		toggle_touch_ui()
+		get_viewport().set_input_as_handled()
+		return
 	if e is InputEventKey and e.keycode == KEY_F5 and e.pressed and not e.echo:
 		match Engine.time_scale:
 			1.0: ff = 2.0
@@ -349,7 +375,31 @@ func _unhandled_input(e: InputEvent) -> void:
 			wheel -= 1
 
 
+func toggle_touch_ui() -> void:
+	var on := not hud.touch_ui_visible()
+	hud.set_touch_ui(on)
+	lmb = false
+	if on:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	elif mode == "play" and not autotest:
+		capture_mouse(true)
+	hud.toast("TOUCH CONTROLS %s · F9" % ("ON" if on else "OFF"), 1.4)
+
+
+func _tick_touch() -> void:
+	hud.mobile_controls.set_active(mode == "play" and not is_instance_valid(picker))
+	var t := touch_ui()
+	if t == null:
+		return
+	var d := t.consume_look_delta()
+	if d != Vector2.ZERO:
+		yaw -= d.x * 0.0052 * sens
+		pitch = clampf(pitch - d.y * 0.0044 * sens, -1.25, 0.95)
+	lmb = t.is_firing()
+
+
 func _process(dt: float) -> void:
+	_tick_touch()
 	if is_instance_valid(fps_counter) and fps_counter.visible:
 		var fps := Engine.get_frames_per_second()
 		var caption := "%d FPS · %.1f ms" % [fps, 1000.0 / maxf(1.0, fps)]
@@ -361,6 +411,7 @@ func _process(dt: float) -> void:
 	hud.tick(dt)
 	if is_instance_valid(picker):
 		pressed_now.clear()
+		touch_pressed.clear()
 		return
 	if universe != null and is_instance_valid(universe):
 		universe.tick(dt)
@@ -393,6 +444,7 @@ func _process(dt: float) -> void:
 				_tick_cine(dt)
 			_tick_sim(dt)
 	pressed_now.clear()
+	touch_pressed.clear()
 	wheel = 0
 
 
@@ -449,13 +501,18 @@ func drive(a: Actor, dt: float, gravity := 22.0, speed_mul := 1.0) -> float:
 	var f := Vector3(-sin(yaw), 0, -cos(yaw))
 	var r := Vector3(cos(yaw), 0, -sin(yaw))
 	var dir := Vector3.ZERO
-	if held(KEY_W): dir += f
-	if held(KEY_S): dir -= f
-	if held(KEY_D): dir += r
-	if held(KEY_A): dir -= r
+	var tmv := touch_ui().move_vector() if touch_ui() != null else Vector2.ZERO
+	if tmv != Vector2.ZERO:
+		# Analog thumbstick: direction and magnitude both carry through.
+		dir = (f * -tmv.y + r * tmv.x).limit_length(1.0)
+	else:
+		if held(KEY_W): dir += f
+		if held(KEY_S): dir -= f
+		if held(KEY_D): dir += r
+		if held(KEY_A): dir -= r
+		if dir.length() > 0.0:
+			dir = dir.normalized()
 	var speed := (8.4 if held(KEY_SHIFT) else 5.4) * speed_mul
-	if dir.length() > 0.0:
-		dir = dir.normalized()
 	a.position += dir * speed * dt
 	if pressed(KEY_SPACE) and a.position.y <= 0.001:
 		a.vy = 8.0

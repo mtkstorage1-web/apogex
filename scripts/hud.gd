@@ -150,6 +150,8 @@ var visual_status: PanelContainer
 var status_rows := {}
 var ammo_counter: Label
 var weapon_caption: Label
+var mobile_controls: MobileControls
+var touch_toggle: Button
 
 
 func _init() -> void:
@@ -443,6 +445,42 @@ func _build() -> void:
 		status_rows[metric[0]] = {"row": row, "label": label, "fill": fill, "reading": reading, "nominal": Color(metric[2])}
 	visual_status.visible = false
 	_ignore_all(self)
+	_build_touch()
+
+
+## Touch overlay sits inside the HUD layer (above the 3D world, below menu_layer modals).
+func _build_touch() -> void:
+	mobile_controls = MobileControls.new()
+	add_child(mobile_controls)
+	touch_toggle = Button.new()
+	touch_toggle.text = "TOUCH UI"
+	touch_toggle.toggle_mode = true
+	touch_toggle.focus_mode = Control.FOCUS_NONE
+	touch_toggle.add_theme_font_size_override("font_size", 11)
+	var sb := _pill_style()
+	sb.border_color = Color(0.92, 0.65, 0.4, 0.7)
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(12)
+	for st in ["normal", "hover", "pressed", "hover_pressed", "focus"]:
+		touch_toggle.add_theme_stylebox_override(st, sb)
+	# Right of the APOGEX wordmark, left of the centred phase strip: clear of the
+	# title (y58), the slots pill (y92) and the strip (centre ±330).
+	touch_toggle.position = Vector2(150, 22)
+	touch_toggle.size = Vector2(84, 24)
+	touch_toggle.mouse_filter = Control.MOUSE_FILTER_STOP
+	touch_toggle.toggled.connect(set_touch_ui)
+	add_child(touch_toggle)
+	touch_toggle.set_pressed_no_signal(mobile_controls.is_touch_visible())
+
+
+func set_touch_ui(on: bool) -> void:
+	mobile_controls.set_touch_visible(on)
+	touch_toggle.set_pressed_no_signal(on)
+	footer.visible = not on
+
+
+func touch_ui_visible() -> bool:
+	return mobile_controls != null and mobile_controls.is_touch_visible()
 
 
 ## Single-player: reuse the phase strip for mission steps and hide the competitive widgets.
@@ -555,8 +593,16 @@ var _summary_missing: Array = []
 var _summary_credits := -1
 
 func tick(dt: float) -> void:
+	_layout_roles()
 	_common_elapsed += dt
+	# Keybind bar is desktop-only; keep it hidden while touch controls are up.
+	var want_footer := not touch_ui_visible()
+	if footer.visible != want_footer:
+		footer.visible = want_footer
 	hit_time = maxf(0.0, hit_time - dt)
+	# On the Moon CombatHUD draws its own blooming 4-tick crosshair; mute the legacy '+'.
+	var combat_active := is_inside_tree() and get_tree().get_first_node_in_group("combat_hud") != null
+	crosshair.self_modulate.a = 0.0 if combat_active else 1.0
 	var hit := hit_time > 0.0
 	if hit != _crosshair_hit:
 		_crosshair_hit = hit
@@ -582,6 +628,8 @@ func tick(dt: float) -> void:
 
 
 func update_common(sim: Sim, selected: int) -> void:
+	if mobile_controls != null:
+		mobile_controls.set_primary_label("FIRE" if sim.phase in ["flight", "surface"] else "ACTION")
 	if sim.phase == "flight":
 		ammo_counter.text = "%d%%" % roundi(sim.hull)
 		_status("health", sim.hull / 100.0, str(roundi(sim.hull)))
@@ -741,3 +789,22 @@ func _pulse(ratio: float) -> void:
 	_pulse_tween = create_tween().set_loops().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	_pulse_tween.tween_property(visual_status, "modulate:a", 0.45, duration / 2)
 	_pulse_tween.tween_property(visual_status, "modulate:a", 1.0, duration / 2)
+
+
+## Touch mode: compact role buttons centred in the gap between the joystick and
+## the right action cluster; desktop: original centred bar.
+func _layout_roles() -> void:
+	if roles_box == null:
+		return
+	var touch := touch_ui_visible()
+	var bw := 84.0 if touch else 104.0
+	for rb in role_buttons:
+		(rb as Label).custom_minimum_size.x = bw
+	var w := bw * 4.0 + 18.0
+	var mid := size.x * 0.5
+	if touch:
+		var left := mobile_controls.joy_home().x + MobileControls.JOY_RADIUS + 12.0
+		var right := mobile_controls.cluster_left_edge() - 12.0
+		mid = (left + right) * 0.5
+	roles_box.size = Vector2(w, 40)
+	roles_box.position = Vector2(mid - w * 0.5, size.y - 62.0)
