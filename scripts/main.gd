@@ -984,12 +984,94 @@ func show_select() -> void:
 	rv.add_child(UI.label("Ready ship · synchronized rival launch · same scoring", 10, UI.MUTED))
 	var bottom := UI.hbox(12)
 	bottom.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	bottom.position = Vector2(-640, -96)
+	bottom.position = Vector2(-680, -96)
 	menu_root.add_child(bottom)
-	bottom.add_child(UI.button("BACK", show_home, false, 120))
-	bottom.add_child(UI.button("ASSIGN BUILD PARTS", show_manifest, false, 200))
-	bottom.add_child(UI.button("START AS %s   ↗" % Sim.SPECIALISTS[opts["selected"]]["name"], start_match, true, 280))
+	bottom.add_child(UI.button("BACK", show_home, false, 110))
+	bottom.add_child(UI.button("ASSIGN PARTS", show_manifest, false, 170))
+	bottom.add_child(UI.button("READY UP · PLAY AS %s   ↗" % Sim.SPECIALISTS[opts["selected"]]["name"], show_loading_briefing, true, 340))
 	_footer()
+
+
+func show_loading_briefing() -> void:
+	mode = "menu"
+	clear_menu()
+	sfx("ui_click", -8.0)
+	var bg := ColorRect.new()
+	bg.color = Color(0.05, 0.06, 0.10, 0.94)
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	menu_root.add_child(bg)
+	_brand(menu_root)
+
+	var center := UI.vbox(14)
+	center.set_anchors_preset(Control.PRESET_CENTER)
+	center.position = Vector2(-320, -110)
+	center.custom_minimum_size = Vector2(640, 220)
+	menu_root.add_child(center)
+	center.add_child(UI.label("DEPLOYING TO EARTH LAUNCH COMPLEX · 16/16 PLAYERS READY", 12, UI.ACCENT, HORIZONTAL_ALIGNMENT_CENTER))
+	center.add_child(UI.heading("PREPARING ", "EXPEDITION", 42))
+	var status := UI.label("Fueling cryo propellant tanks & syncing rival crews...", 14, UI.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
+	center.add_child(status)
+	var bar := UI.bar(UI.ACCENT, 0.0, 10)
+	bar.custom_minimum_size = Vector2(640, 12)
+	center.add_child(bar)
+	var tip := UI.label("TIP: Press F9 (or tap TOUCH UI) anytime for mobile twin-stick controls · Left Alt to Dash.", 12, UI.MUTED, HORIZONTAL_ALIGNMENT_CENTER)
+	center.add_child(tip)
+
+	var tw := create_tween()
+	tw.tween_property(bar, "value", 38.0, 0.45).set_trans(Tween.TRANS_SINE)
+	tw.tween_callback(func() -> void:
+		if is_instance_valid(status): status.text = "Calibrating telemetry, weather & lunar trajectory..."
+	)
+	tw.tween_property(bar, "value", 78.0, 0.45).set_trans(Tween.TRANS_SINE)
+	tw.tween_callback(func() -> void:
+		if is_instance_valid(status): status.text = "Launch pad clear — opening mission briefing..."
+	)
+	tw.tween_property(bar, "value", 100.0, 0.35).set_trans(Tween.TRANS_SINE)
+	tw.tween_callback(show_mission_reminder)
+
+
+func show_mission_reminder() -> void:
+	mode = "menu"
+	clear_menu()
+	var bg := ColorRect.new()
+	bg.color = Color(0.05, 0.06, 0.10, 0.90)
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	menu_root.add_child(bg)
+	_brand(menu_root)
+
+	var card := UI.panel(Vector2(760, 0), Color(0.09, 0.08, 0.14, 0.96))
+	card.set_anchors_preset(Control.PRESET_CENTER)
+	card.position = Vector2(-380, -230)
+	menu_root.add_child(card)
+	var v := UI.vbox(12)
+	card.add_child(v)
+	v.add_child(UI.label("MISSION BRIEFING · YOUR 4-STEP GAME PLAN", 12, UI.ACCENT))
+	v.add_child(UI.heading("HOW TO ", "WIN THE RACE", 34))
+
+	var steps := [
+		["1 · BUILD", "Walk to the white PARTS SHOP (E), hit QUICK BUILD (or pick 12 parts), then press E at the Desk.", UI.ACCENT],
+		["2 · LAUNCH", "Finish the 3 pad system checks (E) and blast off into orbit toward the Moon.", Color("#68cce2")],
+		["3 · CAPTURE", "On the Moon, press B to draw your weapon, fight rivals, and escort Fernando [4] to extract Science Flags.", Color("#5eead4")],
+		["4 · DELIVER", "Load flags up your ship ramp, fly back to Earth, and deliver them to score & win!", Color("#86efac")],
+	]
+	for st in steps:
+		var row := UI.panel(Vector2(710, 0), Color(0.13, 0.11, 0.19, 0.85))
+		var rh := UI.hbox(14)
+		row.add_child(rh)
+		var badge := UI.label(st[0], 13, st[2])
+		badge.custom_minimum_size = Vector2(120, 0)
+		var desc := UI.wrapped_label(st[1], 13, UI.TEXT)
+		desc.custom_minimum_size.x = 540
+		rh.add_child(badge)
+		rh.add_child(desc)
+		v.add_child(row)
+
+	v.add_child(UI.label("Controls: WASD Move · Shift Sprint · Alt Dash · Space Jump · E Interact · B Weapon · 1–4 Switch Crew · F9 Touch UI", 11, UI.MUTED))
+	var actions := UI.hbox(12)
+	actions.add_child(UI.button("BACK TO LOBBY", show_select, false, 180, 42))
+	actions.add_child(UI.spacer(0, 0, true))
+	actions.add_child(UI.button("DROP IN NOW   ↗", start_match, true, 260, 42))
+	v.add_child(actions)
 
 
 func show_manifest() -> void:
