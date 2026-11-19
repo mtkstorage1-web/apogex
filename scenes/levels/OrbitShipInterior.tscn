@@ -1,0 +1,263 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/ship/ship_interior.glb" id="e1"]
+
+[ext_resource type="PackedScene" path="res://assets/props/prop_fuse_box.glb" id="e2"]
+
+[ext_resource type="PackedScene" path="res://assets/props/prop_co2_filter_slot.glb" id="e3"]
+
+[ext_resource type="PackedScene" path="res://assets/props/prop_toggle_panel.glb" id="e4"]
+
+[ext_resource type="PackedScene" path="res://assets/props/prop_scan_screen.glb" id="e5"]
+
+[ext_resource type="PackedScene" path="res://assets/props/prop_button_console.glb" id="e6"]
+
+[ext_resource type="PackedScene" path="res://assets/props/prop_keypad.glb" id="e7"]
+
+[sub_resource type="BoxMesh" id="r1"]
+size = Vector3(0.9, 1.0, 0.6)
+
+[sub_resource type="StandardMaterial3D" id="r2"]
+albedo_color = Color(0.16863, 0.19608, 0.27059, 1.0)
+roughness = 0.85
+
+[sub_resource type="TorusMesh" id="r3"]
+inner_radius = 0.86
+outer_radius = 0.94
+rings = 48
+ring_segments = 4
+
+[sub_resource type="StandardMaterial3D" id="r4"]
+albedo_color = Color(0.91765, 0.65098, 0.39608, 0.9)
+roughness = 0.85
+shading_mode = 0
+transparency = 1
+
+[node name="OrbitShipInterior" type="Node3D"]
+
+[node name="ImportedInterior" parent="." instance=ExtResource("e1")]
+
+[node name="CabinLighting" type="Node3D" parent="."]
+
+[node name="Engine_BayLight" type="OmniLight3D" parent="CabinLighting"]
+position = Vector3(0.0, 2.6, 3.0)
+light_energy = 1.4
+omni_range = 6.0
+light_color = Color(1.0, 0.91373, 0.81569, 1.0)
+
+[node name="Power_RoomLight" type="OmniLight3D" parent="CabinLighting"]
+position = Vector3(0.0, 2.6, 8.8)
+light_energy = 1.4
+omni_range = 6.0
+light_color = Color(1.0, 0.91373, 0.81569, 1.0)
+
+[node name="Life_SupportLight" type="OmniLight3D" parent="CabinLighting"]
+position = Vector3(0.0, 2.6, 14.1)
+light_energy = 1.4
+omni_range = 6.0
+light_color = Color(1.0, 0.91373, 0.81569, 1.0)
+
+[node name="WorkshopLight" type="OmniLight3D" parent="CabinLighting"]
+position = Vector3(0.0, 2.6, 19.4)
+light_energy = 1.4
+omni_range = 6.0
+light_color = Color(1.0, 0.91373, 0.81569, 1.0)
+
+[node name="LabLight" type="OmniLight3D" parent="CabinLighting"]
+position = Vector3(0.0, 2.6, 24.7)
+light_energy = 1.4
+omni_range = 6.0
+light_color = Color(1.0, 0.91373, 0.81569, 1.0)
+
+[node name="CockpitLight" type="OmniLight3D" parent="CabinLighting"]
+position = Vector3(0.0, 2.6, 30.0)
+light_energy = 1.4
+omni_range = 6.0
+light_color = Color(1.0, 0.91373, 0.81569, 1.0)
+
+[node name="AirlockLight" type="OmniLight3D" parent="CabinLighting"]
+position = Vector3(-4.2, 2.4, 19.4)
+light_energy = 1.2
+omni_range = 4.0
+
+[node name="Stations" type="Node3D" parent="."]
+
+[node name="power_room" type="Node3D" parent="Stations"]
+position = Vector3(1.6, 0.0, 8.8)
+
+[node name="StationBase" type="MeshInstance3D" parent="Stations/power_room"]
+position = Vector3(0.0, 0.5, 0.0)
+mesh = SubResource("r1")
+material_override = SubResource("r2")
+
+[node name="StationProp" parent="Stations/power_room" instance=ExtResource("e2")]
+position = Vector3(0.0, 1.0, 0.0)
+rotation = Vector3(0.0, -1.5708, 0.0)
+scale = Vector3(1.8, 1.8, 1.8)
+
+[node name="ObjectiveRing" type="MeshInstance3D" parent="Stations/power_room"]
+position = Vector3(0.0, 0.05, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r3")
+material_override = SubResource("r4")
+cast_shadow = 0
+
+[node name="StationLabel" type="Label3D" parent="Stations/power_room"]
+position = Vector3(0.0, 2.2, 0.0)
+text = "POWER ROOM"
+modulate = Color(1.0, 0.82353, 0.47843, 1.0)
+font_size = 22
+outline_size = 8
+outline_modulate = Color(0.08, 0.06, 0.14, 0.85)
+pixel_size = 0.01
+billboard = 1
+
+[node name="life_support" type="Node3D" parent="Stations"]
+position = Vector3(1.6, 0.0, 14.1)
+
+[node name="StationBase" type="MeshInstance3D" parent="Stations/life_support"]
+position = Vector3(0.0, 0.5, 0.0)
+mesh = SubResource("r1")
+material_override = SubResource("r2")
+
+[node name="StationProp" parent="Stations/life_support" instance=ExtResource("e3")]
+position = Vector3(0.0, 1.0, 0.0)
+rotation = Vector3(0.0, -1.5708, 0.0)
+scale = Vector3(1.8, 1.8, 1.8)
+
+[node name="ObjectiveRing" type="MeshInstance3D" parent="Stations/life_support"]
+position = Vector3(0.0, 0.05, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r3")
+material_override = SubResource("r4")
+cast_shadow = 0
+
+[node name="StationLabel" type="Label3D" parent="Stations/life_support"]
+position = Vector3(0.0, 2.2, 0.0)
+text = "LIFE SUPPORT"
+modulate = Color(1.0, 0.82353, 0.47843, 1.0)
+font_size = 22
+outline_size = 8
+outline_modulate = Color(0.08, 0.06, 0.14, 0.85)
+pixel_size = 0.01
+billboard = 1
+
+[node name="workshop" type="Node3D" parent="Stations"]
+position = Vector3(1.6, 0.0, 19.4)
+
+[node name="StationBase" type="MeshInstance3D" parent="Stations/workshop"]
+position = Vector3(0.0, 0.5, 0.0)
+mesh = SubResource("r1")
+material_override = SubResource("r2")
+
+[node name="StationProp" parent="Stations/workshop" instance=ExtResource("e4")]
+position = Vector3(0.0, 1.0, 0.0)
+rotation = Vector3(0.0, -1.5708, 0.0)
+scale = Vector3(1.8, 1.8, 1.8)
+
+[node name="ObjectiveRing" type="MeshInstance3D" parent="Stations/workshop"]
+position = Vector3(0.0, 0.05, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r3")
+material_override = SubResource("r4")
+cast_shadow = 0
+
+[node name="StationLabel" type="Label3D" parent="Stations/workshop"]
+position = Vector3(0.0, 2.2, 0.0)
+text = "WORKSHOP"
+modulate = Color(1.0, 0.82353, 0.47843, 1.0)
+font_size = 22
+outline_size = 8
+outline_modulate = Color(0.08, 0.06, 0.14, 0.85)
+pixel_size = 0.01
+billboard = 1
+
+[node name="lab" type="Node3D" parent="Stations"]
+position = Vector3(1.6, 0.0, 24.7)
+
+[node name="StationBase" type="MeshInstance3D" parent="Stations/lab"]
+position = Vector3(0.0, 0.5, 0.0)
+mesh = SubResource("r1")
+material_override = SubResource("r2")
+
+[node name="StationProp" parent="Stations/lab" instance=ExtResource("e5")]
+position = Vector3(0.0, 1.0, 0.0)
+rotation = Vector3(0.0, -1.5708, 0.0)
+scale = Vector3(1.8, 1.8, 1.8)
+
+[node name="ObjectiveRing" type="MeshInstance3D" parent="Stations/lab"]
+position = Vector3(0.0, 0.05, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r3")
+material_override = SubResource("r4")
+cast_shadow = 0
+
+[node name="StationLabel" type="Label3D" parent="Stations/lab"]
+position = Vector3(0.0, 2.2, 0.0)
+text = "SCIENCE LABORATORY"
+modulate = Color(1.0, 0.82353, 0.47843, 1.0)
+font_size = 22
+outline_size = 8
+outline_modulate = Color(0.08, 0.06, 0.14, 0.85)
+pixel_size = 0.01
+billboard = 1
+
+[node name="cockpit" type="Node3D" parent="Stations"]
+position = Vector3(0.0, 0.0, 31.4)
+
+[node name="StationBase" type="MeshInstance3D" parent="Stations/cockpit"]
+position = Vector3(0.0, 0.5, 0.0)
+mesh = SubResource("r1")
+material_override = SubResource("r2")
+
+[node name="StationProp" parent="Stations/cockpit" instance=ExtResource("e6")]
+position = Vector3(0.0, 1.0, 0.0)
+rotation = Vector3(0.0, 3.14159, 0.0)
+scale = Vector3(1.8, 1.8, 1.8)
+
+[node name="ObjectiveRing" type="MeshInstance3D" parent="Stations/cockpit"]
+position = Vector3(0.0, 0.05, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r3")
+material_override = SubResource("r4")
+cast_shadow = 0
+
+[node name="StationLabel" type="Label3D" parent="Stations/cockpit"]
+position = Vector3(0.0, 2.2, 0.0)
+text = "FLIGHT DECK"
+modulate = Color(1.0, 0.82353, 0.47843, 1.0)
+font_size = 22
+outline_size = 8
+outline_modulate = Color(0.08, 0.06, 0.14, 0.85)
+pixel_size = 0.01
+billboard = 1
+
+[node name="airlock" type="Node3D" parent="Stations"]
+position = Vector3(-4.6, 0.0, 18.6)
+
+[node name="StationBase" type="MeshInstance3D" parent="Stations/airlock"]
+position = Vector3(0.0, 0.5, 0.0)
+mesh = SubResource("r1")
+material_override = SubResource("r2")
+
+[node name="StationProp" parent="Stations/airlock" instance=ExtResource("e7")]
+position = Vector3(0.0, 1.0, 0.0)
+rotation = Vector3(0.0, 1.5708, 0.0)
+scale = Vector3(1.8, 1.8, 1.8)
+
+[node name="ObjectiveRing" type="MeshInstance3D" parent="Stations/airlock"]
+position = Vector3(0.0, 0.05, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r3")
+material_override = SubResource("r4")
+cast_shadow = 0
+
+[node name="StationLabel" type="Label3D" parent="Stations/airlock"]
+position = Vector3(0.0, 2.2, 0.0)
+text = "AIRLOCK"
+modulate = Color(1.0, 0.82353, 0.47843, 1.0)
+font_size = 22
+outline_size = 8
+outline_modulate = Color(0.08, 0.06, 0.14, 0.85)
+pixel_size = 0.01
+billboard = 1

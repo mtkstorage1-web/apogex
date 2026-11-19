@@ -1,0 +1,54 @@
+{
+  "crew_match_runtime_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "crew_match_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "editable_scene_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "model_detail_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "pad_sequence_runtime_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "performance_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "ship_assembly_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "ship_builder_runtime_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "ship_catalog_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "shop_picker_runtime_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "sim_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "sp_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "textures_test": {
+    "exit_code": 0,
+    "diagnostics": []
+  }
+}

@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS carbine close damage
+PASS weapons have distinct damage profiles
+PASS ranged damage falls off
+PASS headshots reward precision
+PASS scanner is not a firearm
+PASS crew orders cycle
+PASS priority rejects invalid flags
+PASS priority changes the crew target
+PASS extraction counted once
+PASS raider drops sample
+PASS pilot can recover a loose sample
+PASS multiple specialists can carry different samples
+PASS second carrier loads
+PASS departure blocked while any crew member carries a sample
+PASS departure succeeds after all samples loaded
+PASS load and recovery telemetry
+PASS loading still awards no victory score
+PASS home delivery scores
+PASS time warnings fire only once
+PASS same seed replays the same rival decisions
+Crew match rules: 0 failures
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)

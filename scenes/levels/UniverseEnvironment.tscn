@@ -1,0 +1,110 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/textured_environment.gd" id="texture_setup"]
+
+[ext_resource type="PackedScene" path="res://scenes/levels/PlanetAEnvironment.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/levels/PlanetBEnvironment.tscn" id="2"]
+
+[ext_resource type="Shader" path="res://assets/shaders/earth_moon.gdshader" id="orbital"]
+[ext_resource type="Texture2D" path="res://assets/textures/planets/earth_coasts.png" id="earth"]
+[ext_resource type="Texture2D" path="res://assets/textures/planets/moon_relief.png" id="moon"]
+[ext_resource type="Texture2D" path="res://assets/textures/planets/weather_noise.tres" id="weather"]
+
+[ext_resource type="Shader" path="res://assets/shaders/sky_space.gdshader" id="sky_shader"]
+
+[sub_resource type="ShaderMaterial" id="sky_mat"]
+resource_local_to_scene = true
+shader = ExtResource("sky_shader")
+shader_parameter/noise_tex = ExtResource("weather")
+shader_parameter/sky_top_color = Color(0.11, 0.44, 0.84, 1.0)
+shader_parameter/sky_horizon_color = Color(0.62, 0.84, 0.96, 1.0)
+shader_parameter/ground_bottom_color = Color(0.18, 0.42, 0.28, 1.0)
+shader_parameter/atmosphere = 1.0
+
+[sub_resource type="Sky" id="sky"]
+resource_local_to_scene = true
+radiance_size = 1
+process_mode = 0
+sky_material = SubResource("sky_mat")
+
+[sub_resource type="Environment" id="env"]
+resource_local_to_scene = true
+background_mode = 2
+sky = SubResource("sky")
+ambient_light_source = 2
+reflected_light_source = 2
+ambient_light_energy = 0.54
+tonemap_mode = 2
+ssao_enabled = true
+ssao_intensity = 0.85
+ssao_radius = 0.5
+ssao_detail = 0.1
+glow_enabled = true
+glow_intensity = 0.22
+glow_bloom = 0.05
+glow_hdr_threshold = 1.2
+fog_enabled = true
+fog_light_color = Color(0.66, 0.84, 0.96, 1.0)
+fog_sun_scatter = 0.45
+fog_density = 0.00048
+fog_aerial_perspective = 0.6
+fog_sky_affect = 0.0
+adjustment_enabled = true
+adjustment_contrast = 1.04
+adjustment_saturation = 1.12
+
+[sub_resource type="SphereMesh" id="body_a_mesh"]
+radius = 6000.0
+height = 12000.0
+radial_segments = 96
+rings = 48
+
+[sub_resource type="ShaderMaterial" id="body_a_mat"]
+shader = ExtResource("orbital")
+shader_parameter/surface_map = ExtResource("earth")
+shader_parameter/weather_tex = ExtResource("weather")
+
+[sub_resource type="SphereMesh" id="body_b_mesh"]
+radius = 6000.0
+height = 12000.0
+radial_segments = 96
+rings = 48
+
+[sub_resource type="ShaderMaterial" id="body_b_mat"]
+shader = ExtResource("orbital")
+shader_parameter/surface_map = ExtResource("moon")
+shader_parameter/weather_tex = ExtResource("weather")
+shader_parameter/lunar = true
+
+[node name="UniverseEnvironment" type="Node3D"]
+script = ExtResource("texture_setup")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.90757, -0.61087, 0.0)
+light_color = Color(1.0, 0.90, 0.72, 1.0)
+light_energy = 1.42
+shadow_enabled = true
+directional_shadow_max_distance = 160.0
+directional_shadow_mode = 1
+
+[node name="PlanetA" type="Node3D" parent="."]
+
+[node name="PlanetAEnvironment" parent="PlanetA" instance=ExtResource("1")]
+
+[node name="BodyA" type="MeshInstance3D" parent="PlanetA"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6000.6, 0)
+mesh = SubResource("body_a_mesh")
+material_override = SubResource("body_a_mat")
+
+[node name="PlanetB" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -30000)
+
+[node name="PlanetBEnvironment" parent="PlanetB" instance=ExtResource("2")]
+
+[node name="BodyB" type="MeshInstance3D" parent="PlanetB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6000.6, 0)
+mesh = SubResource("body_b_mesh")
+material_override = SubResource("body_b_mat")

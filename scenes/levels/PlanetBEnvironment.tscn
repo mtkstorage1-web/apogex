@@ -1,0 +1,1527 @@
+[gd_scene load_steps=127 format=3]
+
+[ext_resource type="Script" path="res://scripts/textured_environment.gd" id="texture_setup"]
+
+[sub_resource type="ProceduralSkyMaterial" id="r1"]
+sky_top_color = Color(0.0902, 0.20784, 0.26667, 1.0)
+sky_horizon_color = Color(0.30196, 0.48627, 0.50196, 1.0)
+ground_horizon_color = Color(0.30196, 0.48627, 0.50196, 1.0)
+ground_bottom_color = Color(0.23137, 0.17647, 0.20784, 1.0)
+sky_curve = 0.22
+ground_curve = 0.15
+sun_angle_max = 1.0
+
+[sub_resource type="Sky" id="r2"]
+radiance_size = 0
+process_mode = 0
+sky_material = SubResource("r1")
+
+[sub_resource type="Environment" id="r3"]
+background_mode = 2
+sky = SubResource("r2")
+ambient_light_source = 3
+ambient_light_energy = 1.0
+tonemap_mode = 2
+ssao_enabled = true
+ssao_intensity = 1.2
+ssao_radius = 0.5
+ssao_detail = 0.1
+glow_enabled = true
+glow_intensity = 0.5
+fog_enabled = true
+fog_light_color = Color(0.23529, 0.38824, 0.4, 1.0)
+fog_density = 0.004
+fog_sky_affect = 0.15
+
+[sub_resource type="PlaneMesh" id="r4"]
+size = Vector2(900.0, 900.0)
+
+[sub_resource type="StandardMaterial3D" id="r5"]
+albedo_color = Color(0.8902, 0.63137, 0.51765, 1.0)
+roughness = 0.95
+
+[sub_resource type="SphereMesh" id="r6"]
+radius = 3.368
+height = 6.736
+radial_segments = 7
+rings = 4
+
+[sub_resource type="StandardMaterial3D" id="r7"]
+albedo_color = Color(0.78824, 0.72549, 0.82353, 1.0)
+roughness = 0.95
+
+[sub_resource type="SphereMesh" id="r8"]
+radius = 5.407
+height = 10.814
+radial_segments = 7
+rings = 4
+
+[sub_resource type="StandardMaterial3D" id="r9"]
+albedo_color = Color(0.93725, 0.89412, 0.93333, 1.0)
+roughness = 0.95
+
+[sub_resource type="SphereMesh" id="r10"]
+radius = 8.061
+height = 16.122
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r11"]
+radius = 6.206
+height = 12.412
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r12"]
+radius = 8.042
+height = 16.084
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r13"]
+radius = 11.018
+height = 22.036
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r14"]
+radius = 9.039
+height = 18.078
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r15"]
+radius = 5.966
+height = 11.932
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r16"]
+radius = 3.085
+height = 6.17
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r17"]
+radius = 6.737
+height = 13.474
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r18"]
+radius = 11.91
+height = 23.82
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r19"]
+radius = 8.998
+height = 17.996
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r20"]
+radius = 9.103
+height = 18.206
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r21"]
+radius = 10.509
+height = 21.018
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r22"]
+radius = 4.892
+height = 9.784
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r23"]
+radius = 4.782
+height = 9.564
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r24"]
+radius = 2.233
+height = 4.466
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r25"]
+radius = 4.315
+height = 8.63
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r26"]
+radius = 8.812
+height = 17.624
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r27"]
+radius = 11.937
+height = 23.874
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r28"]
+radius = 9.469
+height = 18.938
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r29"]
+radius = 6.5
+height = 13.0
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r30"]
+radius = 3.204
+height = 6.408
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r31"]
+radius = 3.448
+height = 6.896
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r32"]
+radius = 11.11
+height = 22.22
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r33"]
+radius = 7.703
+height = 15.406
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r34"]
+radius = 3.814
+height = 7.628
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r35"]
+radius = 3.266
+height = 6.532
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r36"]
+radius = 7.152
+height = 14.304
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r37"]
+radius = 3.045
+height = 6.09
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r38"]
+radius = 11.094
+height = 22.188
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r39"]
+radius = 5.086
+height = 10.172
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r40"]
+radius = 5.704
+height = 11.408
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r41"]
+radius = 4.973
+height = 9.946
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r42"]
+radius = 5.164
+height = 10.328
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r43"]
+radius = 3.627
+height = 7.254
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r44"]
+radius = 6.011
+height = 12.022
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r45"]
+radius = 12.707
+height = 25.414
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r46"]
+radius = 7.465
+height = 14.93
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r47"]
+radius = 5.306
+height = 10.612
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r48"]
+radius = 12.003
+height = 24.006
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r49"]
+radius = 5.668
+height = 11.336
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r50"]
+radius = 7.708
+height = 15.416
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r51"]
+radius = 5.298
+height = 10.596
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r52"]
+radius = 6.675
+height = 13.35
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r53"]
+radius = 11.658
+height = 23.316
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r54"]
+radius = 6.7
+height = 13.4
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r55"]
+radius = 5.639
+height = 11.278
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r56"]
+radius = 7.582
+height = 15.164
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r57"]
+radius = 7.645
+height = 15.29
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r58"]
+radius = 7.096
+height = 14.192
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r59"]
+radius = 10.031
+height = 20.062
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r60"]
+radius = 6.833
+height = 13.666
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r61"]
+radius = 5.499
+height = 10.998
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r62"]
+radius = 9.714
+height = 19.428
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r63"]
+radius = 13.032
+height = 26.064
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r64"]
+radius = 3.77
+height = 7.54
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r65"]
+radius = 2.861
+height = 5.722
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r66"]
+radius = 10.51
+height = 21.02
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r67"]
+radius = 5.11
+height = 10.22
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r68"]
+radius = 6.623
+height = 13.246
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r69"]
+radius = 9.226
+height = 18.452
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r70"]
+radius = 10.358
+height = 20.716
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r71"]
+radius = 3.923
+height = 7.846
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r72"]
+radius = 5.612
+height = 11.224
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r73"]
+radius = 6.228
+height = 12.456
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r74"]
+radius = 8.582
+height = 17.164
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r75"]
+radius = 8.279
+height = 16.558
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r76"]
+radius = 6.271
+height = 12.542
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r77"]
+radius = 4.072
+height = 8.144
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r78"]
+radius = 4.442
+height = 8.884
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r79"]
+radius = 6.899
+height = 13.798
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r80"]
+radius = 6.912
+height = 13.824
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r81"]
+radius = 9.058
+height = 18.116
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r82"]
+radius = 3.756
+height = 7.512
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r83"]
+radius = 11.134
+height = 22.268
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r84"]
+radius = 7.097
+height = 14.194
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r85"]
+radius = 8.333
+height = 16.666
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r86"]
+radius = 9.899
+height = 19.798
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r87"]
+radius = 2.661
+height = 5.322
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r88"]
+radius = 4.438
+height = 8.876
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r89"]
+radius = 5.388
+height = 10.776
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r90"]
+radius = 2.902
+height = 5.804
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r91"]
+radius = 3.669
+height = 7.338
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r92"]
+radius = 5.474
+height = 10.948
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r93"]
+radius = 3.849
+height = 7.698
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r94"]
+radius = 12.127
+height = 24.254
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r95"]
+radius = 4.89
+height = 9.78
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r96"]
+radius = 4.853
+height = 9.706
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r97"]
+radius = 12.992
+height = 25.984
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r98"]
+radius = 3.15
+height = 6.3
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r99"]
+radius = 4.263
+height = 8.526
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r100"]
+radius = 4.893
+height = 9.786
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r101"]
+radius = 3.281
+height = 6.562
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r102"]
+radius = 7.843
+height = 15.686
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r103"]
+radius = 7.417
+height = 14.834
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r104"]
+radius = 6.656
+height = 13.312
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r105"]
+radius = 6.923
+height = 13.846
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r106"]
+radius = 6.605
+height = 13.21
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r107"]
+radius = 3.125
+height = 6.25
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r108"]
+radius = 6.596
+height = 13.192
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r109"]
+radius = 5.911
+height = 11.822
+radial_segments = 7
+rings = 4
+
+[sub_resource type="SphereMesh" id="r110"]
+radius = 110.0
+height = 220.0
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="r111"]
+albedo_color = Color(0.55294, 0.17255, 0.27059, 1.0)
+roughness = 0.9
+emission_enabled = true
+emission = Color(0.55294, 0.17255, 0.27059, 1.0)
+emission_energy_multiplier = 0.15
+
+[sub_resource type="CylinderMesh" id="r112"]
+top_radius = 92.95348
+bottom_radius = 92.95348
+height = 9.9
+radial_segments = 32
+
+[sub_resource type="StandardMaterial3D" id="r113"]
+albedo_color = Color(0.65098, 0.27843, 0.37255, 1.0)
+roughness = 0.85
+emission_enabled = true
+emission = Color(0.65098, 0.27843, 0.37255, 1.0)
+emission_energy_multiplier = 0.15
+
+[sub_resource type="CylinderMesh" id="r114"]
+top_radius = 108.63614
+bottom_radius = 108.63614
+height = 9.9
+radial_segments = 32
+
+[sub_resource type="SphereMesh" id="r115"]
+radius = 30.0
+height = 60.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="r116"]
+albedo_color = Color(0.61961, 0.77647, 0.81569, 1.0)
+roughness = 0.9
+emission_enabled = true
+emission = Color(0.61961, 0.77647, 0.81569, 1.0)
+emission_energy_multiplier = 0.2
+
+[sub_resource type="CylinderMesh" id="r117"]
+top_radius = 14.0
+bottom_radius = 14.0
+height = 0.06
+radial_segments = 48
+
+[sub_resource type="StandardMaterial3D" id="r118"]
+albedo_color = Color(0.78824, 0.55294, 0.45098, 1.0)
+roughness = 0.85
+
+[sub_resource type="TorusMesh" id="r119"]
+inner_radius = 12.85
+outer_radius = 13.15
+rings = 48
+ring_segments = 4
+
+[sub_resource type="StandardMaterial3D" id="r120"]
+albedo_color = Color(0.94118, 0.54118, 0.29412, 0.75)
+roughness = 0.85
+shading_mode = 0
+transparency = 1
+
+[sub_resource type="StandardMaterial3D" id="r121"]
+albedo_color = Color(0.43529, 0.87843, 0.90196, 0.75)
+roughness = 0.85
+shading_mode = 0
+transparency = 1
+
+[sub_resource type="StandardMaterial3D" id="r122"]
+albedo_color = Color(0.71765, 0.62745, 0.95294, 0.75)
+roughness = 0.85
+shading_mode = 0
+transparency = 1
+
+[sub_resource type="StandardMaterial3D" id="r123"]
+albedo_color = Color(0.69804, 0.87059, 0.49804, 0.75)
+roughness = 0.85
+shading_mode = 0
+transparency = 1
+
+[sub_resource type="TorusMesh" id="r124"]
+inner_radius = 2.25
+outer_radius = 2.55
+rings = 48
+ring_segments = 4
+
+[sub_resource type="StandardMaterial3D" id="r125"]
+albedo_color = Color(0.61176, 0.87059, 0.69412, 0.85)
+roughness = 0.85
+shading_mode = 0
+transparency = 1
+
+[node name="PlanetBEnvironment" type="Node3D"]
+script = ExtResource("texture_setup")
+
+[node name="Terrain" type="Node3D" parent="."]
+
+[node name="Ground" type="MeshInstance3D" parent="Terrain"]
+mesh = SubResource("r4")
+material_override = SubResource("r5")
+
+[node name="TerrainRocks" type="Node3D" parent="Terrain"]
+
+[node name="Rock000" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-58.64151, 0.84192, 40.40559)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r6")
+material_override = SubResource("r7")
+metadata/gameplay_radius = 2.86253
+
+[node name="Rock001" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(1.72815, 1.35184, 175.32869)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r8")
+material_override = SubResource("r9")
+
+[node name="Rock002" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-119.67508, 2.01525, 108.11831)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r10")
+material_override = SubResource("r9")
+
+[node name="Rock003" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(115.7515, 1.5515, -47.20039)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r11")
+material_override = SubResource("r9")
+
+[node name="Rock005" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-74.60396, 2.01052, 75.5666)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r12")
+material_override = SubResource("r9")
+
+[node name="Rock006" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(90.37867, 2.75448, 128.2128)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r13")
+material_override = SubResource("r9")
+
+[node name="Rock007" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-111.25241, 2.25971, 178.24574)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r14")
+material_override = SubResource("r9")
+
+[node name="Rock008" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(18.57012, 1.49153, -119.81066)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r15")
+material_override = SubResource("r7")
+
+[node name="Rock009" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-4.30629, 0.7712, 35.15451)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r16")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 2.62208
+
+[node name="Rock010" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(133.09535, 1.68419, -8.73475)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r17")
+material_override = SubResource("r9")
+
+[node name="Rock011" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(118.75292, 2.97747, -86.00317)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r18")
+material_override = SubResource("r9")
+
+[node name="Rock012" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-46.36651, 2.24941, 57.8563)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r19")
+material_override = SubResource("r7")
+metadata/gameplay_radius = 7.64801
+
+[node name="Rock013" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(96.35366, 2.27568, 153.55508)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r20")
+material_override = SubResource("r9")
+
+[node name="Rock014" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(208.35724, 2.62719, -22.48873)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r21")
+material_override = SubResource("r9")
+
+[node name="Rock015" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(37.29981, 1.2231, 8.84644)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r22")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 4.15855
+
+[node name="Rock016" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(20.81128, 1.1956, -44.4667)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r23")
+material_override = SubResource("r7")
+metadata/gameplay_radius = 4.06504
+
+[node name="Rock017" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(78.5645, 0.55816, 47.14438)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r24")
+material_override = SubResource("r9")
+
+[node name="Rock018" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-63.06093, 1.07871, 115.22532)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r25")
+material_override = SubResource("r9")
+
+[node name="Rock020" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-5.19444, 2.20308, 109.03292)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r26")
+material_override = SubResource("r7")
+
+[node name="Rock021" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-99.10062, 2.98431, 129.75397)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r27")
+material_override = SubResource("r9")
+
+[node name="Rock022" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(132.44624, 2.36724, 142.69734)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r28")
+material_override = SubResource("r9")
+
+[node name="Rock023" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-2.568, 1.62512, -147.07201)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r29")
+material_override = SubResource("r9")
+
+[node name="Rock024" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(49.90108, 0.80098, 34.59693)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r30")
+material_override = SubResource("r7")
+metadata/gameplay_radius = 2.72334
+
+[node name="Rock025" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(26.8148, 0.86207, 54.86271)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r31")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 2.93102
+
+[node name="Rock026" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-164.47394, 2.7775, -66.27709)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r32")
+material_override = SubResource("r9")
+
+[node name="Rock027" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(31.69076, 1.92584, -45.92953)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r33")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 6.54786
+
+[node name="Rock028" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(18.58952, 0.95349, 43.67267)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r34")
+material_override = SubResource("r7")
+metadata/gameplay_radius = 3.24186
+
+[node name="Rock029" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-36.80302, 0.81657, -21.98196)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r35")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 2.77635
+
+[node name="Rock030" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-150.63079, 1.78812, 110.74527)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r36")
+material_override = SubResource("r9")
+
+[node name="Rock031" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-88.34837, 0.76116, 52.95193)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r37")
+material_override = SubResource("r9")
+
+[node name="Rock032" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(149.5553, 2.77343, -141.20701)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r38")
+material_override = SubResource("r7")
+
+[node name="Rock033" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-93.69932, 1.27138, 69.3623)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r39")
+material_override = SubResource("r9")
+
+[node name="Rock034" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-87.95583, 1.42593, -128.26534)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r40")
+material_override = SubResource("r9")
+
+[node name="Rock035" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(118.25656, 1.24325, -119.40617)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r41")
+material_override = SubResource("r9")
+
+[node name="Rock036" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(58.00928, 1.29097, -148.49042)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r42")
+material_override = SubResource("r7")
+
+[node name="Rock037" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-49.92485, 0.90674, 166.45436)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r43")
+material_override = SubResource("r9")
+
+[node name="Rock038" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-197.19555, 1.50283, 81.22297)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r44")
+material_override = SubResource("r9")
+
+[node name="Rock039" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-202.70053, 3.17675, -4.01322)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r45")
+material_override = SubResource("r9")
+
+[node name="Rock040" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(31.66371, 2.75462, -129.36471)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r13")
+material_override = SubResource("r7")
+
+[node name="Rock041" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-8.50042, 1.86616, 197.79109)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r46")
+material_override = SubResource("r9")
+
+[node name="Rock042" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-80.5043, 1.32653, -123.76833)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r47")
+material_override = SubResource("r9")
+
+[node name="Rock043" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-63.7911, 3.0007, -131.76614)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r48")
+material_override = SubResource("r9")
+
+[node name="Rock044" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-57.85245, 1.417, -100.37084)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r49")
+material_override = SubResource("r7")
+
+[node name="Rock045" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(74.69549, 1.92695, -63.81152)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r50")
+material_override = SubResource("r9")
+
+[node name="Rock046" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-73.13021, 1.32452, -200.50427)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r51")
+material_override = SubResource("r9")
+
+[node name="Rock047" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-33.55628, 1.66882, -56.74988)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r52")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 5.67399
+
+[node name="Rock048" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-94.84358, 2.91457, -143.72849)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r53")
+material_override = SubResource("r7")
+
+[node name="Rock049" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(22.82482, 1.67495, 192.70699)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r54")
+material_override = SubResource("r9")
+
+[node name="Rock050" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-44.38985, 1.40976, 32.29348)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r55")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 4.79318
+
+[node name="Rock051" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(91.75645, 1.89558, 0.74515)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r56")
+material_override = SubResource("r9")
+
+[node name="Rock053" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-67.7809, 1.91114, 24.82836)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r57")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 6.49787
+
+[node name="Rock054" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-8.41644, 1.77408, -120.75961)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r58")
+material_override = SubResource("r9")
+
+[node name="Rock055" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-110.5631, 2.5078, -103.56944)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r59")
+material_override = SubResource("r9")
+
+[node name="Rock057" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(72.0051, 1.70815, 55.96276)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r60")
+material_override = SubResource("r9")
+
+[node name="Rock058" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(108.2117, 1.37487, -26.96085)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r61")
+material_override = SubResource("r9")
+
+[node name="Rock059" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-196.93097, 2.42849, -74.03067)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r62")
+material_override = SubResource("r9")
+
+[node name="Rock060" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-48.93262, 3.2579, 167.74819)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r63")
+material_override = SubResource("r7")
+
+[node name="Rock061" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(29.26028, 0.94259, -104.07611)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r64")
+material_override = SubResource("r9")
+
+[node name="Rock062" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-56.14993, 0.71522, 14.10803)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r65")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 2.43176
+
+[node name="Rock063" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-181.4068, 2.62741, 63.3236)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r66")
+material_override = SubResource("r9")
+
+[node name="Rock064" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-184.15545, 1.27751, 104.02602)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r67")
+material_override = SubResource("r7")
+
+[node name="Rock065" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-0.08944, 1.65577, 84.88546)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r68")
+material_override = SubResource("r9")
+
+[node name="Rock066" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(80.93811, 2.3066, -67.16046)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r69")
+material_override = SubResource("r9")
+
+[node name="Rock067" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(113.58974, 2.5895, -47.51261)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r70")
+material_override = SubResource("r9")
+
+[node name="Rock068" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(94.1049, 0.98077, -78.58404)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r71")
+material_override = SubResource("r7")
+
+[node name="Rock069" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(70.05496, 1.403, 35.55372)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r72")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 4.77021
+
+[node name="Rock070" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(94.88614, 1.55702, 9.21786)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r73")
+material_override = SubResource("r9")
+
+[node name="Rock071" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-87.46933, 2.14546, 146.3225)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r74")
+material_override = SubResource("r9")
+
+[node name="Rock072" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-148.57792, 2.06974, -31.26785)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r75")
+material_override = SubResource("r7")
+
+[node name="Rock073" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-55.61756, 1.56765, 33.39463)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r76")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 5.33
+
+[node name="Rock074" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(38.923, 1.018, 11.97119)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r77")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 3.46119
+
+[node name="Rock075" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(21.92199, 1.1104, 173.14426)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r78")
+material_override = SubResource("r9")
+
+[node name="Rock076" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-151.54776, 1.72485, 61.01651)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r79")
+material_override = SubResource("r7")
+
+[node name="Rock078" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-16.25445, 1.72788, 100.6169)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r80")
+material_override = SubResource("r9")
+
+[node name="Rock079" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(44.08485, 2.26443, 130.74162)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r81")
+material_override = SubResource("r9")
+
+[node name="Rock080" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-106.6428, 0.93903, -151.93729)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r82")
+material_override = SubResource("r7")
+
+[node name="Rock081" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-73.90648, 2.7835, -151.76404)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r83")
+material_override = SubResource("r9")
+
+[node name="Rock082" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(29.39217, 1.77424, 40.56066)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r84")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 6.03241
+
+[node name="Rock083" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-39.30509, 2.08334, -51.74576)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r85")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 7.08337
+
+[node name="Rock084" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-30.60015, 2.47487, -145.19759)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r86")
+material_override = SubResource("r7")
+
+[node name="Rock085" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-74.51272, 0.66528, -62.50437)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r87")
+material_override = SubResource("r9")
+
+[node name="Rock086" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-82.41979, 1.10943, 125.6404)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r88")
+material_override = SubResource("r9")
+
+[node name="Rock087" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(23.40978, 1.34691, 49.40576)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r89")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 4.57951
+
+[node name="Rock088" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(166.19001, 0.72546, -35.35317)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r90")
+material_override = SubResource("r7")
+
+[node name="Rock089" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-115.06088, 0.91721, 112.43512)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r91")
+material_override = SubResource("r9")
+
+[node name="Rock090" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(21.63116, 1.36845, -74.70728)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r92")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 4.65274
+
+[node name="Rock091" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(52.39628, 0.96224, -189.48981)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r93")
+material_override = SubResource("r9")
+
+[node name="Rock092" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(80.73454, 3.03187, -179.51097)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r94")
+material_override = SubResource("r7")
+
+[node name="Rock093" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(15.56222, 1.22258, -102.22176)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r95")
+material_override = SubResource("r9")
+
+[node name="Rock094" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(103.36124, 1.21313, 30.45266)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r96")
+material_override = SubResource("r9")
+
+[node name="Rock095" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(113.56486, 3.24812, 176.07011)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r97")
+material_override = SubResource("r9")
+
+[node name="Rock096" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(32.60049, 0.78748, -82.82089)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r98")
+material_override = SubResource("r7")
+
+[node name="Rock097" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-42.60909, 1.06575, 20.87516)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r99")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 3.62356
+
+[node name="Rock098" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-72.96904, 1.22335, -57.69513)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r100")
+material_override = SubResource("r9")
+
+[node name="Rock099" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-87.49543, 0.82014, 166.62767)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r101")
+material_override = SubResource("r9")
+
+[node name="Rock100" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(57.63729, 1.96077, -135.78422)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r102")
+material_override = SubResource("r7")
+
+[node name="Rock101" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-12.98782, 1.85419, -35.12438)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r103")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 6.30423
+
+[node name="Rock102" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-26.12815, 1.66394, 105.11659)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r104")
+material_override = SubResource("r9")
+
+[node name="Rock104" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(73.361, 1.73065, -3.85662)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r105")
+material_override = SubResource("r7")
+metadata/gameplay_radius = 5.88422
+
+[node name="Rock105" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(71.88577, 1.65119, 119.54704)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r106")
+material_override = SubResource("r9")
+
+[node name="Rock106" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-36.05001, 0.78121, -15.7515)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r107")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 2.65611
+
+[node name="Rock108" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(81.16822, 1.64897, -5.51548)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r108")
+material_override = SubResource("r7")
+
+[node name="Rock109" type="MeshInstance3D" parent="Terrain/TerrainRocks"]
+position = Vector3(-31.36394, 1.47787, 14.60767)
+scale = Vector3(1.0, 0.9, 1.0)
+mesh = SubResource("r109")
+material_override = SubResource("r9")
+metadata/gameplay_radius = 5.02475
+
+[node name="GiantPlanet" type="Node3D" parent="Terrain"]
+position = Vector3(-260.0, 160.0, -480.0)
+
+[node name="Core" type="MeshInstance3D" parent="Terrain/GiantPlanet"]
+mesh = SubResource("r110")
+material_override = SubResource("r111")
+
+[node name="Band0" type="MeshInstance3D" parent="Terrain/GiantPlanet"]
+position = Vector3(0.0, -59.4, 0.0)
+mesh = SubResource("r112")
+material_override = SubResource("r113")
+
+[node name="Band1" type="MeshInstance3D" parent="Terrain/GiantPlanet"]
+position = Vector3(0.0, -19.8, 0.0)
+mesh = SubResource("r114")
+material_override = SubResource("r113")
+
+[node name="Band2" type="MeshInstance3D" parent="Terrain/GiantPlanet"]
+position = Vector3(0.0, 19.8, 0.0)
+mesh = SubResource("r114")
+material_override = SubResource("r113")
+
+[node name="Band3" type="MeshInstance3D" parent="Terrain/GiantPlanet"]
+position = Vector3(0.0, 59.4, 0.0)
+mesh = SubResource("r112")
+material_override = SubResource("r113")
+
+[node name="SmallMoon" type="MeshInstance3D" parent="Terrain"]
+position = Vector3(220.0, 140.0, -420.0)
+mesh = SubResource("r115")
+material_override = SubResource("r116")
+
+[node name="LandingBays" type="Node3D" parent="."]
+
+[node name="Bay0" type="Node3D" parent="LandingBays"]
+position = Vector3(0.0, 0.0, 58.0)
+
+[node name="LandingPlatform" type="MeshInstance3D" parent="LandingBays/Bay0"]
+position = Vector3(0.0, 0.03, 0.0)
+mesh = SubResource("r117")
+material_override = SubResource("r118")
+
+[node name="TeamColorRing" type="MeshInstance3D" parent="LandingBays/Bay0"]
+position = Vector3(0.0, 0.1, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r119")
+material_override = SubResource("r120")
+cast_shadow = 0
+
+[node name="Bay1" type="Node3D" parent="LandingBays"]
+position = Vector3(-58.0, 0.0, -30.0)
+
+[node name="LandingPlatform" type="MeshInstance3D" parent="LandingBays/Bay1"]
+position = Vector3(0.0, 0.03, 0.0)
+mesh = SubResource("r117")
+material_override = SubResource("r118")
+
+[node name="TeamColorRing" type="MeshInstance3D" parent="LandingBays/Bay1"]
+position = Vector3(0.0, 0.1, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r119")
+material_override = SubResource("r121")
+cast_shadow = 0
+
+[node name="Bay2" type="Node3D" parent="LandingBays"]
+position = Vector3(58.0, 0.0, -30.0)
+
+[node name="LandingPlatform" type="MeshInstance3D" parent="LandingBays/Bay2"]
+position = Vector3(0.0, 0.03, 0.0)
+mesh = SubResource("r117")
+material_override = SubResource("r118")
+
+[node name="TeamColorRing" type="MeshInstance3D" parent="LandingBays/Bay2"]
+position = Vector3(0.0, 0.1, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r119")
+material_override = SubResource("r122")
+cast_shadow = 0
+
+[node name="Bay3" type="Node3D" parent="LandingBays"]
+position = Vector3(0.0, 0.0, -62.0)
+
+[node name="LandingPlatform" type="MeshInstance3D" parent="LandingBays/Bay3"]
+position = Vector3(0.0, 0.03, 0.0)
+mesh = SubResource("r117")
+material_override = SubResource("r118")
+
+[node name="TeamColorRing" type="MeshInstance3D" parent="LandingBays/Bay3"]
+position = Vector3(0.0, 0.1, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r119")
+material_override = SubResource("r123")
+cast_shadow = 0
+
+[node name="LoadRamp" type="Node3D" parent="."]
+position = Vector3(0.0, 0.0, 42.5)
+
+[node name="RampRing" type="MeshInstance3D" parent="LoadRamp"]
+position = Vector3(0.0, 0.1, 0.0)
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r124")
+material_override = SubResource("r125")
+cast_shadow = 0
+
+[node name="RampInstructions" type="Label3D" parent="LoadRamp"]
+position = Vector3(0.0, 3.0, 0.0)
+text = "LOAD RAMP · E LOAD · T DEPART"
+modulate = Color(0.61176, 0.87059, 0.69412, 1.0)
+font_size = 22
+outline_size = 8
+outline_modulate = Color(0.08, 0.06, 0.14, 0.85)
+pixel_size = 0.01
+billboard = 1

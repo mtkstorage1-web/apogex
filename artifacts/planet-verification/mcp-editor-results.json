@@ -1,0 +1,39 @@
+{
+  "cache_warning": "Preloaded GDScript dependencies may be stale after source edits. Restart the editor before treating this run as validation of dependency changes. ResourceLoader cache modes do not invalidate GDScript's preload cache.",
+  "duration_ms": 195,
+  "edited_scene": "res://main.tscn",
+  "failed": 0,
+  "passed": 3,
+  "results": [
+    {
+      "assertion_count": 32,
+      "duration_ms": 2,
+      "message": "",
+      "passed": true,
+      "suite": "improvements",
+      "test": "test_bundled_audio_assets_load"
+    },
+    {
+      "assertion_count": 2,
+      "duration_ms": 0,
+      "message": "",
+      "passed": true,
+      "suite": "improvements",
+      "test": "test_main_scene_instantiates"
+    },
+    {
+      "assertion_count": 12,
+      "duration_ms": 193,
+      "message": "",
+      "passed": true,
+      "suite": "improvements",
+      "test": "test_modified_scripts_load_without_errors"
+    }
+  ],
+  "skipped": 0,
+  "suite_count": 1,
+  "suites_run": [
+    "improvements"
+  ],
+  "total": 3
+}

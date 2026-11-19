@@ -1,0 +1,95 @@
+[gd_scene load_steps=11 format=3]
+
+[sub_resource type="SphereMesh" id="r1"]
+radius = 1.8
+height = 3.6
+radial_segments = 7
+rings = 4
+
+[sub_resource type="StandardMaterial3D" id="r2"]
+albedo_color = Color(0.5451, 0.44706, 0.72157, 1.0)
+roughness = 0.95
+
+[sub_resource type="SphereMesh" id="r3"]
+radius = 0.55
+height = 1.1
+radial_segments = 6
+rings = 3
+
+[sub_resource type="StandardMaterial3D" id="r4"]
+albedo_color = Color(0.43529, 0.87843, 0.90196, 1.0)
+roughness = 0.9
+emission_enabled = true
+emission = Color(0.43529, 0.87843, 0.90196, 1.0)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="CylinderMesh" id="r5"]
+top_radius = 0.06
+bottom_radius = 0.06
+height = 2.2
+radial_segments = 6
+
+[sub_resource type="StandardMaterial3D" id="r6"]
+albedo_color = Color(0.92549, 0.90588, 0.95686, 1.0)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="r7"]
+size = Vector3(0.05, 0.5, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="r8"]
+albedo_color = Color(0.43529, 0.87843, 0.90196, 1.0)
+roughness = 0.85
+
+[sub_resource type="TorusMesh" id="r9"]
+inner_radius = 1.31
+outer_radius = 1.49
+rings = 48
+ring_segments = 4
+
+[sub_resource type="StandardMaterial3D" id="r10"]
+albedo_color = Color(0.43529, 0.87843, 0.90196, 0.8)
+roughness = 0.85
+shading_mode = 0
+transparency = 1
+
+[node name="FlagMarker" type="Node3D"]
+
+[node name="Pedestal" type="MeshInstance3D" parent="."]
+position = Vector3(0.0, 0.5, 0.0)
+scale = Vector3(1.0, 0.55, 1.0)
+mesh = SubResource("r1")
+material_override = SubResource("r2")
+
+[node name="Crystal" type="Node3D" parent="."]
+
+[node name="Gem" type="MeshInstance3D" parent="Crystal"]
+cast_shadow = 0
+mesh = SubResource("r3")
+material_override = SubResource("r4")
+
+[node name="Pole" type="MeshInstance3D" parent="Crystal"]
+cast_shadow = 0
+position = Vector3(0.7, 0.2, 0.0)
+mesh = SubResource("r5")
+material_override = SubResource("r6")
+
+[node name="Pennant" type="MeshInstance3D" parent="Crystal"]
+cast_shadow = 0
+position = Vector3(0.7, 1.05, 0.4)
+mesh = SubResource("r7")
+material_override = SubResource("r8")
+
+[node name="ScanRing" type="MeshInstance3D" parent="."]
+scale = Vector3(1.0, 0.05, 1.0)
+mesh = SubResource("r9")
+material_override = SubResource("r10")
+cast_shadow = 0
+
+[node name="FlagLabel" type="Label3D" parent="."]
+text = "FLAG"
+modulate = Color(0.9098, 0.98431, 0.98824, 1.0)
+font_size = 34
+outline_size = 8
+outline_modulate = Color(0.08, 0.06, 0.14, 0.85)
+pixel_size = 0.01
+billboard = 1

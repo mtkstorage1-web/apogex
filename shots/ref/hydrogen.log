@@ -1,0 +1,17 @@
+I've launched the image generation subagents for all six APOGEX reference assets (`01_kiosk.png` through `06_props.png`). Waiting for them to finish generating.
+Waiting for the active image-generator subagents (`01_kiosk`, `04_kestrel`, `06_props`) to report back before retrying the three that hit the brief rate limit (`02_gantry`, `03_engine`, `05_hauler`).
+`01_kiosk` and `04_kestrel` are finishing up, and I've retried `02_gantry` individually to avoid the concurrency rate limit. Waiting for their file paths.
+`01_kiosk.png` is generated and converted. Waiting for `04_kestrel` to finish before running the remaining four one at a time so we don't collide on the image-generation rate limit.
+Converted `04_kestrel.png` and verified it. Waiting for `02_gantry` to finish generating.
+Generated **2 of 6** reference PNGs before image-generation quota was exhausted (`02_gantry`, `03_engine`, `05_hauler`, and `06_props` are blocked). No other workspace files were edited.
+
+### Generated Images
+- [01_kiosk.png](file:///Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/hydrogen/01_kiosk.png) (`/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/hydrogen/01_kiosk.png`) — Chamfered upright terminal in matte dark gunmetal and brushed slate bevels with an angled dark violet glass console, floating violet holographic wireframe-thruster pane, and warm orange (`#eaa665`) recessed trim strips and indicator lights.
+- [04_kestrel.png](file:///Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/hydrogen/04_kestrel.png) (`/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/hydrogen/04_kestrel.png`) — Faceted forward-pronged scout hull blocking matte off-white armor and cool slate intakes over a dark charcoal chassis, featuring a dark violet tinted canopy and warm orange (`#eaa665`) stripe accents on the aft spine and side nacelles.
+
+### Blocker for Remaining 4 Images
+The `image-generator` tool (`gemini-3.1-flash-image`) failed with a hard quota exhaustion error while attempting `02_gantry` (after `03_engine`, `05_hauler`, and `06_props` had also hit rate-limit errors):
+- `429 Too Many Requests` / `RESOURCE_EXHAUSTED` (`QUOTA_EXHAUSTED`)
+- `quotaResetDelay`: `4h58m52.813873935s` (`quotaResetTimeStamp`: `2026-11-17T20:01:44Z`)
+
+Once the image model quota resets, we can generate the remaining four images (`02_gantry.png`, `03_engine.png`, `05_hauler.png`, `06_props.png`) one at a time into `/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/hydrogen`.

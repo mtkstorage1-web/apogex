@@ -1,0 +1,81 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+PASS intro keeps cinematic mode
+PASS desk starts build in play mode
+PASS starting pad sequence does not release mouse controls
+PASS shop cannot restart active build
+PASS auto assembly advances in play mode
+PASS build preserves player camera
+PASS build preserves actor visibility
+PASS build preserves unrelated prompts
+PASS outfit preserves player camera
+PASS outfit preserves actor visibility
+PASS outfit preserves unrelated prompts
+PASS erect preserves player camera
+PASS erect preserves actor visibility
+PASS erect preserves unrelated prompts
+PASS boosters preserves player camera
+PASS boosters preserves actor visibility
+PASS boosters preserves unrelated prompts
+PASS build and outfit finish without blocking play
+PASS automated assembly and outfit complete
+PASS player can jump between sequences
+PASS E starts erect from play mode
+PASS view controls work during erect
+PASS player can jump during erect
+PASS pause freezes pad sequence
+PASS erect and boosters finish ready for mission desk
+PASS completed sequence stops ticking
+PASS mission desk opens ROUTE after build
+PASS route selection opens GO/NO-GO
+PASS launch enters cinematic
+PASS launch charges the route budget once
+PASS Earth has a larger concentric atmosphere shell
+PASS Moon has no atmosphere shell
+PASS planet centers are 30,000 m apart
+PASS ascent clock advances in unscaled play seconds
+PASS FlightBoosterB01 remains attached and firing at 19.99 s
+PASS FlightBoosterB02 remains attached and firing at 19.99 s
+PASS pausing does not consume booster burn time
+PASS first launch defaults to High and 60 FPS
+PASS pause opens Graphics
+PASS pause quality button applies preset 3
+PASS pause quality button applies preset 0
+PASS pause quality button applies preset 1
+PASS pause quality button applies preset 2
+PASS pause quality button applies preset 3
+PASS pause FPS button applies 120
+PASS pause FPS button applies 144
+PASS pause FPS button applies 0
+PASS pause FPS button applies 30
+PASS pause FPS button applies 60
+PASS pause FPS button applies 120
+PASS graphics returns to pause
+PASS pause sensitivity can be changed
+PASS pause volume can be changed
+PASS pause motion setting can be changed
+PASS cycling keeps the ascent paused
+PASS new Main loads saved graphics and FPS from user settings
+PASS new Main loads existing controls, audio and motion settings
+PASS home opens Settings
+PASS home Settings opens Graphics
+PASS home settings cycles CUSTOM to LOW and resets the FPS limit
+PASS home settings cycles FPS
+PASS FlightBoosterB01 separates and stops firing at 20.01 s
+PASS FlightBoosterB02 separates and stops firing at 20.01 s
+PASS FlightBoosterB01 falls away after release
+PASS FlightBoosterB02 falls away after release
+PASS both bodies clear the camera near plane
+PASS A is below and behind the ship and B is ahead
+PASS A recedes during ascent
+PASS launch fog clears at altitude
+PASS the launch vehicle remains visible after the ground fades
+LAUNCH PLANETS: A=(0.0, -6000.6, 0.0) B=(0.0, -6000.6, -30000.0) camera clearance=2033.6 m / 24208.0 m
+PASS ascent hands off to playable Flight
+PASS staging does not charge the route a second time
+PASS Moon grows in angular size with approach
+MOON: angular diameter 22.57° at launch, 40.22° at mid-flight
+PASS lunar descent raises local regolith without atmospheric fog
+PASS lunar thruster dust stops emitting when the flame cuts off
+PAD_SEQUENCE_RESULT: 0 failures

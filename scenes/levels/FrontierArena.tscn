@@ -1,0 +1,1611 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_concrete"]
+albedo_color = Color(0.4, 0.4745098039215686, 0.49411764705882355, 1)
+roughness = 0.88
+
+[sub_resource type="StandardMaterial3D" id="mat_dark"]
+albedo_color = Color(0.12549019607843137, 0.20392156862745098, 0.24313725490196078, 1)
+roughness = 0.72
+
+[sub_resource type="StandardMaterial3D" id="mat_floor"]
+albedo_color = Color(0.2196078431372549, 0.30196078431372547, 0.3254901960784314, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="mat_orange"]
+albedo_color = Color(0.8431372549019608, 0.4666666666666667, 0.25098039215686274, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="mat_blue"]
+albedo_color = Color(0.3254901960784314, 0.7215686274509804, 0.7647058823529411, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="mat_steel"]
+albedo_color = Color(0.5372549019607843, 0.6078431372549019, 0.6196078431372549, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="mat_sand"]
+albedo_color = Color(0.7098039215686275, 0.6666666666666666, 0.6274509803921569, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="mesh_1"]
+size = Vector3(78, 0.25, 72)
+
+[sub_resource type="BoxMesh" id="mesh_2"]
+size = Vector3(15, 0.035, 65)
+
+[sub_resource type="BoxMesh" id="mesh_3"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_4"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_5"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_6"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_7"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_8"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_9"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_10"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_11"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_12"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_13"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_14"]
+size = Vector3(15, 0.035, 65)
+
+[sub_resource type="BoxMesh" id="mesh_15"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_16"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_17"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_18"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_19"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_20"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_21"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_22"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_23"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_24"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_25"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_26"]
+size = Vector3(15, 0.035, 65)
+
+[sub_resource type="BoxMesh" id="mesh_27"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_28"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_29"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_30"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_31"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_32"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_33"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_34"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_35"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_36"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_37"]
+size = Vector3(0.13, 0.03, 2.5)
+
+[sub_resource type="BoxMesh" id="mesh_38"]
+size = Vector3(1.4, 5.0, 72)
+
+[sub_resource type="BoxMesh" id="mesh_39"]
+size = Vector3(1.52, 0.16, 72.12)
+
+[sub_resource type="BoxMesh" id="mesh_40"]
+size = Vector3(1.43, 0.22, 72.03)
+
+[sub_resource type="BoxMesh" id="mesh_41"]
+size = Vector3(28, 4.5, 1.4)
+
+[sub_resource type="BoxMesh" id="mesh_42"]
+size = Vector3(28.12, 0.16, 1.52)
+
+[sub_resource type="BoxMesh" id="mesh_43"]
+size = Vector3(28.03, 0.22, 1.43)
+
+[sub_resource type="BoxMesh" id="mesh_44"]
+size = Vector3(28, 4.5, 1.4)
+
+[sub_resource type="BoxMesh" id="mesh_45"]
+size = Vector3(28.12, 0.16, 1.52)
+
+[sub_resource type="BoxMesh" id="mesh_46"]
+size = Vector3(28.03, 0.22, 1.43)
+
+[sub_resource type="BoxMesh" id="mesh_47"]
+size = Vector3(1.2, 3.8, 12)
+
+[sub_resource type="BoxMesh" id="mesh_48"]
+size = Vector3(1.3199999999999998, 0.16, 12.12)
+
+[sub_resource type="BoxMesh" id="mesh_49"]
+size = Vector3(1.23, 0.22, 12.03)
+
+[sub_resource type="BoxMesh" id="mesh_50"]
+size = Vector3(1.2, 3.8, 10)
+
+[sub_resource type="BoxMesh" id="mesh_51"]
+size = Vector3(1.3199999999999998, 0.16, 10.12)
+
+[sub_resource type="BoxMesh" id="mesh_52"]
+size = Vector3(1.23, 0.22, 10.03)
+
+[sub_resource type="BoxMesh" id="mesh_53"]
+size = Vector3(1.2, 3.8, 14)
+
+[sub_resource type="BoxMesh" id="mesh_54"]
+size = Vector3(1.3199999999999998, 0.16, 14.12)
+
+[sub_resource type="BoxMesh" id="mesh_55"]
+size = Vector3(1.23, 0.22, 14.03)
+
+[sub_resource type="BoxMesh" id="mesh_56"]
+size = Vector3(1.7, 4.5, 1.0)
+
+[sub_resource type="BoxMesh" id="mesh_57"]
+size = Vector3(1.8199999999999998, 0.16, 1.12)
+
+[sub_resource type="BoxMesh" id="mesh_58"]
+size = Vector3(1.73, 0.22, 1.03)
+
+[sub_resource type="BoxMesh" id="mesh_59"]
+size = Vector3(1.7, 4.5, 1.0)
+
+[sub_resource type="BoxMesh" id="mesh_60"]
+size = Vector3(1.8199999999999998, 0.16, 1.12)
+
+[sub_resource type="BoxMesh" id="mesh_61"]
+size = Vector3(1.73, 0.22, 1.03)
+
+[sub_resource type="BoxMesh" id="mesh_62"]
+size = Vector3(1.7, 0.7, 9)
+
+[sub_resource type="BoxMesh" id="mesh_63"]
+size = Vector3(1.75, 0.12, 7)
+
+[sub_resource type="BoxMesh" id="mesh_64"]
+size = Vector3(1.7, 4.5, 1.0)
+
+[sub_resource type="BoxMesh" id="mesh_65"]
+size = Vector3(1.8199999999999998, 0.16, 1.12)
+
+[sub_resource type="BoxMesh" id="mesh_66"]
+size = Vector3(1.73, 0.22, 1.03)
+
+[sub_resource type="BoxMesh" id="mesh_67"]
+size = Vector3(1.7, 4.5, 1.0)
+
+[sub_resource type="BoxMesh" id="mesh_68"]
+size = Vector3(1.8199999999999998, 0.16, 1.12)
+
+[sub_resource type="BoxMesh" id="mesh_69"]
+size = Vector3(1.73, 0.22, 1.03)
+
+[sub_resource type="BoxMesh" id="mesh_70"]
+size = Vector3(1.7, 0.7, 9)
+
+[sub_resource type="BoxMesh" id="mesh_71"]
+size = Vector3(1.75, 0.12, 7)
+
+[sub_resource type="BoxMesh" id="mesh_72"]
+size = Vector3(4.2, 2.2, 2.8)
+
+[sub_resource type="BoxMesh" id="mesh_73"]
+size = Vector3(3.528, 1.54, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh_74"]
+size = Vector3(0.252, 2.2800000000000002, 2.88)
+
+[sub_resource type="BoxMesh" id="mesh_75"]
+size = Vector3(0.252, 2.2800000000000002, 2.88)
+
+[sub_resource type="BoxMesh" id="mesh_76"]
+size = Vector3(4.3, 0.14, 2.9)
+
+[sub_resource type="BoxMesh" id="mesh_77"]
+size = Vector3(5.0, 1.4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_78"]
+size = Vector3(4.2, 0.9799999999999999, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh_79"]
+size = Vector3(0.3, 1.48, 1.8800000000000001)
+
+[sub_resource type="BoxMesh" id="mesh_80"]
+size = Vector3(0.3, 1.48, 1.8800000000000001)
+
+[sub_resource type="BoxMesh" id="mesh_81"]
+size = Vector3(5.1, 0.14, 1.9000000000000001)
+
+[sub_resource type="BoxMesh" id="mesh_82"]
+size = Vector3(9, 2.4, 1.0)
+
+[sub_resource type="BoxMesh" id="mesh_83"]
+size = Vector3(9.12, 0.16, 1.12)
+
+[sub_resource type="BoxMesh" id="mesh_84"]
+size = Vector3(9.03, 0.22, 1.03)
+
+[sub_resource type="BoxMesh" id="mesh_85"]
+size = Vector3(3.5, 1.5, 2)
+
+[sub_resource type="BoxMesh" id="mesh_86"]
+size = Vector3(2.94, 1.0499999999999998, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh_87"]
+size = Vector3(0.21, 1.58, 2.08)
+
+[sub_resource type="BoxMesh" id="mesh_88"]
+size = Vector3(0.21, 1.58, 2.08)
+
+[sub_resource type="BoxMesh" id="mesh_89"]
+size = Vector3(3.6, 0.14, 2.1)
+
+[sub_resource type="BoxMesh" id="mesh_90"]
+size = Vector3(3.0, 1.5, 2)
+
+[sub_resource type="BoxMesh" id="mesh_91"]
+size = Vector3(2.52, 1.0499999999999998, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh_92"]
+size = Vector3(0.18, 1.58, 2.08)
+
+[sub_resource type="BoxMesh" id="mesh_93"]
+size = Vector3(0.18, 1.58, 2.08)
+
+[sub_resource type="BoxMesh" id="mesh_94"]
+size = Vector3(3.1, 0.14, 2.1)
+
+[sub_resource type="BoxMesh" id="mesh_95"]
+size = Vector3(1.4, 5.0, 72)
+
+[sub_resource type="BoxMesh" id="mesh_96"]
+size = Vector3(1.52, 0.16, 72.12)
+
+[sub_resource type="BoxMesh" id="mesh_97"]
+size = Vector3(1.43, 0.22, 72.03)
+
+[sub_resource type="BoxMesh" id="mesh_98"]
+size = Vector3(28, 4.5, 1.4)
+
+[sub_resource type="BoxMesh" id="mesh_99"]
+size = Vector3(28.12, 0.16, 1.52)
+
+[sub_resource type="BoxMesh" id="mesh_100"]
+size = Vector3(28.03, 0.22, 1.43)
+
+[sub_resource type="BoxMesh" id="mesh_101"]
+size = Vector3(28, 4.5, 1.4)
+
+[sub_resource type="BoxMesh" id="mesh_102"]
+size = Vector3(28.12, 0.16, 1.52)
+
+[sub_resource type="BoxMesh" id="mesh_103"]
+size = Vector3(28.03, 0.22, 1.43)
+
+[sub_resource type="BoxMesh" id="mesh_104"]
+size = Vector3(1.2, 3.8, 12)
+
+[sub_resource type="BoxMesh" id="mesh_105"]
+size = Vector3(1.3199999999999998, 0.16, 12.12)
+
+[sub_resource type="BoxMesh" id="mesh_106"]
+size = Vector3(1.23, 0.22, 12.03)
+
+[sub_resource type="BoxMesh" id="mesh_107"]
+size = Vector3(1.2, 3.8, 10)
+
+[sub_resource type="BoxMesh" id="mesh_108"]
+size = Vector3(1.3199999999999998, 0.16, 10.12)
+
+[sub_resource type="BoxMesh" id="mesh_109"]
+size = Vector3(1.23, 0.22, 10.03)
+
+[sub_resource type="BoxMesh" id="mesh_110"]
+size = Vector3(1.2, 3.8, 14)
+
+[sub_resource type="BoxMesh" id="mesh_111"]
+size = Vector3(1.3199999999999998, 0.16, 14.12)
+
+[sub_resource type="BoxMesh" id="mesh_112"]
+size = Vector3(1.23, 0.22, 14.03)
+
+[sub_resource type="BoxMesh" id="mesh_113"]
+size = Vector3(1.7, 4.5, 1.0)
+
+[sub_resource type="BoxMesh" id="mesh_114"]
+size = Vector3(1.8199999999999998, 0.16, 1.12)
+
+[sub_resource type="BoxMesh" id="mesh_115"]
+size = Vector3(1.73, 0.22, 1.03)
+
+[sub_resource type="BoxMesh" id="mesh_116"]
+size = Vector3(1.7, 4.5, 1.0)
+
+[sub_resource type="BoxMesh" id="mesh_117"]
+size = Vector3(1.8199999999999998, 0.16, 1.12)
+
+[sub_resource type="BoxMesh" id="mesh_118"]
+size = Vector3(1.73, 0.22, 1.03)
+
+[sub_resource type="BoxMesh" id="mesh_119"]
+size = Vector3(1.7, 0.7, 9)
+
+[sub_resource type="BoxMesh" id="mesh_120"]
+size = Vector3(1.75, 0.12, 7)
+
+[sub_resource type="BoxMesh" id="mesh_121"]
+size = Vector3(1.7, 4.5, 1.0)
+
+[sub_resource type="BoxMesh" id="mesh_122"]
+size = Vector3(1.8199999999999998, 0.16, 1.12)
+
+[sub_resource type="BoxMesh" id="mesh_123"]
+size = Vector3(1.73, 0.22, 1.03)
+
+[sub_resource type="BoxMesh" id="mesh_124"]
+size = Vector3(1.7, 4.5, 1.0)
+
+[sub_resource type="BoxMesh" id="mesh_125"]
+size = Vector3(1.8199999999999998, 0.16, 1.12)
+
+[sub_resource type="BoxMesh" id="mesh_126"]
+size = Vector3(1.73, 0.22, 1.03)
+
+[sub_resource type="BoxMesh" id="mesh_127"]
+size = Vector3(1.7, 0.7, 9)
+
+[sub_resource type="BoxMesh" id="mesh_128"]
+size = Vector3(1.75, 0.12, 7)
+
+[sub_resource type="BoxMesh" id="mesh_129"]
+size = Vector3(4.2, 2.2, 2.8)
+
+[sub_resource type="BoxMesh" id="mesh_130"]
+size = Vector3(3.528, 1.54, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh_131"]
+size = Vector3(0.252, 2.2800000000000002, 2.88)
+
+[sub_resource type="BoxMesh" id="mesh_132"]
+size = Vector3(0.252, 2.2800000000000002, 2.88)
+
+[sub_resource type="BoxMesh" id="mesh_133"]
+size = Vector3(4.3, 0.14, 2.9)
+
+[sub_resource type="BoxMesh" id="mesh_134"]
+size = Vector3(5.0, 1.4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_135"]
+size = Vector3(4.2, 0.9799999999999999, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh_136"]
+size = Vector3(0.3, 1.48, 1.8800000000000001)
+
+[sub_resource type="BoxMesh" id="mesh_137"]
+size = Vector3(0.3, 1.48, 1.8800000000000001)
+
+[sub_resource type="BoxMesh" id="mesh_138"]
+size = Vector3(5.1, 0.14, 1.9000000000000001)
+
+[sub_resource type="BoxMesh" id="mesh_139"]
+size = Vector3(9, 2.4, 1.0)
+
+[sub_resource type="BoxMesh" id="mesh_140"]
+size = Vector3(9.12, 0.16, 1.12)
+
+[sub_resource type="BoxMesh" id="mesh_141"]
+size = Vector3(9.03, 0.22, 1.03)
+
+[sub_resource type="BoxMesh" id="mesh_142"]
+size = Vector3(3.5, 1.5, 2)
+
+[sub_resource type="BoxMesh" id="mesh_143"]
+size = Vector3(2.94, 1.0499999999999998, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh_144"]
+size = Vector3(0.21, 1.58, 2.08)
+
+[sub_resource type="BoxMesh" id="mesh_145"]
+size = Vector3(0.21, 1.58, 2.08)
+
+[sub_resource type="BoxMesh" id="mesh_146"]
+size = Vector3(3.6, 0.14, 2.1)
+
+[sub_resource type="BoxMesh" id="mesh_147"]
+size = Vector3(3.0, 1.5, 2)
+
+[sub_resource type="BoxMesh" id="mesh_148"]
+size = Vector3(2.52, 1.0499999999999998, 0.07)
+
+[sub_resource type="BoxMesh" id="mesh_149"]
+size = Vector3(0.18, 1.58, 2.08)
+
+[sub_resource type="BoxMesh" id="mesh_150"]
+size = Vector3(0.18, 1.58, 2.08)
+
+[sub_resource type="BoxMesh" id="mesh_151"]
+size = Vector3(3.1, 0.14, 2.1)
+
+[sub_resource type="BoxMesh" id="mesh_152"]
+size = Vector3(5.5, 2.4, 5.5)
+
+[sub_resource type="BoxMesh" id="mesh_153"]
+size = Vector3(5.62, 0.16, 5.62)
+
+[sub_resource type="BoxMesh" id="mesh_154"]
+size = Vector3(5.53, 0.22, 5.53)
+
+[sub_resource type="BoxMesh" id="mesh_155"]
+size = Vector3(3.8, 2.6, 3.8)
+
+[sub_resource type="BoxMesh" id="mesh_156"]
+size = Vector3(4.1, 0.16, 4.1)
+
+[sub_resource type="BoxMesh" id="mesh_157"]
+size = Vector3(4.1, 0.16, 4.1)
+
+[sub_resource type="BoxMesh" id="mesh_158"]
+size = Vector3(4.1, 0.16, 4.1)
+
+[sub_resource type="BoxMesh" id="mesh_159"]
+size = Vector3(7, 1.4, 1.4)
+
+[sub_resource type="BoxMesh" id="mesh_160"]
+size = Vector3(7.12, 0.16, 1.52)
+
+[sub_resource type="BoxMesh" id="mesh_161"]
+size = Vector3(7.03, 0.22, 1.43)
+
+[sub_resource type="BoxMesh" id="mesh_162"]
+size = Vector3(1.2, 2.5, 7)
+
+[sub_resource type="BoxMesh" id="mesh_163"]
+size = Vector3(1.3199999999999998, 0.16, 7.12)
+
+[sub_resource type="BoxMesh" id="mesh_164"]
+size = Vector3(1.23, 0.22, 7.03)
+
+[sub_resource type="BoxMesh" id="mesh_165"]
+size = Vector3(5, 8, 5)
+
+[sub_resource type="BoxMesh" id="mesh_166"]
+size = Vector3(5.2, 0.6, 5.2)
+
+[sub_resource type="BoxMesh" id="mesh_167"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_168"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_169"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_170"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_171"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_172"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_173"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_174"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_175"]
+size = Vector3(5, 8, 5)
+
+[sub_resource type="BoxMesh" id="mesh_176"]
+size = Vector3(5.2, 0.6, 5.2)
+
+[sub_resource type="BoxMesh" id="mesh_177"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_178"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_179"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_180"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_181"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_182"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_183"]
+size = Vector3(1.4, 4, 1.8)
+
+[sub_resource type="BoxMesh" id="mesh_184"]
+size = Vector3(1.4, 4, 1.8)
+
+[node name="FrontierArena" type="Node3D"]
+
+[node name="ArenaFoundation" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.13, 0)
+mesh = SubResource("mesh_1")
+material_override = SubResource("mat_sand")
+
+[node name="LaneFloor-26" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.015, 0)
+mesh = SubResource("mesh_2")
+material_override = SubResource("mat_floor")
+
+[node name="LaneMark-26_-28" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, -28)
+mesh = SubResource("mesh_3")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark-26_-22" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, -22)
+mesh = SubResource("mesh_4")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark-26_-16" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, -16)
+mesh = SubResource("mesh_5")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark-26_-10" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, -10)
+mesh = SubResource("mesh_6")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark-26_-4" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, -4)
+mesh = SubResource("mesh_7")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark-26_2" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, 2)
+mesh = SubResource("mesh_8")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark-26_8" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, 8)
+mesh = SubResource("mesh_9")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark-26_14" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, 14)
+mesh = SubResource("mesh_10")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark-26_20" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, 20)
+mesh = SubResource("mesh_11")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark-26_26" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, 26)
+mesh = SubResource("mesh_12")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark-26_32" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 0.05, 32)
+mesh = SubResource("mesh_13")
+material_override = SubResource("mat_blue")
+
+[node name="LaneFloor0" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.015, 0)
+mesh = SubResource("mesh_14")
+material_override = SubResource("mat_floor")
+
+[node name="LaneMark0_-28" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, -28)
+mesh = SubResource("mesh_15")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark0_-22" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, -22)
+mesh = SubResource("mesh_16")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark0_-16" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, -16)
+mesh = SubResource("mesh_17")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark0_-10" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, -10)
+mesh = SubResource("mesh_18")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark0_-4" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, -4)
+mesh = SubResource("mesh_19")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark0_2" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, 2)
+mesh = SubResource("mesh_20")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark0_8" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, 8)
+mesh = SubResource("mesh_21")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark0_14" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, 14)
+mesh = SubResource("mesh_22")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark0_20" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, 20)
+mesh = SubResource("mesh_23")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark0_26" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, 26)
+mesh = SubResource("mesh_24")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark0_32" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, 32)
+mesh = SubResource("mesh_25")
+material_override = SubResource("mat_blue")
+
+[node name="LaneFloor26" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.015, 0)
+mesh = SubResource("mesh_26")
+material_override = SubResource("mat_floor")
+
+[node name="LaneMark26_-28" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, -28)
+mesh = SubResource("mesh_27")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark26_-22" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, -22)
+mesh = SubResource("mesh_28")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark26_-16" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, -16)
+mesh = SubResource("mesh_29")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark26_-10" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, -10)
+mesh = SubResource("mesh_30")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark26_-4" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, -4)
+mesh = SubResource("mesh_31")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark26_2" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, 2)
+mesh = SubResource("mesh_32")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark26_8" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, 8)
+mesh = SubResource("mesh_33")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark26_14" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, 14)
+mesh = SubResource("mesh_34")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark26_20" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, 20)
+mesh = SubResource("mesh_35")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark26_26" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, 26)
+mesh = SubResource("mesh_36")
+material_override = SubResource("mat_blue")
+
+[node name="LaneMark26_32" type="MeshInstance3D" parent="."]
+position = Vector3(26, 0.05, 32)
+mesh = SubResource("mesh_37")
+material_override = SubResource("mat_blue")
+
+[node name="OuterWall-1" type="MeshInstance3D" parent="."]
+position = Vector3(-40, 2.5, 0)
+mesh = SubResource("mesh_38")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.4, 5.0, 72)
+
+[node name="OuterWall-1Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-40, 5.08, 0)
+mesh = SubResource("mesh_39")
+material_override = SubResource("mat_dark")
+
+[node name="OuterWall-1Band" type="MeshInstance3D" parent="."]
+position = Vector3(-40, 1.0, 0)
+mesh = SubResource("mesh_40")
+material_override = SubResource("mat_steel")
+
+[node name="EndWall-1_-36" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 2.25, -36)
+mesh = SubResource("mesh_41")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(28, 4.5, 1.4)
+
+[node name="EndWall-1_-36Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 4.58, -36)
+mesh = SubResource("mesh_42")
+material_override = SubResource("mat_dark")
+
+[node name="EndWall-1_-36Band" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 1.0, -36)
+mesh = SubResource("mesh_43")
+material_override = SubResource("mat_steel")
+
+[node name="EndWall-1_36" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 2.25, 36)
+mesh = SubResource("mesh_44")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(28, 4.5, 1.4)
+
+[node name="EndWall-1_36Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 4.58, 36)
+mesh = SubResource("mesh_45")
+material_override = SubResource("mat_dark")
+
+[node name="EndWall-1_36Band" type="MeshInstance3D" parent="."]
+position = Vector3(-26, 1.0, 36)
+mesh = SubResource("mesh_46")
+material_override = SubResource("mat_steel")
+
+[node name="LaneDivider-1_-25" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.9, -25)
+mesh = SubResource("mesh_47")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.2, 3.8, 12)
+
+[node name="LaneDivider-1_-25Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 3.88, -25)
+mesh = SubResource("mesh_48")
+material_override = SubResource("mat_dark")
+
+[node name="LaneDivider-1_-25Band" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.0, -25)
+mesh = SubResource("mesh_49")
+material_override = SubResource("mat_steel")
+
+[node name="LaneDivider-1_-6" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.9, -6)
+mesh = SubResource("mesh_50")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.2, 3.8, 10)
+
+[node name="LaneDivider-1_-6Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 3.88, -6)
+mesh = SubResource("mesh_51")
+material_override = SubResource("mat_dark")
+
+[node name="LaneDivider-1_-6Band" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.0, -6)
+mesh = SubResource("mesh_52")
+material_override = SubResource("mat_steel")
+
+[node name="LaneDivider-1_23" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.9, 23)
+mesh = SubResource("mesh_53")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.2, 3.8, 14)
+
+[node name="LaneDivider-1_23Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 3.88, 23)
+mesh = SubResource("mesh_54")
+material_override = SubResource("mat_dark")
+
+[node name="LaneDivider-1_23Band" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.0, 23)
+mesh = SubResource("mesh_55")
+material_override = SubResource("mat_steel")
+
+[node name="GatePillar-1_7_-4" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 2.25, 3)
+mesh = SubResource("mesh_56")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.7, 4.5, 1.0)
+
+[node name="GatePillar-1_7_-4Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 4.58, 3)
+mesh = SubResource("mesh_57")
+material_override = SubResource("mat_dark")
+
+[node name="GatePillar-1_7_-4Band" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.0, 3)
+mesh = SubResource("mesh_58")
+material_override = SubResource("mat_steel")
+
+[node name="GatePillar-1_7_4" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 2.25, 11)
+mesh = SubResource("mesh_59")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.7, 4.5, 1.0)
+
+[node name="GatePillar-1_7_4Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 4.58, 11)
+mesh = SubResource("mesh_60")
+material_override = SubResource("mat_dark")
+
+[node name="GatePillar-1_7_4Band" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.0, 11)
+mesh = SubResource("mesh_61")
+material_override = SubResource("mat_steel")
+
+[node name="GateLintel-1_7" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 4.4, 7)
+mesh = SubResource("mesh_62")
+material_override = SubResource("mat_dark")
+
+[node name="GateLight-1_7" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 3.85, 7)
+mesh = SubResource("mesh_63")
+material_override = SubResource("mat_blue")
+
+[node name="GatePillar-1_-15_-4" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 2.25, -19)
+mesh = SubResource("mesh_64")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.7, 4.5, 1.0)
+
+[node name="GatePillar-1_-15_-4Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 4.58, -19)
+mesh = SubResource("mesh_65")
+material_override = SubResource("mat_dark")
+
+[node name="GatePillar-1_-15_-4Band" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.0, -19)
+mesh = SubResource("mesh_66")
+material_override = SubResource("mat_steel")
+
+[node name="GatePillar-1_-15_4" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 2.25, -11)
+mesh = SubResource("mesh_67")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.7, 4.5, 1.0)
+
+[node name="GatePillar-1_-15_4Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 4.58, -11)
+mesh = SubResource("mesh_68")
+material_override = SubResource("mat_dark")
+
+[node name="GatePillar-1_-15_4Band" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.0, -11)
+mesh = SubResource("mesh_69")
+material_override = SubResource("mat_steel")
+
+[node name="GateLintel-1_-15" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 4.4, -15)
+mesh = SubResource("mesh_70")
+material_override = SubResource("mat_dark")
+
+[node name="GateLight-1_-15" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 3.85, -15)
+mesh = SubResource("mesh_71")
+material_override = SubResource("mat_blue")
+
+[node name="OuterSupply-1" type="MeshInstance3D" parent="."]
+position = Vector3(-28, 1.1, -12)
+mesh = SubResource("mesh_72")
+material_override = SubResource("mat_dark")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(4.2, 2.2, 2.8)
+
+[node name="OuterSupply-1Face" type="MeshInstance3D" parent="."]
+position = Vector3(-28, 1.2100000000000002, -13.435)
+mesh = SubResource("mesh_73")
+material_override = SubResource("mat_orange")
+
+[node name="OuterSupply-1Brace-1" type="MeshInstance3D" parent="."]
+position = Vector3(-29.68, 1.1, -12)
+mesh = SubResource("mesh_74")
+material_override = SubResource("mat_steel")
+
+[node name="OuterSupply-1Brace1" type="MeshInstance3D" parent="."]
+position = Vector3(-26.32, 1.1, -12)
+mesh = SubResource("mesh_75")
+material_override = SubResource("mat_steel")
+
+[node name="OuterSupply-1Top" type="MeshInstance3D" parent="."]
+position = Vector3(-28, 2.27, -12)
+mesh = SubResource("mesh_76")
+material_override = SubResource("mat_steel")
+
+[node name="OuterBarricade-1" type="MeshInstance3D" parent="."]
+position = Vector3(-23, 0.7, 20)
+mesh = SubResource("mesh_77")
+material_override = SubResource("mat_dark")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(5.0, 1.4, 1.8)
+
+[node name="OuterBarricade-1Face" type="MeshInstance3D" parent="."]
+position = Vector3(-23, 0.77, 19.065)
+mesh = SubResource("mesh_78")
+material_override = SubResource("mat_orange")
+
+[node name="OuterBarricade-1Brace-1" type="MeshInstance3D" parent="."]
+position = Vector3(-25.0, 0.7, 20)
+mesh = SubResource("mesh_79")
+material_override = SubResource("mat_steel")
+
+[node name="OuterBarricade-1Brace1" type="MeshInstance3D" parent="."]
+position = Vector3(-21.0, 0.7, 20)
+mesh = SubResource("mesh_80")
+material_override = SubResource("mat_steel")
+
+[node name="OuterBarricade-1Top" type="MeshInstance3D" parent="."]
+position = Vector3(-23, 1.47, 20)
+mesh = SubResource("mesh_81")
+material_override = SubResource("mat_steel")
+
+[node name="SpawnScreen-1" type="MeshInstance3D" parent="."]
+position = Vector3(-23, 1.2, 31)
+mesh = SubResource("mesh_82")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(9, 2.4, 1.0)
+
+[node name="SpawnScreen-1Cap" type="MeshInstance3D" parent="."]
+position = Vector3(-23, 2.48, 31)
+mesh = SubResource("mesh_83")
+material_override = SubResource("mat_dark")
+
+[node name="SpawnScreen-1Band" type="MeshInstance3D" parent="."]
+position = Vector3(-23, 1.0, 31)
+mesh = SubResource("mesh_84")
+material_override = SubResource("mat_steel")
+
+[node name="EntranceCover-1" type="MeshInstance3D" parent="."]
+position = Vector3(-5, 0.75, -28)
+mesh = SubResource("mesh_85")
+material_override = SubResource("mat_dark")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(3.5, 1.5, 2)
+
+[node name="EntranceCover-1Face" type="MeshInstance3D" parent="."]
+position = Vector3(-5, 0.8250000000000001, -29.035)
+mesh = SubResource("mesh_86")
+material_override = SubResource("mat_orange")
+
+[node name="EntranceCover-1Brace-1" type="MeshInstance3D" parent="."]
+position = Vector3(-6.4, 0.75, -28)
+mesh = SubResource("mesh_87")
+material_override = SubResource("mat_steel")
+
+[node name="EntranceCover-1Brace1" type="MeshInstance3D" parent="."]
+position = Vector3(-3.5999999999999996, 0.75, -28)
+mesh = SubResource("mesh_88")
+material_override = SubResource("mat_steel")
+
+[node name="EntranceCover-1Top" type="MeshInstance3D" parent="."]
+position = Vector3(-5, 1.57, -28)
+mesh = SubResource("mesh_89")
+material_override = SubResource("mat_steel")
+
+[node name="CenterPocket-1" type="MeshInstance3D" parent="."]
+position = Vector3(-6, 0.75, 22)
+mesh = SubResource("mesh_90")
+material_override = SubResource("mat_dark")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(3.0, 1.5, 2)
+
+[node name="CenterPocket-1Face" type="MeshInstance3D" parent="."]
+position = Vector3(-6, 0.8250000000000001, 20.965)
+mesh = SubResource("mesh_91")
+material_override = SubResource("mat_orange")
+
+[node name="CenterPocket-1Brace-1" type="MeshInstance3D" parent="."]
+position = Vector3(-7.2, 0.75, 22)
+mesh = SubResource("mesh_92")
+material_override = SubResource("mat_steel")
+
+[node name="CenterPocket-1Brace1" type="MeshInstance3D" parent="."]
+position = Vector3(-4.8, 0.75, 22)
+mesh = SubResource("mesh_93")
+material_override = SubResource("mat_steel")
+
+[node name="CenterPocket-1Top" type="MeshInstance3D" parent="."]
+position = Vector3(-6, 1.57, 22)
+mesh = SubResource("mesh_94")
+material_override = SubResource("mat_steel")
+
+[node name="OuterWall1" type="MeshInstance3D" parent="."]
+position = Vector3(40, 2.5, 0)
+mesh = SubResource("mesh_95")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.4, 5.0, 72)
+
+[node name="OuterWall1Cap" type="MeshInstance3D" parent="."]
+position = Vector3(40, 5.08, 0)
+mesh = SubResource("mesh_96")
+material_override = SubResource("mat_dark")
+
+[node name="OuterWall1Band" type="MeshInstance3D" parent="."]
+position = Vector3(40, 1.0, 0)
+mesh = SubResource("mesh_97")
+material_override = SubResource("mat_steel")
+
+[node name="EndWall1_-36" type="MeshInstance3D" parent="."]
+position = Vector3(26, 2.25, -36)
+mesh = SubResource("mesh_98")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(28, 4.5, 1.4)
+
+[node name="EndWall1_-36Cap" type="MeshInstance3D" parent="."]
+position = Vector3(26, 4.58, -36)
+mesh = SubResource("mesh_99")
+material_override = SubResource("mat_dark")
+
+[node name="EndWall1_-36Band" type="MeshInstance3D" parent="."]
+position = Vector3(26, 1.0, -36)
+mesh = SubResource("mesh_100")
+material_override = SubResource("mat_steel")
+
+[node name="EndWall1_36" type="MeshInstance3D" parent="."]
+position = Vector3(26, 2.25, 36)
+mesh = SubResource("mesh_101")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(28, 4.5, 1.4)
+
+[node name="EndWall1_36Cap" type="MeshInstance3D" parent="."]
+position = Vector3(26, 4.58, 36)
+mesh = SubResource("mesh_102")
+material_override = SubResource("mat_dark")
+
+[node name="EndWall1_36Band" type="MeshInstance3D" parent="."]
+position = Vector3(26, 1.0, 36)
+mesh = SubResource("mesh_103")
+material_override = SubResource("mat_steel")
+
+[node name="LaneDivider1_-25" type="MeshInstance3D" parent="."]
+position = Vector3(12, 1.9, -25)
+mesh = SubResource("mesh_104")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.2, 3.8, 12)
+
+[node name="LaneDivider1_-25Cap" type="MeshInstance3D" parent="."]
+position = Vector3(12, 3.88, -25)
+mesh = SubResource("mesh_105")
+material_override = SubResource("mat_dark")
+
+[node name="LaneDivider1_-25Band" type="MeshInstance3D" parent="."]
+position = Vector3(12, 1.0, -25)
+mesh = SubResource("mesh_106")
+material_override = SubResource("mat_steel")
+
+[node name="LaneDivider1_-6" type="MeshInstance3D" parent="."]
+position = Vector3(12, 1.9, -6)
+mesh = SubResource("mesh_107")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.2, 3.8, 10)
+
+[node name="LaneDivider1_-6Cap" type="MeshInstance3D" parent="."]
+position = Vector3(12, 3.88, -6)
+mesh = SubResource("mesh_108")
+material_override = SubResource("mat_dark")
+
+[node name="LaneDivider1_-6Band" type="MeshInstance3D" parent="."]
+position = Vector3(12, 1.0, -6)
+mesh = SubResource("mesh_109")
+material_override = SubResource("mat_steel")
+
+[node name="LaneDivider1_23" type="MeshInstance3D" parent="."]
+position = Vector3(12, 1.9, 23)
+mesh = SubResource("mesh_110")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.2, 3.8, 14)
+
+[node name="LaneDivider1_23Cap" type="MeshInstance3D" parent="."]
+position = Vector3(12, 3.88, 23)
+mesh = SubResource("mesh_111")
+material_override = SubResource("mat_dark")
+
+[node name="LaneDivider1_23Band" type="MeshInstance3D" parent="."]
+position = Vector3(12, 1.0, 23)
+mesh = SubResource("mesh_112")
+material_override = SubResource("mat_steel")
+
+[node name="GatePillar1_7_-4" type="MeshInstance3D" parent="."]
+position = Vector3(12, 2.25, 3)
+mesh = SubResource("mesh_113")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.7, 4.5, 1.0)
+
+[node name="GatePillar1_7_-4Cap" type="MeshInstance3D" parent="."]
+position = Vector3(12, 4.58, 3)
+mesh = SubResource("mesh_114")
+material_override = SubResource("mat_dark")
+
+[node name="GatePillar1_7_-4Band" type="MeshInstance3D" parent="."]
+position = Vector3(12, 1.0, 3)
+mesh = SubResource("mesh_115")
+material_override = SubResource("mat_steel")
+
+[node name="GatePillar1_7_4" type="MeshInstance3D" parent="."]
+position = Vector3(12, 2.25, 11)
+mesh = SubResource("mesh_116")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.7, 4.5, 1.0)
+
+[node name="GatePillar1_7_4Cap" type="MeshInstance3D" parent="."]
+position = Vector3(12, 4.58, 11)
+mesh = SubResource("mesh_117")
+material_override = SubResource("mat_dark")
+
+[node name="GatePillar1_7_4Band" type="MeshInstance3D" parent="."]
+position = Vector3(12, 1.0, 11)
+mesh = SubResource("mesh_118")
+material_override = SubResource("mat_steel")
+
+[node name="GateLintel1_7" type="MeshInstance3D" parent="."]
+position = Vector3(12, 4.4, 7)
+mesh = SubResource("mesh_119")
+material_override = SubResource("mat_dark")
+
+[node name="GateLight1_7" type="MeshInstance3D" parent="."]
+position = Vector3(12, 3.85, 7)
+mesh = SubResource("mesh_120")
+material_override = SubResource("mat_blue")
+
+[node name="GatePillar1_-15_-4" type="MeshInstance3D" parent="."]
+position = Vector3(12, 2.25, -19)
+mesh = SubResource("mesh_121")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.7, 4.5, 1.0)
+
+[node name="GatePillar1_-15_-4Cap" type="MeshInstance3D" parent="."]
+position = Vector3(12, 4.58, -19)
+mesh = SubResource("mesh_122")
+material_override = SubResource("mat_dark")
+
+[node name="GatePillar1_-15_-4Band" type="MeshInstance3D" parent="."]
+position = Vector3(12, 1.0, -19)
+mesh = SubResource("mesh_123")
+material_override = SubResource("mat_steel")
+
+[node name="GatePillar1_-15_4" type="MeshInstance3D" parent="."]
+position = Vector3(12, 2.25, -11)
+mesh = SubResource("mesh_124")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.7, 4.5, 1.0)
+
+[node name="GatePillar1_-15_4Cap" type="MeshInstance3D" parent="."]
+position = Vector3(12, 4.58, -11)
+mesh = SubResource("mesh_125")
+material_override = SubResource("mat_dark")
+
+[node name="GatePillar1_-15_4Band" type="MeshInstance3D" parent="."]
+position = Vector3(12, 1.0, -11)
+mesh = SubResource("mesh_126")
+material_override = SubResource("mat_steel")
+
+[node name="GateLintel1_-15" type="MeshInstance3D" parent="."]
+position = Vector3(12, 4.4, -15)
+mesh = SubResource("mesh_127")
+material_override = SubResource("mat_dark")
+
+[node name="GateLight1_-15" type="MeshInstance3D" parent="."]
+position = Vector3(12, 3.85, -15)
+mesh = SubResource("mesh_128")
+material_override = SubResource("mat_blue")
+
+[node name="OuterSupply1" type="MeshInstance3D" parent="."]
+position = Vector3(28, 1.1, -12)
+mesh = SubResource("mesh_129")
+material_override = SubResource("mat_dark")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(4.2, 2.2, 2.8)
+
+[node name="OuterSupply1Face" type="MeshInstance3D" parent="."]
+position = Vector3(28, 1.2100000000000002, -13.435)
+mesh = SubResource("mesh_130")
+material_override = SubResource("mat_orange")
+
+[node name="OuterSupply1Brace-1" type="MeshInstance3D" parent="."]
+position = Vector3(26.32, 1.1, -12)
+mesh = SubResource("mesh_131")
+material_override = SubResource("mat_steel")
+
+[node name="OuterSupply1Brace1" type="MeshInstance3D" parent="."]
+position = Vector3(29.68, 1.1, -12)
+mesh = SubResource("mesh_132")
+material_override = SubResource("mat_steel")
+
+[node name="OuterSupply1Top" type="MeshInstance3D" parent="."]
+position = Vector3(28, 2.27, -12)
+mesh = SubResource("mesh_133")
+material_override = SubResource("mat_steel")
+
+[node name="OuterBarricade1" type="MeshInstance3D" parent="."]
+position = Vector3(23, 0.7, 20)
+mesh = SubResource("mesh_134")
+material_override = SubResource("mat_dark")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(5.0, 1.4, 1.8)
+
+[node name="OuterBarricade1Face" type="MeshInstance3D" parent="."]
+position = Vector3(23, 0.77, 19.065)
+mesh = SubResource("mesh_135")
+material_override = SubResource("mat_orange")
+
+[node name="OuterBarricade1Brace-1" type="MeshInstance3D" parent="."]
+position = Vector3(21.0, 0.7, 20)
+mesh = SubResource("mesh_136")
+material_override = SubResource("mat_steel")
+
+[node name="OuterBarricade1Brace1" type="MeshInstance3D" parent="."]
+position = Vector3(25.0, 0.7, 20)
+mesh = SubResource("mesh_137")
+material_override = SubResource("mat_steel")
+
+[node name="OuterBarricade1Top" type="MeshInstance3D" parent="."]
+position = Vector3(23, 1.47, 20)
+mesh = SubResource("mesh_138")
+material_override = SubResource("mat_steel")
+
+[node name="SpawnScreen1" type="MeshInstance3D" parent="."]
+position = Vector3(23, 1.2, 31)
+mesh = SubResource("mesh_139")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(9, 2.4, 1.0)
+
+[node name="SpawnScreen1Cap" type="MeshInstance3D" parent="."]
+position = Vector3(23, 2.48, 31)
+mesh = SubResource("mesh_140")
+material_override = SubResource("mat_dark")
+
+[node name="SpawnScreen1Band" type="MeshInstance3D" parent="."]
+position = Vector3(23, 1.0, 31)
+mesh = SubResource("mesh_141")
+material_override = SubResource("mat_steel")
+
+[node name="EntranceCover1" type="MeshInstance3D" parent="."]
+position = Vector3(5, 0.75, -28)
+mesh = SubResource("mesh_142")
+material_override = SubResource("mat_dark")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(3.5, 1.5, 2)
+
+[node name="EntranceCover1Face" type="MeshInstance3D" parent="."]
+position = Vector3(5, 0.8250000000000001, -29.035)
+mesh = SubResource("mesh_143")
+material_override = SubResource("mat_orange")
+
+[node name="EntranceCover1Brace-1" type="MeshInstance3D" parent="."]
+position = Vector3(3.5999999999999996, 0.75, -28)
+mesh = SubResource("mesh_144")
+material_override = SubResource("mat_steel")
+
+[node name="EntranceCover1Brace1" type="MeshInstance3D" parent="."]
+position = Vector3(6.4, 0.75, -28)
+mesh = SubResource("mesh_145")
+material_override = SubResource("mat_steel")
+
+[node name="EntranceCover1Top" type="MeshInstance3D" parent="."]
+position = Vector3(5, 1.57, -28)
+mesh = SubResource("mesh_146")
+material_override = SubResource("mat_steel")
+
+[node name="CenterPocket1" type="MeshInstance3D" parent="."]
+position = Vector3(6, 0.75, 22)
+mesh = SubResource("mesh_147")
+material_override = SubResource("mat_dark")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(3.0, 1.5, 2)
+
+[node name="CenterPocket1Face" type="MeshInstance3D" parent="."]
+position = Vector3(6, 0.8250000000000001, 20.965)
+mesh = SubResource("mesh_148")
+material_override = SubResource("mat_orange")
+
+[node name="CenterPocket1Brace-1" type="MeshInstance3D" parent="."]
+position = Vector3(4.8, 0.75, 22)
+mesh = SubResource("mesh_149")
+material_override = SubResource("mat_steel")
+
+[node name="CenterPocket1Brace1" type="MeshInstance3D" parent="."]
+position = Vector3(7.2, 0.75, 22)
+mesh = SubResource("mesh_150")
+material_override = SubResource("mat_steel")
+
+[node name="CenterPocket1Top" type="MeshInstance3D" parent="."]
+position = Vector3(6, 1.57, 22)
+mesh = SubResource("mesh_151")
+material_override = SubResource("mat_steel")
+
+[node name="CentralReactorBase" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.2, 0)
+mesh = SubResource("mesh_152")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(5.5, 2.4, 5.5)
+
+[node name="CentralReactorBaseCap" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.48, 0)
+mesh = SubResource("mesh_153")
+material_override = SubResource("mat_dark")
+
+[node name="CentralReactorBaseBand" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.0, 0)
+mesh = SubResource("mesh_154")
+material_override = SubResource("mat_steel")
+
+[node name="ReactorHousing" type="MeshInstance3D" parent="."]
+position = Vector3(0, 3.7, 0)
+mesh = SubResource("mesh_155")
+material_override = SubResource("mat_dark")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(3.8, 2.6, 3.8)
+
+[node name="ReactorCoolingBand2.7" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.7, 0)
+mesh = SubResource("mesh_156")
+material_override = SubResource("mat_blue")
+
+[node name="ReactorCoolingBand3.7" type="MeshInstance3D" parent="."]
+position = Vector3(0, 3.7, 0)
+mesh = SubResource("mesh_157")
+material_override = SubResource("mat_blue")
+
+[node name="ReactorCoolingBand4.7" type="MeshInstance3D" parent="."]
+position = Vector3(0, 4.7, 0)
+mesh = SubResource("mesh_158")
+material_override = SubResource("mat_blue")
+
+[node name="NorthCrossCover" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.7, -18)
+mesh = SubResource("mesh_159")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(7, 1.4, 1.4)
+
+[node name="NorthCrossCoverCap" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.48, -18)
+mesh = SubResource("mesh_160")
+material_override = SubResource("mat_dark")
+
+[node name="NorthCrossCoverBand" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.0, -18)
+mesh = SubResource("mesh_161")
+material_override = SubResource("mat_steel")
+
+[node name="SouthCrossCover" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.25, 17)
+mesh = SubResource("mesh_162")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(1.2, 2.5, 7)
+
+[node name="SouthCrossCoverCap" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.58, 17)
+mesh = SubResource("mesh_163")
+material_override = SubResource("mat_dark")
+
+[node name="SouthCrossCoverBand" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.0, 17)
+mesh = SubResource("mesh_164")
+material_override = SubResource("mat_steel")
+
+[node name="WestSector" type="Label3D" parent="."]
+position = Vector3(-28, 5, -30)
+text = "A  /  STORAGE"
+font_size = 80
+pixel_size = 0.0035
+modulate = Color(0.9294117647058824, 0.6509803921568628, 0.4235294117647059, 1)
+outline_size = 3
+billboard = 1
+
+[node name="CenterSector" type="Label3D" parent="."]
+position = Vector3(0, 6.3, 0)
+text = "B  /  REACTOR"
+font_size = 80
+pixel_size = 0.0035
+modulate = Color(0.7372549019607844, 0.9019607843137255, 0.9058823529411765, 1)
+outline_size = 3
+billboard = 1
+
+[node name="EastSector" type="Label3D" parent="."]
+position = Vector3(29, 5, -29)
+text = "C  /  RELAY"
+font_size = 80
+pixel_size = 0.0035
+modulate = Color(0.9294117647058824, 0.6509803921568628, 0.4235294117647059, 1)
+outline_size = 3
+billboard = 1
+
+[node name="HomeGate" type="Label3D" parent="."]
+position = Vector3(0, 5, 35)
+text = "EXTRACTION  /  SOUTH GATE"
+font_size = 80
+pixel_size = 0.0035
+modulate = Color(0.9294117647058824, 0.6509803921568628, 0.4235294117647059, 1)
+outline_size = 3
+billboard = 1
+
+[node name="UtilityTower-1" type="MeshInstance3D" parent="."]
+position = Vector3(-36, 4, 29)
+mesh = SubResource("mesh_165")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(5, 8, 5)
+
+[node name="TowerBand-1" type="MeshInstance3D" parent="."]
+position = Vector3(-36, 6, 29)
+mesh = SubResource("mesh_166")
+material_override = SubResource("mat_orange")
+
+[node name="WallButtress-1_-28" type="MeshInstance3D" parent="."]
+position = Vector3(-38.8, 2, -28)
+mesh = SubResource("mesh_167")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress-1_-20" type="MeshInstance3D" parent="."]
+position = Vector3(-38.8, 2, -20)
+mesh = SubResource("mesh_168")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress-1_-12" type="MeshInstance3D" parent="."]
+position = Vector3(-38.8, 2, -12)
+mesh = SubResource("mesh_169")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress-1_-4" type="MeshInstance3D" parent="."]
+position = Vector3(-38.8, 2, -4)
+mesh = SubResource("mesh_170")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress-1_4" type="MeshInstance3D" parent="."]
+position = Vector3(-38.8, 2, 4)
+mesh = SubResource("mesh_171")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress-1_12" type="MeshInstance3D" parent="."]
+position = Vector3(-38.8, 2, 12)
+mesh = SubResource("mesh_172")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress-1_20" type="MeshInstance3D" parent="."]
+position = Vector3(-38.8, 2, 20)
+mesh = SubResource("mesh_173")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress-1_28" type="MeshInstance3D" parent="."]
+position = Vector3(-38.8, 2, 28)
+mesh = SubResource("mesh_174")
+material_override = SubResource("mat_dark")
+
+[node name="UtilityTower1" type="MeshInstance3D" parent="."]
+position = Vector3(36, 4, 29)
+mesh = SubResource("mesh_175")
+material_override = SubResource("mat_concrete")
+metadata/arena_cover = true
+metadata/cover_size = Vector3(5, 8, 5)
+
+[node name="TowerBand1" type="MeshInstance3D" parent="."]
+position = Vector3(36, 6, 29)
+mesh = SubResource("mesh_176")
+material_override = SubResource("mat_orange")
+
+[node name="WallButtress1_-28" type="MeshInstance3D" parent="."]
+position = Vector3(38.8, 2, -28)
+mesh = SubResource("mesh_177")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress1_-20" type="MeshInstance3D" parent="."]
+position = Vector3(38.8, 2, -20)
+mesh = SubResource("mesh_178")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress1_-12" type="MeshInstance3D" parent="."]
+position = Vector3(38.8, 2, -12)
+mesh = SubResource("mesh_179")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress1_-4" type="MeshInstance3D" parent="."]
+position = Vector3(38.8, 2, -4)
+mesh = SubResource("mesh_180")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress1_4" type="MeshInstance3D" parent="."]
+position = Vector3(38.8, 2, 4)
+mesh = SubResource("mesh_181")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress1_12" type="MeshInstance3D" parent="."]
+position = Vector3(38.8, 2, 12)
+mesh = SubResource("mesh_182")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress1_20" type="MeshInstance3D" parent="."]
+position = Vector3(38.8, 2, 20)
+mesh = SubResource("mesh_183")
+material_override = SubResource("mat_dark")
+
+[node name="WallButtress1_28" type="MeshInstance3D" parent="."]
+position = Vector3(38.8, 2, 28)
+mesh = SubResource("mesh_184")
+material_override = SubResource("mat_dark")

@@ -1,0 +1,16 @@
+.godot/
+.DS_Store
+**/.DS_Store
+__MACOSX/
+*.tmp
+*.import.tmp
+export/
+build/
+*.translation
+mono_crash.*.json
+.mono/
+data_*/
+artifacts/ad/raw.avi
+.vscode/
+.idea/
+.claude/settings.local.json

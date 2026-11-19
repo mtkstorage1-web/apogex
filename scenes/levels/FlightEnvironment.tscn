@@ -1,0 +1,162 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/textured_environment.gd" id="texture_setup"]
+
+[sub_resource type="ProceduralSkyMaterial" id="r1"]
+sky_top_color = Color(0.05098, 0.08627, 0.14902, 1.0)
+sky_horizon_color = Color(0.11373, 0.18824, 0.27843, 1.0)
+ground_horizon_color = Color(0.11373, 0.18824, 0.27843, 1.0)
+ground_bottom_color = Color(0.04314, 0.07059, 0.12549, 1.0)
+sky_curve = 0.22
+ground_curve = 0.15
+sun_angle_max = 1.0
+
+[sub_resource type="Sky" id="r2"]
+radiance_size = 0
+process_mode = 0
+sky_material = SubResource("r1")
+
+[sub_resource type="Environment" id="r3"]
+background_mode = 2
+sky = SubResource("r2")
+ambient_light_source = 3
+ambient_light_energy = 0.55
+tonemap_mode = 2
+ssao_enabled = true
+ssao_intensity = 1.2
+ssao_radius = 0.5
+ssao_detail = 0.1
+glow_enabled = true
+glow_intensity = 0.5
+
+[sub_resource type="SphereMesh" id="r4"]
+radius = 260.0
+height = 520.0
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="r5"]
+albedo_color = Color(0.9098, 0.66275, 0.55294, 1.0)
+roughness = 0.9
+emission_enabled = true
+emission = Color(0.9098, 0.66275, 0.55294, 1.0)
+emission_energy_multiplier = 0.15
+
+[sub_resource type="CylinderMesh" id="r6"]
+top_radius = 219.70824
+bottom_radius = 219.70824
+height = 23.4
+radial_segments = 32
+
+[sub_resource type="StandardMaterial3D" id="r7"]
+albedo_color = Color(0.83922, 0.56078, 0.47059, 1.0)
+roughness = 0.85
+emission_enabled = true
+emission = Color(0.83922, 0.56078, 0.47059, 1.0)
+emission_energy_multiplier = 0.15
+
+[sub_resource type="CylinderMesh" id="r8"]
+top_radius = 256.77633
+bottom_radius = 256.77633
+height = 23.4
+radial_segments = 32
+
+[sub_resource type="SphereMesh" id="r9"]
+radius = 120.0
+height = 240.0
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="r10"]
+albedo_color = Color(0.55294, 0.17255, 0.27059, 1.0)
+roughness = 0.9
+emission_enabled = true
+emission = Color(0.55294, 0.17255, 0.27059, 1.0)
+emission_energy_multiplier = 0.15
+
+[sub_resource type="CylinderMesh" id="r11"]
+top_radius = 101.4038
+bottom_radius = 101.4038
+height = 10.8
+radial_segments = 32
+
+[sub_resource type="StandardMaterial3D" id="r12"]
+albedo_color = Color(0.65098, 0.27843, 0.37255, 1.0)
+roughness = 0.85
+emission_enabled = true
+emission = Color(0.65098, 0.27843, 0.37255, 1.0)
+emission_energy_multiplier = 0.15
+
+[sub_resource type="CylinderMesh" id="r13"]
+top_radius = 118.51215
+bottom_radius = 118.51215
+height = 10.8
+radial_segments = 32
+
+[node name="FlightEnvironment" type="Node3D"]
+script = ExtResource("texture_setup")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("r3")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.5236, -0.87266, 0.0)
+light_color = Color(1.0, 0.94902, 0.90196, 1.0)
+light_energy = 1.4
+shadow_enabled = true
+directional_shadow_max_distance = 90.0
+directional_shadow_mode = 1
+
+[node name="DestinationPlanet" type="Node3D" parent="."]
+position = Vector3(120.0, -160.0, -2600.0)
+
+[node name="Core" type="MeshInstance3D" parent="DestinationPlanet"]
+mesh = SubResource("r4")
+material_override = SubResource("r5")
+
+[node name="Band0" type="MeshInstance3D" parent="DestinationPlanet"]
+position = Vector3(0.0, -140.4, 0.0)
+mesh = SubResource("r6")
+material_override = SubResource("r7")
+
+[node name="Band1" type="MeshInstance3D" parent="DestinationPlanet"]
+position = Vector3(0.0, -46.8, 0.0)
+mesh = SubResource("r8")
+material_override = SubResource("r7")
+
+[node name="Band2" type="MeshInstance3D" parent="DestinationPlanet"]
+position = Vector3(0.0, 46.8, 0.0)
+mesh = SubResource("r8")
+material_override = SubResource("r7")
+
+[node name="Band3" type="MeshInstance3D" parent="DestinationPlanet"]
+position = Vector3(0.0, 140.4, 0.0)
+mesh = SubResource("r6")
+material_override = SubResource("r7")
+
+[node name="RedPlanet" type="Node3D" parent="."]
+position = Vector3(-900.0, 300.0, -2400.0)
+
+[node name="Core" type="MeshInstance3D" parent="RedPlanet"]
+mesh = SubResource("r9")
+material_override = SubResource("r10")
+
+[node name="Band0" type="MeshInstance3D" parent="RedPlanet"]
+position = Vector3(0.0, -64.8, 0.0)
+mesh = SubResource("r11")
+material_override = SubResource("r12")
+
+[node name="Band1" type="MeshInstance3D" parent="RedPlanet"]
+position = Vector3(0.0, -21.6, 0.0)
+mesh = SubResource("r13")
+material_override = SubResource("r12")
+
+[node name="Band2" type="MeshInstance3D" parent="RedPlanet"]
+position = Vector3(0.0, 21.6, 0.0)
+mesh = SubResource("r13")
+material_override = SubResource("r12")
+
+[node name="Band3" type="MeshInstance3D" parent="RedPlanet"]
+position = Vector3(0.0, 64.8, 0.0)
+mesh = SubResource("r11")
+material_override = SubResource("r12")

@@ -1,0 +1,92 @@
+{
+  "scenes/KestrelDesignPreview.tscn": {
+    "meshes_before": 0,
+    "materials_before": 0,
+    "materials_after": 0
+  },
+  "scenes/AerospaceHardwarePreview.tscn": {
+    "meshes_before": 163,
+    "materials_before": 6,
+    "materials_after": 6
+  },
+  "scenes/ShipFamiliesPreview.tscn": {
+    "meshes_before": 1336,
+    "materials_before": 138,
+    "materials_after": 36
+  },
+  "scenes/prefabs/FlagMarker.tscn": {
+    "meshes_before": 5,
+    "materials_before": 5,
+    "materials_after": 5
+  },
+  "scenes/prefabs/IndustrialAssemblyRobot.tscn": {
+    "meshes_before": 86,
+    "materials_before": 2,
+    "materials_after": 2
+  },
+  "scenes/prefabs/FlightBooster.tscn": {
+    "meshes_before": 76,
+    "materials_before": 3,
+    "materials_after": 3
+  },
+  "scenes/prefabs/Kestrel.tscn": {
+    "meshes_before": 300,
+    "materials_before": 118,
+    "materials_after": 16
+  },
+  "scenes/levels/PlanetBEnvironment.tscn": {
+    "meshes_before": 119,
+    "materials_before": 12,
+    "materials_after": 12
+  },
+  "scenes/levels/OrbitShipInterior.tscn": {
+    "meshes_before": 12,
+    "materials_before": 2,
+    "materials_after": 2
+  },
+  "scenes/levels/FlightEnvironment.tscn": {
+    "meshes_before": 10,
+    "materials_before": 4,
+    "materials_after": 4
+  },
+  "scenes/levels/WorkshopEnvironment.tscn": {
+    "meshes_before": 81,
+    "materials_before": 15,
+    "materials_after": 15
+  },
+  "scenes/levels/PlanetAEnvironment.tscn": {
+    "meshes_before": 189,
+    "materials_before": 23,
+    "materials_after": 23
+  },
+  "scenes/levels/FrontierArena.tscn": {
+    "meshes_before": 184,
+    "materials_before": 7,
+    "materials_after": 7
+  },
+  "scenes/levels/UniverseEnvironment.tscn": {
+    "meshes_before": 2,
+    "materials_before": 2,
+    "materials_after": 2
+  },
+  "scenes/prefabs/ships/lancer.tscn": {
+    "meshes_before": 233,
+    "materials_before": 5,
+    "materials_after": 5
+  },
+  "scenes/prefabs/ships/halo.tscn": {
+    "meshes_before": 274,
+    "materials_before": 5,
+    "materials_after": 5
+  },
+  "scenes/prefabs/ships/hauler.tscn": {
+    "meshes_before": 264,
+    "materials_before": 5,
+    "materials_after": 5
+  },
+  "scenes/prefabs/ships/bulwark.tscn": {
+    "meshes_before": 265,
+    "materials_before": 5,
+    "materials_after": 5
+  }
+}

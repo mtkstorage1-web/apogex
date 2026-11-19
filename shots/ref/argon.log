@@ -1,0 +1,16 @@
+I have launched six image-generation tasks in parallel to create the APOGEX reference sheets (`01_kiosk.png` through `06_props.png`) in `/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/argon`. I will inspect and report the completed paths and design notes as soon as they finish.
+I am blocked from generating the six PNG reference images because the built-in image generation model (`gemini-3.1-flash-image` via the `image-generator` subagent) returned a quota exhaustion error:
+
+- **Error**: `429 Too Many Requests` (`RESOURCE_EXHAUSTED` / `QUOTA_EXHAUSTED`)
+- **Message**: `"You have exhausted your capacity on this model. Your quota will reset after 4h59m12s."` (resets at `2026-11-17T20:01:44Z`)
+
+No files were created or modified in `/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/argon` or elsewhere in the workspace.
+
+For reference once quota resets, here are the target paths and 1-line design notes prepared for each asset:
+
+1. `/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/argon/01_kiosk.png` — Chamfered low-poly pedestal with a slanted console desk; matte slate-grey casing, translucent dark violet glass UI screens with a floating ship-part hologram, and warm orange (`#eaa665`) emissive trim strips.
+2. `/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/argon/02_gantry.png` — Box-truss overhead gantry beam and multi-jointed robotic assembly arm; brushed dark gunmetal struts, dark violet glass optical sensor pod, and `#eaa665` painted actuator housings and hazard stripes.
+3. `/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/argon/03_thruster.png` — Angular segmented fusion nozzle on a low-profile cradle with exposed manifold piping; dark titanium and ceramic-grey casing, dark violet glass diagnostic panel, and `#eaa665` anodized mounting rings and inner nozzle glow.
+4. `/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/argon/04_scout.png` — Sharp dart-wedge Kestrel-class scout hull with forward-cant winglets; faceted matte slate armor plating, angular dark violet glass cockpit canopy, and `#eaa665` nose racing stripes and intake trim.
+5. `/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/argon/05_hauler.png` — Blocky industrial freighter hull with an asymmetric bridge and exposed spine truss; weathered dark iron plating, recessed dark violet bridge glazing, and `#eaa665` cargo docking clamps and structural frame beams.
+6. `/Users/kngightzzy/tminus-editable-godot-4-scenes/shots/ref/argon/06_props.png` — Cohesive hangar cluster of ribbed hexagonal crates, a vertical tool rack, and caged cylindrical fuel tanks; matte charcoal metal bodies, a dark violet glass rack readout, and `#eaa665` tank bands, latches, and stencils.

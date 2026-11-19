@@ -1,0 +1,347 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS exact Kestrel masses
+PASS exact Kestrel systems
+PASS exact Kestrel TWR and delta-v
+PASS Kestrel price keel
+PASS unique Kestrel Standard Pressure Keel
+PASS no dominance keel kestrel / lancer
+PASS no dominance keel kestrel / hauler
+PASS no dominance keel kestrel / halo
+PASS no dominance keel kestrel / bulwark
+PASS unique Lancer Needle Pressure Keel
+PASS no dominance keel lancer / kestrel
+PASS no dominance keel lancer / hauler
+PASS no dominance keel lancer / halo
+PASS no dominance keel lancer / bulwark
+PASS unique Hauler Atlas Pressure Keel
+PASS no dominance keel hauler / kestrel
+PASS no dominance keel hauler / lancer
+PASS no dominance keel hauler / halo
+PASS no dominance keel hauler / bulwark
+PASS unique Halo Farstar Pressure Keel
+PASS no dominance keel halo / kestrel
+PASS no dominance keel halo / lancer
+PASS no dominance keel halo / hauler
+PASS no dominance keel halo / bulwark
+PASS unique Bulwark Bastion Pressure Keel
+PASS no dominance keel bulwark / kestrel
+PASS no dominance keel bulwark / lancer
+PASS no dominance keel bulwark / hauler
+PASS no dominance keel bulwark / halo
+PASS Kestrel price port
+PASS unique Kestrel Standard Vector Drive
+PASS no dominance port kestrel / lancer
+PASS no dominance port kestrel / hauler
+PASS no dominance port kestrel / halo
+PASS no dominance port kestrel / bulwark
+PASS unique Lancer Needle Vector Drive
+PASS no dominance port lancer / kestrel
+PASS no dominance port lancer / hauler
+PASS no dominance port lancer / halo
+PASS no dominance port lancer / bulwark
+PASS unique Hauler Atlas Vector Drive
+PASS no dominance port hauler / kestrel
+PASS no dominance port hauler / lancer
+PASS no dominance port hauler / halo
+PASS no dominance port hauler / bulwark
+PASS unique Halo Farstar Vector Drive
+PASS no dominance port halo / kestrel
+PASS no dominance port halo / lancer
+PASS no dominance port halo / hauler
+PASS no dominance port halo / bulwark
+PASS unique Bulwark Bastion Vector Drive
+PASS no dominance port bulwark / kestrel
+PASS no dominance port bulwark / lancer
+PASS no dominance port bulwark / hauler
+PASS no dominance port bulwark / halo
+PASS Kestrel price bridge
+PASS unique Kestrel Standard Navigator
+PASS no dominance bridge kestrel / lancer
+PASS no dominance bridge kestrel / hauler
+PASS no dominance bridge kestrel / halo
+PASS no dominance bridge kestrel / bulwark
+PASS unique Lancer Needle Navigator
+PASS no dominance bridge lancer / kestrel
+PASS no dominance bridge lancer / hauler
+PASS no dominance bridge lancer / halo
+PASS no dominance bridge lancer / bulwark
+PASS unique Hauler Atlas Navigator
+PASS no dominance bridge hauler / kestrel
+PASS no dominance bridge hauler / lancer
+PASS no dominance bridge hauler / halo
+PASS no dominance bridge hauler / bulwark
+PASS unique Halo Farstar Navigator
+PASS no dominance bridge halo / kestrel
+PASS no dominance bridge halo / lancer
+PASS no dominance bridge halo / hauler
+PASS no dominance bridge halo / bulwark
+PASS unique Bulwark Bastion Navigator
+PASS no dominance bridge bulwark / kestrel
+PASS no dominance bridge bulwark / lancer
+PASS no dominance bridge bulwark / hauler
+PASS no dominance bridge bulwark / halo
+PASS Kestrel price reactor
+PASS unique Kestrel Standard Bus Core
+PASS no dominance reactor kestrel / lancer
+PASS no dominance reactor kestrel / hauler
+PASS no dominance reactor kestrel / halo
+PASS no dominance reactor kestrel / bulwark
+PASS unique Lancer Needle Bus Core
+PASS no dominance reactor lancer / kestrel
+PASS no dominance reactor lancer / hauler
+PASS no dominance reactor lancer / halo
+PASS no dominance reactor lancer / bulwark
+PASS unique Hauler Atlas Bus Core
+PASS no dominance reactor hauler / kestrel
+PASS no dominance reactor hauler / lancer
+PASS no dominance reactor hauler / halo
+PASS no dominance reactor hauler / bulwark
+PASS unique Halo Farstar Bus Core
+PASS no dominance reactor halo / kestrel
+PASS no dominance reactor halo / lancer
+PASS no dominance reactor halo / hauler
+PASS no dominance reactor halo / bulwark
+PASS unique Bulwark Bastion Bus Core
+PASS no dominance reactor bulwark / kestrel
+PASS no dominance reactor bulwark / lancer
+PASS no dominance reactor bulwark / hauler
+PASS no dominance reactor bulwark / halo
+PASS Kestrel price battery
+PASS unique Kestrel Standard Cell Bank
+PASS no dominance battery kestrel / lancer
+PASS no dominance battery kestrel / hauler
+PASS no dominance battery kestrel / halo
+PASS no dominance battery kestrel / bulwark
+PASS unique Lancer Needle Cell Bank
+PASS no dominance battery lancer / kestrel
+PASS no dominance battery lancer / hauler
+PASS no dominance battery lancer / halo
+PASS no dominance battery lancer / bulwark
+PASS unique Hauler Atlas Cell Bank
+PASS no dominance battery hauler / kestrel
+PASS no dominance battery hauler / lancer
+PASS no dominance battery hauler / halo
+PASS no dominance battery hauler / bulwark
+PASS unique Halo Farstar Cell Bank
+PASS no dominance battery halo / kestrel
+PASS no dominance battery halo / lancer
+PASS no dominance battery halo / hauler
+PASS no dominance battery halo / bulwark
+PASS unique Bulwark Bastion Cell Bank
+PASS no dominance battery bulwark / kestrel
+PASS no dominance battery bulwark / lancer
+PASS no dominance battery bulwark / hauler
+PASS no dominance battery bulwark / halo
+PASS Kestrel price coolant
+PASS unique Kestrel Standard Heat Wing
+PASS no dominance coolant kestrel / lancer
+PASS no dominance coolant kestrel / hauler
+PASS no dominance coolant kestrel / halo
+PASS no dominance coolant kestrel / bulwark
+PASS unique Lancer Needle Heat Wing
+PASS no dominance coolant lancer / kestrel
+PASS no dominance coolant lancer / hauler
+PASS no dominance coolant lancer / halo
+PASS no dominance coolant lancer / bulwark
+PASS unique Hauler Atlas Heat Wing
+PASS no dominance coolant hauler / kestrel
+PASS no dominance coolant hauler / lancer
+PASS no dominance coolant hauler / halo
+PASS no dominance coolant hauler / bulwark
+PASS unique Halo Farstar Heat Wing
+PASS no dominance coolant halo / kestrel
+PASS no dominance coolant halo / lancer
+PASS no dominance coolant halo / hauler
+PASS no dominance coolant halo / bulwark
+PASS unique Bulwark Bastion Heat Wing
+PASS no dominance coolant bulwark / kestrel
+PASS no dominance coolant bulwark / lancer
+PASS no dominance coolant bulwark / hauler
+PASS no dominance coolant bulwark / halo
+PASS Kestrel price cargo
+PASS unique Kestrel Standard Sample Rack
+PASS no dominance cargo kestrel / lancer
+PASS no dominance cargo kestrel / hauler
+PASS no dominance cargo kestrel / halo
+PASS no dominance cargo kestrel / bulwark
+PASS unique Lancer Needle Sample Rack
+PASS no dominance cargo lancer / kestrel
+PASS no dominance cargo lancer / hauler
+PASS no dominance cargo lancer / halo
+PASS no dominance cargo lancer / bulwark
+PASS unique Hauler Atlas Sample Rack
+PASS no dominance cargo hauler / kestrel
+PASS no dominance cargo hauler / lancer
+PASS no dominance cargo hauler / halo
+PASS no dominance cargo hauler / bulwark
+PASS unique Halo Farstar Sample Rack
+PASS no dominance cargo halo / kestrel
+PASS no dominance cargo halo / lancer
+PASS no dominance cargo halo / hauler
+PASS no dominance cargo halo / bulwark
+PASS unique Bulwark Bastion Sample Rack
+PASS no dominance cargo bulwark / kestrel
+PASS no dominance cargo bulwark / lancer
+PASS no dominance cargo bulwark / hauler
+PASS no dominance cargo bulwark / halo
+PASS Kestrel price scrubber
+PASS unique Kestrel Standard Breather
+PASS no dominance scrubber kestrel / lancer
+PASS no dominance scrubber kestrel / hauler
+PASS no dominance scrubber kestrel / halo
+PASS no dominance scrubber kestrel / bulwark
+PASS unique Lancer Needle Breather
+PASS no dominance scrubber lancer / kestrel
+PASS no dominance scrubber lancer / hauler
+PASS no dominance scrubber lancer / halo
+PASS no dominance scrubber lancer / bulwark
+PASS unique Hauler Atlas Breather
+PASS no dominance scrubber hauler / kestrel
+PASS no dominance scrubber hauler / lancer
+PASS no dominance scrubber hauler / halo
+PASS no dominance scrubber hauler / bulwark
+PASS unique Halo Farstar Breather
+PASS no dominance scrubber halo / kestrel
+PASS no dominance scrubber halo / lancer
+PASS no dominance scrubber halo / hauler
+PASS no dominance scrubber halo / bulwark
+PASS unique Bulwark Bastion Breather
+PASS no dominance scrubber bulwark / kestrel
+PASS no dominance scrubber bulwark / lancer
+PASS no dominance scrubber bulwark / hauler
+PASS no dominance scrubber bulwark / halo
+PASS Kestrel price stores
+PASS unique Kestrel Standard Trail Stores
+PASS no dominance stores kestrel / lancer
+PASS no dominance stores kestrel / hauler
+PASS no dominance stores kestrel / halo
+PASS no dominance stores kestrel / bulwark
+PASS unique Lancer Needle Trail Stores
+PASS no dominance stores lancer / kestrel
+PASS no dominance stores lancer / hauler
+PASS no dominance stores lancer / halo
+PASS no dominance stores lancer / bulwark
+PASS unique Hauler Atlas Trail Stores
+PASS no dominance stores hauler / kestrel
+PASS no dominance stores hauler / lancer
+PASS no dominance stores hauler / halo
+PASS no dominance stores hauler / bulwark
+PASS unique Halo Farstar Trail Stores
+PASS no dominance stores halo / kestrel
+PASS no dominance stores halo / lancer
+PASS no dominance stores halo / hauler
+PASS no dominance stores halo / bulwark
+PASS unique Bulwark Bastion Trail Stores
+PASS no dominance stores bulwark / kestrel
+PASS no dominance stores bulwark / lancer
+PASS no dominance stores bulwark / hauler
+PASS no dominance stores bulwark / halo
+PASS Kestrel price engine
+PASS unique Kestrel Standard Dorsal Cannon
+PASS no dominance engine kestrel / lancer
+PASS no dominance engine kestrel / hauler
+PASS no dominance engine kestrel / halo
+PASS no dominance engine kestrel / bulwark
+PASS unique Lancer Needle Dorsal Cannon
+PASS no dominance engine lancer / kestrel
+PASS no dominance engine lancer / hauler
+PASS no dominance engine lancer / halo
+PASS no dominance engine lancer / bulwark
+PASS unique Hauler Atlas Dorsal Cannon
+PASS no dominance engine hauler / kestrel
+PASS no dominance engine hauler / lancer
+PASS no dominance engine hauler / halo
+PASS no dominance engine hauler / bulwark
+PASS unique Halo Farstar Dorsal Cannon
+PASS no dominance engine halo / kestrel
+PASS no dominance engine halo / lancer
+PASS no dominance engine halo / hauler
+PASS no dominance engine halo / bulwark
+PASS unique Bulwark Bastion Dorsal Cannon
+PASS no dominance engine bulwark / kestrel
+PASS no dominance engine bulwark / lancer
+PASS no dominance engine bulwark / hauler
+PASS no dominance engine bulwark / halo
+PASS Kestrel price thruster
+PASS unique Kestrel Standard Impulse Drive
+PASS no dominance thruster kestrel / lancer
+PASS no dominance thruster kestrel / hauler
+PASS no dominance thruster kestrel / halo
+PASS no dominance thruster kestrel / bulwark
+PASS unique Lancer Needle Impulse Drive
+PASS no dominance thruster lancer / kestrel
+PASS no dominance thruster lancer / hauler
+PASS no dominance thruster lancer / halo
+PASS no dominance thruster lancer / bulwark
+PASS unique Hauler Atlas Impulse Drive
+PASS no dominance thruster hauler / kestrel
+PASS no dominance thruster hauler / lancer
+PASS no dominance thruster hauler / halo
+PASS no dominance thruster hauler / bulwark
+PASS unique Halo Farstar Impulse Drive
+PASS no dominance thruster halo / kestrel
+PASS no dominance thruster halo / lancer
+PASS no dominance thruster halo / hauler
+PASS no dominance thruster halo / bulwark
+PASS unique Bulwark Bastion Impulse Drive
+PASS no dominance thruster bulwark / kestrel
+PASS no dominance thruster bulwark / lancer
+PASS no dominance thruster bulwark / hauler
+PASS no dominance thruster bulwark / halo
+PASS Kestrel price antenna
+PASS unique Kestrel Standard Signal Crown
+PASS no dominance antenna kestrel / lancer
+PASS no dominance antenna kestrel / hauler
+PASS no dominance antenna kestrel / halo
+PASS no dominance antenna kestrel / bulwark
+PASS unique Lancer Needle Signal Crown
+PASS no dominance antenna lancer / kestrel
+PASS no dominance antenna lancer / hauler
+PASS no dominance antenna lancer / halo
+PASS no dominance antenna lancer / bulwark
+PASS unique Hauler Atlas Signal Crown
+PASS no dominance antenna hauler / kestrel
+PASS no dominance antenna hauler / lancer
+PASS no dominance antenna hauler / halo
+PASS no dominance antenna hauler / bulwark
+PASS unique Halo Farstar Signal Crown
+PASS no dominance antenna halo / kestrel
+PASS no dominance antenna halo / lancer
+PASS no dominance antenna halo / hauler
+PASS no dominance antenna halo / bulwark
+PASS unique Bulwark Bastion Signal Crown
+PASS no dominance antenna bulwark / kestrel
+PASS no dominance antenna bulwark / lancer
+PASS no dominance antenna bulwark / hauler
+PASS no dominance antenna bulwark / halo
+PASS price targets: 1978 / 5508
+PASS mixed cost, mass, TWR and cargo
+PASS exact Kestrel route budget
+FAMILY kestrel cost 3060 wet 750 thrust 10.4 TWR 1.414 fuel 80 dv 398.2 cargo 6 armor 1.00 turret 1.00 scan 1.00 handling 1.00 power 3.60
+FAMILY lancer cost 1989 wet 641 thrust 13.6 TWR 2.164 fuel 67 dv 389.8 cargo 4 armor 1.15 turret 0.90 scan 1.15 handling 1.33 power 2.80
+FAMILY hauler cost 2551 wet 954 thrust 9.2 TWR 0.983 fuel 140 dv 560.3 cargo 13 armor 1.05 turret 0.80 scan 0.88 handling 0.88 power 4.60
+FAMILY halo cost 5508 wet 825 thrust 9.6 TWR 1.187 fuel 107 dv 662.1 cargo 7 armor 1.08 turret 1.10 scan 1.53 handling 1.08 power 7.80
+FAMILY bulwark cost 5355 wet 962 thrust 11.4 TWR 1.208 fuel 76 dv 290.5 cargo 5 armor 0.48 turret 1.65 scan 1.10 handling 0.94 power 2.80
+PASS armored keel purchased
+PASS armor scales incoming ship damage
+PASS explorer systems purchased
+PASS engine efficiency and battery capacity applied
+PASS reserve upgrade stacks with variants
+PASS refresh idempotent and preserves upgrades
+PASS refresh preserves fuel consumed
+PASS loadout JSON round trip
+PASS initial choice purchases full price
+PASS swap refunds difference
+PASS swap charges difference
+PASS insufficient funds atomic
+PASS invalid ids rejected
+PASS choice locked when auto build begins
+PASS choice locked after manual build begins
+PASS auto build defaults and charges Kestrel
+PASS seeded rival 1
+PASS seeded rival 2
+PASS seeded rival 3
+PASS rivals vary by seed without consuming gameplay RNG
+RESULT PASS
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)

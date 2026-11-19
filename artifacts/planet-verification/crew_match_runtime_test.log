@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+PASS quick deploy enters real flight
+PASS quick deploy completes paid build and checks
+PASS rival launch synchronized
+PASS flight sim and HUD run
+PASS holstered weapon cannot fire
+PASS B completes the draw animation
+PASS weapon attached to the real hand bone
+PASS barrel and muzzle point forward away from the character
+PASS Chip animated feet stay grounded
+PASS drawn gun consumes ammo when fired
+PASS reload completes and restores magazine
+PASS B returns to empty hands
+PASS shots reduce rival health
+PASS lethal damage knocks the rival out
+PASS player knockout starts a grounded collapse
+PASS player recovers at the ramp after the knockout
+PASS C orders real teammates
+PASS Z assigns a priority sample
+PASS M opens tactical overlay
+PASS tactical arena instantiated with real cover
+PASS rock cover blocks fire
+PASS suit recovers out of combat
+PASS role switching preserves independent suit health
+PASS AI raider navigates out, extracts, and returns a sample to the ship
+PASS AI raider extracts a sample during the live simulation
+PASS rivals navigate the arena, load samples, return, and score
+PASS pause closes tactical overlay
+PASS resume restores gameplay
+PASS debrief renders crew telemetry
+PASS same-seed rematch restarts quick deployment
+Crew match runtime: 0 failures

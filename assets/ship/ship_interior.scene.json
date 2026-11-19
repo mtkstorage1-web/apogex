@@ -1,0 +1,1248 @@
+{
+ "name": "ship_interior",
+ "doc": "DATA ONLY. Modules chained rear->nose along +Z. props reference assets/minigame_props. handles = zero-g grab points. tasks = repair minigames and role duties hooks.",
+ "modules": [
+  {
+   "name": "engine_bay",
+   "owner": "Engineer",
+   "center": [
+    0,
+    0,
+    3.0
+   ],
+   "size": [
+    5.0,
+    3.0,
+    6.0
+   ],
+   "zmin": 0.0,
+   "zmax": 6.0
+  },
+  {
+   "name": "power_room",
+   "owner": "Engineer",
+   "center": [
+    0,
+    0,
+    8.8
+   ],
+   "size": [
+    5.0,
+    3.0,
+    5.0
+   ],
+   "zmin": 6.3,
+   "zmax": 11.3
+  },
+  {
+   "name": "life_support",
+   "owner": "Specialist",
+   "center": [
+    0,
+    0,
+    14.1
+   ],
+   "size": [
+    5.0,
+    3.0,
+    5.0
+   ],
+   "zmin": 11.6,
+   "zmax": 16.6
+  },
+  {
+   "name": "workshop",
+   "owner": "Specialist",
+   "center": [
+    0,
+    0,
+    19.4
+   ],
+   "size": [
+    5.0,
+    3.0,
+    5.0
+   ],
+   "zmin": 16.9,
+   "zmax": 21.9
+  },
+  {
+   "name": "lab",
+   "owner": "Specialist",
+   "center": [
+    0,
+    0,
+    24.7
+   ],
+   "size": [
+    5.0,
+    3.0,
+    5.0
+   ],
+   "zmin": 22.2,
+   "zmax": 27.2
+  },
+  {
+   "name": "cockpit",
+   "owner": "Pilot",
+   "center": [
+    0,
+    0,
+    30.0
+   ],
+   "size": [
+    5.0,
+    3.0,
+    5.0
+   ],
+   "zmin": 27.5,
+   "zmax": 32.5
+  },
+  {
+   "name": "airlock",
+   "owner": "Specialist",
+   "center": [
+    -4.25,
+    0,
+    19.4
+   ],
+   "size": [
+    3.0,
+    3.0,
+    3.0
+   ],
+   "zmin": 17.9,
+   "zmax": 20.9
+  }
+ ],
+ "props": [
+  {
+   "asset": "minigame_props/prop_fuel_line_panel.glb",
+   "module": "engine_bay",
+   "position": [
+    -2.4,
+    0,
+    1.5
+   ],
+   "rotation_y_deg": 90,
+   "task": "clear_fuel_line",
+   "owner": "Engineer"
+  },
+  {
+   "asset": "minigame_props/prop_valve_wheel.glb",
+   "module": "engine_bay",
+   "position": [
+    2.2,
+    0,
+    1.5
+   ],
+   "rotation_y_deg": -90,
+   "task": "open_coolant_valve",
+   "owner": "Engineer"
+  },
+  {
+   "asset": "minigame_props/prop_hull_patch.glb",
+   "module": "engine_bay",
+   "position": [
+    2.45,
+    0,
+    4.5
+   ],
+   "rotation_y_deg": -90,
+   "task": "patch_hull",
+   "owner": "Engineer"
+  },
+  {
+   "asset": "minigame_props/prop_toggle_panel.glb",
+   "module": "engine_bay",
+   "position": [
+    -2.45,
+    0.8,
+    4.5
+   ],
+   "rotation_y_deg": 90,
+   "task": "manual_ignition",
+   "owner": "Engineer"
+  },
+  {
+   "asset": "minigame_props/prop_fuse_box.glb",
+   "module": "power_room",
+   "position": [
+    -2.45,
+    0.9,
+    7.8
+   ],
+   "rotation_y_deg": 90,
+   "task": "swap_fuse",
+   "owner": "Engineer"
+  },
+  {
+   "asset": "minigame_props/prop_wire_panel.glb",
+   "module": "power_room",
+   "position": [
+    2.45,
+    0.8,
+    7.8
+   ],
+   "rotation_y_deg": -90,
+   "task": "reconnect_wires",
+   "owner": "Engineer"
+  },
+  {
+   "asset": "minigame_props/prop_toggle_panel.glb",
+   "module": "power_room",
+   "position": [
+    2.45,
+    0.8,
+    10.0
+   ],
+   "rotation_y_deg": -90,
+   "task": "reroute_power",
+   "owner": "Engineer"
+  },
+  {
+   "asset": "minigame_props/prop_slider_lever.glb",
+   "module": "power_room",
+   "position": [
+    -2.45,
+    0.6,
+    10.0
+   ],
+   "rotation_y_deg": 90,
+   "task": "balance_power",
+   "owner": "Engineer"
+  },
+  {
+   "asset": "minigame_props/prop_co2_filter_slot.glb",
+   "module": "life_support",
+   "position": [
+    -2.45,
+    0.0,
+    13.1
+   ],
+   "rotation_y_deg": 90,
+   "task": "swap_co2_filter",
+   "owner": "Specialist"
+  },
+  {
+   "asset": "minigame_props/prop_valve_wheel.glb",
+   "module": "life_support",
+   "position": [
+    2.2,
+    0,
+    12.9
+   ],
+   "rotation_y_deg": -90,
+   "task": "refill_oxygen",
+   "owner": "Specialist"
+  },
+  {
+   "asset": "minigame_props/prop_hull_patch.glb",
+   "module": "life_support",
+   "position": [
+    2.45,
+    0,
+    15.6
+   ],
+   "rotation_y_deg": -90,
+   "task": "patch_hull",
+   "owner": "Specialist"
+  },
+  {
+   "asset": "minigame_props/prop_scan_screen.glb",
+   "module": "life_support",
+   "position": [
+    -2.45,
+    0.6,
+    15.6
+   ],
+   "rotation_y_deg": 90,
+   "task": "check_recycler",
+   "owner": "Specialist"
+  },
+  {
+   "asset": "minigame_props/prop_bolt_panel.glb",
+   "module": "workshop",
+   "position": [
+    -2.45,
+    0.8,
+    18.4
+   ],
+   "rotation_y_deg": 90,
+   "task": "craft_spare",
+   "owner": "Specialist"
+  },
+  {
+   "asset": "minigame_props/prop_button_console.glb",
+   "module": "workshop",
+   "position": [
+    2.45,
+    0.8,
+    18.4
+   ],
+   "rotation_y_deg": -90,
+   "task": "craft_menu",
+   "owner": "Specialist"
+  },
+  {
+   "asset": "minigame_props/prop_keypad.glb",
+   "module": "workshop",
+   "position": [
+    2.45,
+    0.8,
+    20.6
+   ],
+   "rotation_y_deg": -90,
+   "task": "inventory_code",
+   "owner": "Specialist"
+  },
+  {
+   "asset": "minigame_props/prop_scan_screen.glb",
+   "module": "lab",
+   "position": [
+    -2.45,
+    0.6,
+    23.7
+   ],
+   "rotation_y_deg": 90,
+   "task": "aim_instrument",
+   "owner": "Specialist"
+  },
+  {
+   "asset": "minigame_props/prop_dial_calibrator.glb",
+   "module": "lab",
+   "position": [
+    2.45,
+    0.8,
+    23.7
+   ],
+   "rotation_y_deg": -90,
+   "task": "calibrate_instrument",
+   "owner": "Specialist"
+  },
+  {
+   "asset": "minigame_props/prop_cable_plug_set.glb",
+   "module": "lab",
+   "position": [
+    2.45,
+    0.8,
+    25.9
+   ],
+   "rotation_y_deg": -90,
+   "task": "plug_experiment",
+   "owner": "Specialist"
+  },
+  {
+   "asset": "minigame_props/prop_dial_calibrator.glb",
+   "module": "cockpit",
+   "position": [
+    -2.45,
+    0.8,
+    30.6
+   ],
+   "rotation_y_deg": 90,
+   "task": "attitude_trim",
+   "owner": "Pilot"
+  },
+  {
+   "asset": "minigame_props/prop_slider_lever.glb",
+   "module": "cockpit",
+   "position": [
+    2.45,
+    0.6,
+    30.6
+   ],
+   "rotation_y_deg": -90,
+   "task": "throttle",
+   "owner": "Pilot"
+  },
+  {
+   "asset": "minigame_props/prop_toggle_panel.glb",
+   "module": "cockpit",
+   "position": [
+    0,
+    0.8,
+    32.1
+   ],
+   "rotation_y_deg": 180,
+   "task": "stage_switch",
+   "owner": "Pilot"
+  }
+ ],
+ "handles": [
+  {
+   "module": "engine_bay",
+   "pos": [
+    -2.42,
+    1.4,
+    0.75
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    2.42,
+    1.4,
+    0.75
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    0,
+    2.88,
+    0.75
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    -2.42,
+    1.4,
+    2.25
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    2.42,
+    1.4,
+    2.25
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    0,
+    2.88,
+    2.25
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    -2.42,
+    1.4,
+    3.75
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    2.42,
+    1.4,
+    3.75
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    0,
+    2.88,
+    3.75
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    -2.42,
+    1.4,
+    5.25
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    2.42,
+    1.4,
+    5.25
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "engine_bay",
+   "pos": [
+    0,
+    2.88,
+    5.25
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    -2.42,
+    1.4,
+    6.925000000000001
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    2.42,
+    1.4,
+    6.925000000000001
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    0,
+    2.88,
+    6.925000000000001
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    -2.42,
+    1.4,
+    8.175
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    2.42,
+    1.4,
+    8.175
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    0,
+    2.88,
+    8.175
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    -2.42,
+    1.4,
+    9.425
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    2.42,
+    1.4,
+    9.425
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    0,
+    2.88,
+    9.425
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    -2.42,
+    1.4,
+    10.675
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    2.42,
+    1.4,
+    10.675
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "power_room",
+   "pos": [
+    0,
+    2.88,
+    10.675
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    -2.42,
+    1.4,
+    12.225
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    2.42,
+    1.4,
+    12.225
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    0,
+    2.88,
+    12.225
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    -2.42,
+    1.4,
+    13.475
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    2.42,
+    1.4,
+    13.475
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    0,
+    2.88,
+    13.475
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    -2.42,
+    1.4,
+    14.725
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    2.42,
+    1.4,
+    14.725
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    0,
+    2.88,
+    14.725
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    -2.42,
+    1.4,
+    15.975
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    2.42,
+    1.4,
+    15.975
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "life_support",
+   "pos": [
+    0,
+    2.88,
+    15.975
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    -2.42,
+    1.4,
+    17.525
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    2.42,
+    1.4,
+    17.525
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    0,
+    2.88,
+    17.525
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    -2.42,
+    1.4,
+    18.775
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    2.42,
+    1.4,
+    18.775
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    0,
+    2.88,
+    18.775
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    -2.42,
+    1.4,
+    20.025
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    2.42,
+    1.4,
+    20.025
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    0,
+    2.88,
+    20.025
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    -2.42,
+    1.4,
+    21.275
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    2.42,
+    1.4,
+    21.275
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "workshop",
+   "pos": [
+    0,
+    2.88,
+    21.275
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "lab",
+   "pos": [
+    -2.42,
+    1.4,
+    22.825
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "lab",
+   "pos": [
+    2.42,
+    1.4,
+    22.825
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "lab",
+   "pos": [
+    0,
+    2.88,
+    22.825
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "lab",
+   "pos": [
+    -2.42,
+    1.4,
+    24.075
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "lab",
+   "pos": [
+    2.42,
+    1.4,
+    24.075
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "lab",
+   "pos": [
+    0,
+    2.88,
+    24.075
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "lab",
+   "pos": [
+    -2.42,
+    1.4,
+    25.325
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "lab",
+   "pos": [
+    2.42,
+    1.4,
+    25.325
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "lab",
+   "pos": [
+    0,
+    2.88,
+    25.325
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "lab",
+   "pos": [
+    -2.42,
+    1.4,
+    26.575
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "lab",
+   "pos": [
+    2.42,
+    1.4,
+    26.575
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "lab",
+   "pos": [
+    0,
+    2.88,
+    26.575
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    -2.42,
+    1.4,
+    28.125
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    2.42,
+    1.4,
+    28.125
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    0,
+    2.88,
+    28.125
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    -2.42,
+    1.4,
+    29.375
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    2.42,
+    1.4,
+    29.375
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    0,
+    2.88,
+    29.375
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    -2.42,
+    1.4,
+    30.625
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    2.42,
+    1.4,
+    30.625
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    0,
+    2.88,
+    30.625
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    -2.42,
+    1.4,
+    31.875
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    2.42,
+    1.4,
+    31.875
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "cockpit",
+   "pos": [
+    0,
+    2.88,
+    31.875
+   ],
+   "radius": 0.3
+  },
+  {
+   "module": "airlock",
+   "pos": [
+    -5.65,
+    1.4,
+    18.4
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "airlock",
+   "pos": [
+    -5.65,
+    1.4,
+    19.4
+   ],
+   "radius": 0.25
+  },
+  {
+   "module": "airlock",
+   "pos": [
+    -5.65,
+    1.4,
+    20.4
+   ],
+   "radius": 0.25
+  }
+ ],
+ "tasks": [
+  {
+   "task": "clear_fuel_line",
+   "module": "engine_bay",
+   "owner": "Engineer",
+   "prop": "prop_fuel_line_panel"
+  },
+  {
+   "task": "open_coolant_valve",
+   "module": "engine_bay",
+   "owner": "Engineer",
+   "prop": "prop_valve_wheel"
+  },
+  {
+   "task": "patch_hull",
+   "module": "engine_bay",
+   "owner": "Engineer",
+   "prop": "prop_hull_patch"
+  },
+  {
+   "task": "manual_ignition",
+   "module": "engine_bay",
+   "owner": "Engineer",
+   "prop": "prop_toggle_panel"
+  },
+  {
+   "task": "swap_fuse",
+   "module": "power_room",
+   "owner": "Engineer",
+   "prop": "prop_fuse_box"
+  },
+  {
+   "task": "reconnect_wires",
+   "module": "power_room",
+   "owner": "Engineer",
+   "prop": "prop_wire_panel"
+  },
+  {
+   "task": "reroute_power",
+   "module": "power_room",
+   "owner": "Engineer",
+   "prop": "prop_toggle_panel"
+  },
+  {
+   "task": "balance_power",
+   "module": "power_room",
+   "owner": "Engineer",
+   "prop": "prop_slider_lever"
+  },
+  {
+   "task": "swap_co2_filter",
+   "module": "life_support",
+   "owner": "Specialist",
+   "prop": "prop_co2_filter_slot"
+  },
+  {
+   "task": "refill_oxygen",
+   "module": "life_support",
+   "owner": "Specialist",
+   "prop": "prop_valve_wheel"
+  },
+  {
+   "task": "patch_hull",
+   "module": "life_support",
+   "owner": "Specialist",
+   "prop": "prop_hull_patch"
+  },
+  {
+   "task": "check_recycler",
+   "module": "life_support",
+   "owner": "Specialist",
+   "prop": "prop_scan_screen"
+  },
+  {
+   "task": "craft_spare",
+   "module": "workshop",
+   "owner": "Specialist",
+   "prop": "prop_bolt_panel"
+  },
+  {
+   "task": "craft_menu",
+   "module": "workshop",
+   "owner": "Specialist",
+   "prop": "prop_button_console"
+  },
+  {
+   "task": "inventory_code",
+   "module": "workshop",
+   "owner": "Specialist",
+   "prop": "prop_keypad"
+  },
+  {
+   "task": "aim_instrument",
+   "module": "lab",
+   "owner": "Specialist",
+   "prop": "prop_scan_screen"
+  },
+  {
+   "task": "calibrate_instrument",
+   "module": "lab",
+   "owner": "Specialist",
+   "prop": "prop_dial_calibrator"
+  },
+  {
+   "task": "plug_experiment",
+   "module": "lab",
+   "owner": "Specialist",
+   "prop": "prop_cable_plug_set"
+  },
+  {
+   "task": "attitude_trim",
+   "module": "cockpit",
+   "owner": "Pilot",
+   "prop": "prop_dial_calibrator"
+  },
+  {
+   "task": "throttle",
+   "module": "cockpit",
+   "owner": "Pilot",
+   "prop": "prop_slider_lever"
+  },
+  {
+   "task": "stage_switch",
+   "module": "cockpit",
+   "owner": "Pilot",
+   "prop": "prop_toggle_panel"
+  }
+ ],
+ "hatches": [
+  {
+   "from": "engine_bay",
+   "to": "power_room",
+   "position": [
+    0,
+    1.05,
+    6.22
+   ],
+   "width": 1.2,
+   "height": 2.1
+  },
+  {
+   "from": "power_room",
+   "to": "life_support",
+   "position": [
+    0,
+    1.05,
+    11.53
+   ],
+   "width": 1.2,
+   "height": 2.1
+  },
+  {
+   "from": "life_support",
+   "to": "workshop",
+   "position": [
+    0,
+    1.05,
+    16.82
+   ],
+   "width": 1.2,
+   "height": 2.1
+  },
+  {
+   "from": "workshop",
+   "to": "lab",
+   "position": [
+    0,
+    1.05,
+    22.12
+   ],
+   "width": 1.2,
+   "height": 2.1
+  },
+  {
+   "from": "lab",
+   "to": "cockpit",
+   "position": [
+    0,
+    1.05,
+    27.42
+   ],
+   "width": 1.2,
+   "height": 2.1
+  },
+  {
+   "from": "workshop",
+   "to": "airlock",
+   "position": [
+    -2.65,
+    1.05,
+    19.4
+   ],
+   "width": 1.2,
+   "height": 2.1
+  }
+ ],
+ "asset": "ship_interior/ship_interior.glb",
+ "collision": "ship_interior/ship_interior_collision.glb",
+ "nav": "ship_interior/ship_nav.json"
+}

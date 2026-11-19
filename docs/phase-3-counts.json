@@ -1,0 +1,57 @@
+{
+  "Flight": {
+    "after": 10,
+    "before": 10,
+    "multimeshes": 0
+  },
+  "FrontierArena": {
+    "after": 184,
+    "before": 184,
+    "multimeshes": 0
+  },
+  "OrbitShipInterior": {
+    "after": 81,
+    "before": 81,
+    "multimeshes": 0
+  },
+  "PlanetA": {
+    "after": 132,
+    "before": 205,
+    "multimeshes": 24
+  },
+  "PlanetB": {
+    "after": 53,
+    "before": 119,
+    "multimeshes": 28
+  },
+  "Universe": {
+    "after": 253,
+    "before": 326,
+    "multimeshes": 24
+  },
+  "Workshop": {
+    "after": 72,
+    "before": 81,
+    "multimeshes": 4
+  },
+  "bulwark": {
+    "after": 301,
+    "before": 265
+  },
+  "halo": {
+    "after": 310,
+    "before": 274
+  },
+  "hauler": {
+    "after": 300,
+    "before": 264
+  },
+  "kestrel": {
+    "after": 336,
+    "before": 300
+  },
+  "lancer": {
+    "after": 269,
+    "before": 233
+  }
+}

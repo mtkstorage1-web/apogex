@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+TWR 1.28 dv 357.8
+sheltered required 54.0 margin 26.0 valid true
+balanced required 73.7 margin 6.3 valid true
+slingshot required 97.1 margin -17.1 valid false
+landed hull 100.0 power 3.68 t 102
+scan steps 50
+return: docking
+over: All surviving crews have returned. Undelivered flags do not score. time 532
+  ORANGE delivered 1 phase docked
+  CYAN delivered 3 phase delivered
+  VIOLET delivered 3 phase delivered
+  LIME delivered 4 phase delivered
+debrief rank 4 xp 50 patch Flight Cadet
+flag states { "delivered": 11, "site": 1 }
+RESULT PASS
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)

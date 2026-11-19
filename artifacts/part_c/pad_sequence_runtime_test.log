@@ -1,0 +1,31 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+PASS intro keeps cinematic mode
+PASS desk starts build in play mode
+PASS starting pad sequence does not release mouse controls
+PASS shop cannot restart active build
+PASS auto assembly advances in play mode
+PASS build preserves player camera
+PASS build preserves actor visibility
+PASS build preserves unrelated prompts
+PASS outfit preserves player camera
+PASS outfit preserves actor visibility
+PASS outfit preserves unrelated prompts
+PASS erect preserves player camera
+PASS erect preserves actor visibility
+PASS erect preserves unrelated prompts
+PASS boosters preserves player camera
+PASS boosters preserves actor visibility
+PASS boosters preserves unrelated prompts
+PASS build and outfit finish without blocking play
+PASS automated assembly and outfit complete
+PASS player can jump between sequences
+PASS E starts erect from play mode
+PASS view controls work during erect
+PASS player can jump during erect
+PASS pause freezes pad sequence
+PASS erect and boosters finish ready for mission desk
+PASS completed sequence stops ticking
+PASS launch keeps cinematic mode
+PAD_SEQUENCE_RESULT: 0 failures

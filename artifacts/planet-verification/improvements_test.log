@@ -1,0 +1,89 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+PASS audio stream loaded: shot_carbine
+PASS audio stream loaded: shot_scatter
+PASS audio stream loaded: shot_sidearm
+PASS audio stream loaded: hitmarker
+PASS audio stream loaded: capture_tick
+PASS audio stream loaded: explosion
+PASS audio stream loaded: hurt
+PASS audio stream loaded: shield_recharge
+PASS audio stream loaded: shield_hit
+PASS audio stream loaded: shield_break
+PASS audio stream loaded: reload_click
+PASS audio stream loaded: reload_ratchet
+PASS audio stream loaded: step_0
+PASS audio stream loaded: step_1
+PASS audio stream loaded: step_2
+PASS audio stream loaded: step_3
+PASS audio stream loaded: ui_click
+PASS audio stream loaded: ui_hover
+PASS audio stream loaded: ui_buy
+PASS audio stream loaded: ui_error
+PASS audio stream loaded: alarm_warn
+PASS audio stream loaded: scan_hum
+PASS audio stream loaded: ability_cast
+PASS 2D and 3D audio player pools initialized
+PASS sfx_3d assigns positional stream when autotest is false
+PASS quick deploy enters Flight
+PASS Flight builds dorsal turret rig
+PASS Flight builds 3 hull plates and 4 system beacons
+PASS Flight builds shield dome and tactical overlay
+PASS Flight turret color reflects Lancer engine loadout
+PASS Flight shield dome appears when shield is active
+PASS Flight overlay ticks cleanly across all 4 roles
+PASS landing transitions to PlanetB
+PASS PlanetB builds 3D beacons, scan beam, and shield bubble
+PASS Z reveals 3D priority sample beacon
+PASS role 0 weapon spawns distinct tracer profile (1)
+PASS role 1 weapon spawns distinct tracer profile (3)
+PASS role 2 weapon spawns distinct tracer profile (2)
+PASS Chip Q heals nearby ally with ring pulse
+PASS F ultimate activates 3D shield bubble on PlanetB
+PASS Actor.poll_step emits footstep clip name
+PASS UI.font loads distinct sans and mono fonts
+PASS UI.font falls back cleanly on missing path override
+PASS InputMap registered action: move_forward
+PASS InputMap registered action: move_back
+PASS InputMap registered action: move_left
+PASS InputMap registered action: move_right
+PASS InputMap registered action: jump
+PASS InputMap registered action: sprint
+PASS InputMap registered action: interact
+PASS InputMap registered action: reload
+PASS InputMap registered action: holster
+PASS InputMap registered action: skill
+PASS InputMap registered action: ultimate
+PASS InputMap registered action: orders
+PASS InputMap registered action: ping
+PASS InputMap registered action: tactical_map
+PASS InputMap registered action: camera_view
+PASS InputMap registered action: depart
+PASS InputMap registered action: drop_flag
+PASS InputMap registered action: help
+PASS InputMap registered action: role_1
+PASS InputMap registered action: role_2
+PASS InputMap registered action: role_3
+PASS InputMap registered action: role_4
+PASS rebind_action updates InputMap key event
+PASS g.held delegates through rebound InputMap action
+PASS HUD fits (1280, 720) with updated fonts: @Label@106
+PASS HUD fits (1280, 720) with updated fonts: @PanelContainer@120
+PASS HUD fits (1280, 720) with updated fonts: @PanelContainer@59
+PASS HUD fits (1280, 720) with updated fonts: @PanelContainer@65
+PASS HUD fits (1280, 720) with updated fonts: CrewAdvisor
+PASS HUD fits (1280, 720) with updated fonts: @HBoxContainer@101
+PASS HUD fits (1280, 720) with updated fonts: @PanelContainer@114
+PASS HUD fits (1280, 720) with updated fonts: @Label@91
+PASS HUD fits (3004, 1805) with updated fonts: @Label@106
+PASS HUD fits (3004, 1805) with updated fonts: @PanelContainer@120
+PASS HUD fits (3004, 1805) with updated fonts: @PanelContainer@59
+PASS HUD fits (3004, 1805) with updated fonts: @PanelContainer@65
+PASS HUD fits (3004, 1805) with updated fonts: CrewAdvisor
+PASS HUD fits (3004, 1805) with updated fonts: @HBoxContainer@101
+PASS HUD fits (3004, 1805) with updated fonts: @PanelContainer@114
+PASS HUD fits (3004, 1805) with updated fonts: @Label@91
+PASS MissionControlUI runs simulation to completion
+PASS MissionControlUI renders SimChart control
+IMPROVEMENTS_TEST_RESULT: 0 failures
