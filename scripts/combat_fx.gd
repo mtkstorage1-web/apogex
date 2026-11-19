@@ -40,21 +40,26 @@ static func impact(parent: Node3D, at: Vector3, color: Color, size := 1.0, count
 	particles.name = "ImpactSparks"
 	particles.position = at
 	preload("res://scripts/graphics_settings.gd").set_particle_count(particles, count)
-	particles.lifetime = 0.4
+	particles.lifetime = 0.45
 	particles.one_shot = true
 	particles.explosiveness = 1.0
 	particles.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
 	particles.emission_sphere_radius = size * 0.12
 	particles.direction = Vector3.UP
 	particles.spread = 180.0
-	particles.gravity = Vector3(0, -5, 0)
-	particles.initial_velocity_min = size * 2.0
-	particles.initial_velocity_max = size * 8.0
-	particles.scale_amount_min = size * 0.08
-	particles.scale_amount_max = size * 0.24
+	particles.gravity = Vector3(0, -3.2, 0)
+	particles.damping_min = size * 4.0
+	particles.damping_max = size * 9.0
+	particles.initial_velocity_min = size * 3.0
+	particles.initial_velocity_max = size * 11.0
+	particles.scale_amount_min = size * 0.06
+	particles.scale_amount_max = size * 0.28
+	# White-hot core that cools through a boosted tint so sparks pop on the dark regolith.
+	var hot := Color(minf(color.r * 1.6 + 0.2, 1.0), minf(color.g * 1.6 + 0.2, 1.0), minf(color.b * 1.6 + 0.2, 1.0))
 	var fade := Gradient.new()
-	fade.set_color(0, Color(1, 0.95, 0.8, 0.9))
-	fade.add_point(0.25, Color(color, 0.7))
+	fade.set_color(0, Color(1, 1, 1, 1))
+	fade.add_point(0.12, Color(1, 0.96, 0.82, 0.95))
+	fade.add_point(0.4, Color(hot, 0.8))
 	fade.set_color(1, Color(color, 0))
 	particles.color_ramp = fade
 	particles.mesh = preload("res://scripts/exhaust_fx.gd").soft_quad()
@@ -63,11 +68,13 @@ static func impact(parent: Node3D, at: Vector3, color: Color, size := 1.0, count
 	particles.emitting = true
 	var light := particles.get_child(0) as OmniLight3D
 	light.light_color = color
-	light.light_energy = size * 1.8
-	light.omni_range = size * 4.0
+	light.light_energy = size * 4.0
+	light.omni_range = size * 5.0
+	light.omni_attenuation = 1.4
 	light.shadow_enabled = false
+	# Punchy flash: instant peak, sharp exponential falloff (retained pooled light, no new nodes).
 	var tween := particles.create_tween()
-	tween.tween_property(light, "light_energy", 0.0, 0.15)
+	tween.tween_property(light, "light_energy", 0.0, 0.14).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	tween.tween_interval(0.5)
 	tween.tween_callback(_release.bind(particles))
 

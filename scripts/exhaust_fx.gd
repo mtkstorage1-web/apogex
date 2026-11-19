@@ -62,6 +62,7 @@ static func create(radius: float, plume_length: float, warm := false) -> Exhaust
 	fx.emitters.append(particles)
 	var light := OmniLight3D.new()
 	light.light_color = Color(1.0, 0.48, 0.12) if warm else Color(0.2, 0.6, 1.0)
+	if warm: light.set_meta("base_color", light.light_color)
 	light.light_energy = 0.55
 	light.omni_range = radius * 4.0
 	light.position.z = radius
@@ -85,7 +86,13 @@ func _process(dt: float) -> void:
 	var power := intensity * (0.94 + 0.06 * sin(age * 27.0))
 	for material in plume_materials: material.set_shader_parameter("intensity", power)
 	for emitter in emitters: emitter.emitting = is_visible_in_tree() and intensity > 0.02
-	for light in lights: light.light_energy = power * 0.55 if is_visible_in_tree() else 0.0
+	# Warm golden-amber ignition flicker: layered fast sines + small random crackle.
+	var flicker := 0.82 + 0.1 * sin(age * 31.0) + 0.06 * sin(age * 57.0 + 1.3) + 0.08 * randf()
+	var lit := is_visible_in_tree() and intensity > 0.02
+	for light in lights:
+		light.light_energy = power * 0.62 * flicker if lit else 0.0
+		if lit and light.has_meta("base_color"):
+			light.light_color = (light.get_meta("base_color") as Color).lerp(Color(1.0, 0.72, 0.28), clampf(0.25 + 0.2 * sin(age * 19.0), 0.0, 0.45))
 
 
 ## World-space steam/dust stays at the launch mount as the vehicle clears it.

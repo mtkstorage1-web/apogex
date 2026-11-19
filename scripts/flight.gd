@@ -51,6 +51,10 @@ var raid_sel := 0
 var eng_delay := 0.0
 var raid_delay := 0.0
 var shake := 0.0
+var _fov_kick := 0.0
+var _applied_kick := 0.0
+var _was_boosting := false
+var _rumble_t := 0.0
 var done := false
 var warning_clock := 0.0
 var bank_target := 0.0
@@ -138,6 +142,7 @@ func setup(main, start: Transform3D) -> void:
 	g.yaw = 0.0
 	g.pitch = _start_heading.x
 	g.cam.fov = 70.0
+	_applied_kick = 0.0
 	# Continue from the launch chase camera instead of cutting to the role camera.
 	cam_from = Transform3D.IDENTITY.looking_at(Vector3(0, 2, -40) - Vector3(0, 10, 38), Vector3.UP)
 	cam_from.origin = Vector3(0, 10, 38)
@@ -624,6 +629,17 @@ func _camera(dt: float) -> void:
 	var jitter := Vector3.ZERO
 	if not UI.reduced_motion and GraphicsSettings.motion_effects:
 		jitter = Vector3(randf() - 0.5, randf() - 0.5, 0) * shake * 1.5
+		# Thrust rumble: subtle layered micro-shake scaled by forward speed, punchier on boost.
+		var boosting := s.boost > 0.0 and s.phase == "flight"
+		if boosting and not _was_boosting:
+			_fov_kick = 5.0
+		_was_boosting = boosting
+		_fov_kick = move_toward(_fov_kick, 0.0, dt * 4.0)
+		_rumble_t += dt
+		var thrust := clampf(absf(flight_speed) / 185.0, 0.0, 1.0)
+		var rumble := thrust * (0.07 + (0.09 if boosting else 0.0))
+		if rumble > 0.001 and g.mode != "cine":
+			jitter += Vector3(sin(_rumble_t * 47.0) + 0.5 * sin(_rumble_t * 83.0), cos(_rumble_t * 53.0) + 0.5 * sin(_rumble_t * 71.0), 0.0) * rumble
 		var target_fov := 70.0
 		if s.selected == 0 and s.phase == "flight" and g.mode != "cine":
 			if s.boost > 0.0:
@@ -632,8 +648,13 @@ func _camera(dt: float) -> void:
 				target_fov = 66.0
 			elif g.held(KEY_W):
 				target_fov = 78.0
-		cam.fov = lerpf(cam.fov, target_fov, 1.0 - exp(-dt * 5.0))
+		var base_fov := cam.fov - _applied_kick
+		_applied_kick = _fov_kick * smoothstep(0.0, 5.0, _fov_kick)
+		cam.fov = lerpf(base_fov, target_fov, 1.0 - exp(-dt * 5.0)) + _applied_kick
 	else:
+		_fov_kick = 0.0
+		_applied_kick = 0.0
+		_was_boosting = s.boost > 0.0
 		cam.fov = 70.0
 	match s.selected:
 		2:
@@ -690,6 +711,8 @@ func cine(_kind: String, k: float, dt: float) -> void:
 	flame.visible = k < 0.9
 	_sync_universe()
 	g.cam.fov = 70.0
+	_applied_kick = 0.0
+	_fov_kick = 0.0
 	g.cam.position = rig.position + Vector3(26, 7 + 10.0 * (1.0 - k), 30)
 	g.cam.look_at(rig.position + Vector3(0, -2, 0), Vector3.UP)
 

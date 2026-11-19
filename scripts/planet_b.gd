@@ -57,6 +57,8 @@ var scan_sfx_cd := 0.0
 var sprint_dust_distance := 0.0
 var dust_mesh: QuadMesh
 var dust_fade: Gradient
+var extract_ring: MeshInstance3D
+var flag_state_prev := {}
 
 
 func actor(i: int) -> Actor:
@@ -193,7 +195,21 @@ func _flags() -> void:
 		var ring: MeshInstance3D = marker.get_node("ScanRing") as MeshInstance3D
 		var lab: Label3D = marker.get_node("FlagLabel") as Label3D
 		blockers.append({"c": Vector2(site[0], site[1]), "r": 1.3})
-		flag_nodes[f["id"]] = {"crystal": crystal, "gem": gem, "pennant": pennant, "ring": ring, "label": lab, "site": marker.position}
+		# Tension cue: a pulsing luminous halo that rides under whoever carries this flag.
+		var aura := Gfx.ring(1.6, 0.16, CRYSTAL, 0.8)
+		aura.name = "CarryAura"
+		aura.material_override = Gfx.unshaded(CRYSTAL, 0.8).duplicate()
+		aura.visible = false
+		marker.add_child(aura)
+		flag_nodes[f["id"]] = {"crystal": crystal, "gem": gem, "pennant": pennant, "ring": ring, "label": lab, "site": marker.position, "aura": aura}
+		flag_state_prev[f["id"]] = f["state"]
+	# Extraction zone at the load ramp lights up and throbs while our crew carries a flag.
+	extract_ring = Gfx.ring(4.0, 0.22, ACCENT, 0.8)
+	extract_ring.name = "ExtractRing"
+	extract_ring.material_override = Gfx.unshaded(ACCENT, 0.8).duplicate()
+	extract_ring.position = HATCH + Vector3(0, 0.12, 0)
+	extract_ring.visible = false
+	add_child(extract_ring)
 
 
 func _ships() -> void:
@@ -960,6 +976,36 @@ func _visuals(dt: float) -> void:
 			shot_trace["node"].queue_free()
 			tracers.erase(shot_trace)
 
+
+## Pulsing carry aura plus crisp flashes on pickup / delivery / drop transitions.
+func _flag_tension(f: Dictionary, fn: Dictionary, col: Color, t: float) -> void:
+	var st: String = f["state"]
+	var on_moon: bool = f["planet"] == "B"
+	var aura: MeshInstance3D = fn["aura"]
+	aura.visible = on_moon and st == "carried"
+	if aura.visible:
+		var cr: Node3D = fn["crystal"]
+		var beat := 0.5 + 0.5 * sin(t * 9.0 + float(f["id"]))
+		aura.position = Vector3(cr.position.x, 0.14, cr.position.z)
+		var sc := 1.0 + beat * 0.45
+		aura.scale = Vector3(sc, 0.05, sc)
+		(aura.material_override as StandardMaterial3D).albedo_color = Color(col.lerp(Color.WHITE, beat * 0.4), 0.4 + beat * 0.55)
+	var prev: String = flag_state_prev.get(f["id"], st)
+	if prev == st:
+		return
+	flag_state_prev[f["id"]] = st
+	if not on_moon and st != "onboard":
+		return
+	var at: Vector3 = fn["site"] + (fn["crystal"] as Node3D).position
+	if st == "carried":
+		CombatFX.impact(self, at, col.lerp(Color.WHITE, 0.3), 1.6, 26)
+		CombatFX.ring_pulse(self, Vector3(at.x, 0.2, at.z), col, 5.0, 0.4)
+	elif st == "onboard":
+		CombatFX.impact(self, HATCH + Vector3(0, 1.5, 0), ACCENT.lerp(Color.WHITE, 0.4), 2.2, 32)
+		CombatFX.ring_pulse(self, HATCH + Vector3(0, 0.2, 0), ACCENT, 9.0, 0.55)
+	elif st == "ground" and prev == "carried":
+		CombatFX.impact(self, at, Color.WHITE, 1.2, 16)
+		CombatFX.ring_pulse(self, Vector3(at.x, 0.2, at.z), Color.WHITE, 3.5, 0.35)
 
 func hud_update(hud: Hud) -> void:
 	var s: Sim = g.sim
