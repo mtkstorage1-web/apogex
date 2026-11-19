@@ -6,6 +6,7 @@ extends Node3D
 const CONSOLES := {"engine": Vector3(-12, 0, 4), "power": Vector3(12, 0, -3), "pressure": Vector3(12, 0, 6)}
 const CONSOLE_PROPS := {"engine": "prop_dial_calibrator", "power": "prop_button_console", "pressure": "prop_valve_wheel"}
 const Hardware = preload("res://scripts/industrial_hardware.gd")
+const GraphicsSettings = preload("res://scripts/graphics_settings.gd")
 const ACCENT := Color("#f08a4b")
 const SHOP := Vector3(0, 0, -30)
 const SHOP_FOOTPRINT := Rect2(-17, SHOP.z - 11, 34, 24)
@@ -140,6 +141,7 @@ func setup(main, p_delivery: bool) -> void:
 	_ship()
 	_shop()
 	_water_features()
+	_living_world()
 	_grass_scatter()
 	_apron_railing()
 	_crew()
@@ -285,6 +287,134 @@ func _lakeside_tree(parent: Node3D, pos: Vector3, scale_f: float, trunk_mat: Mat
 		cone.height = 2.6 - tier * 0.5
 		cone.radial_segments = 10
 		tree.add_child(Gfx.mesh(cone, leaf_mat, Vector3(0, 3.0 + tier * 1.5, 0), true))
+
+
+var _sky_birds: Array = []   # {root, lw, rw, angle, radius, height, speed, phase}
+var _splash_cd := 0.0
+var _chatter_t := 9.0
+var _chatter_idx := 0
+const CREW_CALLOUTS := [
+	"FINN: Clear skies over the pad — perfect launch window!",
+	"CHIP: Cryo propellant tanks pressurized and venting clean.",
+	"BARBARA: Rival pads are already moving — let's beat 'em to orbit!",
+	"FERNANDO: Grab our blueprint at the Parts Shop and let's roll!",
+	"FINN: Wind is light across the meadow — green across the board.",
+	"CHIP: Assembly gantry standing by whenever you confirm all 12 slots.",
+]
+
+
+func _living_world() -> void:
+	var life := Node3D.new()
+	life.name = "LivingWorld"
+	add_child(life)
+
+	# 1. Floating sunlit pollen / light motes drifting across the meadow & ponds.
+	var motes := CPUParticles3D.new()
+	motes.name = "SunlitMotes"
+	motes.position = Vector3(0, 3.2, 10)
+	motes.lifetime = 6.5
+	motes.preprocess = 3.0
+	motes.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	motes.emission_box_extents = Vector3(58, 2.8, 52)
+	motes.direction = Vector3(0.4, 0.25, 0.2)
+	motes.spread = 55.0
+	motes.gravity = Vector3(0, 0.04, 0)
+	motes.initial_velocity_min = 0.25
+	motes.initial_velocity_max = 0.75
+	motes.scale_amount_min = 0.04
+	motes.scale_amount_max = 0.09
+	var mote_mesh := QuadMesh.new()
+	mote_mesh.size = Vector2(1.0, 1.0)
+	var mote_mat := StandardMaterial3D.new()
+	mote_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mote_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	mote_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mote_mat.albedo_color = Color(1.0, 0.96, 0.76, 0.55)
+	mote_mesh.material = mote_mat
+	motes.mesh = mote_mesh
+	motes.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	GraphicsSettings.set_particle_count(motes, 70)
+	life.add_child(motes)
+
+	# 2. Gentle cryogenic steam wisps rising from the launch complex propellant tanks.
+	var steam_mat := StandardMaterial3D.new()
+	steam_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	steam_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	steam_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	steam_mat.albedo_color = Color(0.92, 0.97, 1.0, 0.26)
+	var steam_mesh := QuadMesh.new()
+	steam_mesh.size = Vector2(1.2, 1.2)
+	steam_mesh.material = steam_mat
+	for tx in [-47.0, 47.0]:
+		var vent := CPUParticles3D.new()
+		vent.position = Vector3(tx, 7.6, -49.0)
+		vent.lifetime = 3.2
+		vent.preprocess = 1.5
+		vent.direction = Vector3(0.25, 1.0, 0.1)
+		vent.spread = 18.0
+		vent.gravity = Vector3(0.18, 0.25, 0)
+		vent.initial_velocity_min = 1.1
+		vent.initial_velocity_max = 2.0
+		vent.scale_amount_min = 0.55
+		vent.scale_amount_max = 1.75
+		vent.mesh = steam_mesh
+		vent.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		GraphicsSettings.set_particle_count(vent, 14)
+		life.add_child(vent)
+
+	# 3. Stylized sunlit birds gliding in wide lazy circles above the spaceport.
+	var bird_mat := Gfx.mat(Color("#f7f9fc"), 0.8)
+	var wing_mesh := BoxMesh.new()
+	wing_mesh.size = Vector3(0.85, 0.05, 0.24)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 8081
+	for i in 6:
+		var root := Node3D.new()
+		var lw := Gfx.mesh(wing_mesh, bird_mat, Vector3(-0.42, 0, 0), false)
+		var rw := Gfx.mesh(wing_mesh, bird_mat, Vector3(0.42, 0, 0), false)
+		root.add_child(lw)
+		root.add_child(rw)
+		life.add_child(root)
+		_sky_birds.append({
+			"root": root, "lw": lw, "rw": rw,
+			"angle": rng.randf_range(0.0, TAU),
+			"radius": rng.randf_range(38.0, 74.0),
+			"height": rng.randf_range(24.0, 44.0),
+			"speed": rng.randf_range(0.14, 0.24) * (1.0 if i % 2 == 0 else -1.0),
+			"phase": rng.randf_range(0.0, TAU),
+		})
+
+
+func _tick_living_world(dt: float, player: Actor, speed: float) -> void:
+	var motion_ok := GraphicsSettings.motion_effects and not UI.reduced_motion
+	if motion_ok:
+		for b in _sky_birds:
+			b["angle"] += float(b["speed"]) * dt
+			b["phase"] += dt * 5.2
+			var a: float = b["angle"]
+			var r: float = b["radius"]
+			var root: Node3D = b["root"]
+			root.position = Vector3(cos(a) * r, float(b["height"]) + sin(a * 2.0) * 2.2, sin(a) * r)
+			root.rotation.y = -a + (0.0 if float(b["speed"]) > 0.0 else PI)
+			var flap := sin(float(b["phase"])) * 0.42
+			(b["lw"] as Node3D).rotation.z = flap
+			(b["rw"] as Node3D).rotation.z = -flap
+
+	# Reactive pond splash when moving through shallow pond edges.
+	_splash_cd = maxf(0.0, _splash_cd - dt)
+	if speed > 1.2 and _splash_cd <= 0.0 and player != null:
+		var pt := Vector2(player.position.x, player.position.z)
+		if _in_water_pond(pt, 0.8):
+			_splash_cd = 0.28
+			CombatFX.dust_puff(self, player.global_position, Color("#c8f4ff"), 0.85)
+			g.sfx("splash", -12.0, 0.14)
+
+	# Lively periodic crew radio callouts so the squad feels alive.
+	_chatter_t -= dt
+	if _chatter_t <= 0.0 and g != null and g.hud != null and not g.autotest:
+		_chatter_t = 18.0
+		g.hud.toast(CREW_CALLOUTS[_chatter_idx % CREW_CALLOUTS.size()])
+		_chatter_idx += 1
 
 
 func _in_water_pond(point: Vector2, pad := 0.0) -> bool:
@@ -891,6 +1021,7 @@ func tick(dt: float) -> void:
 	beacon.visible = false
 	var work := _interact(r, a, dt)
 	a.animate(dt, speed, work, s.carry[r] != null)
+	_tick_living_world(dt, a, speed)
 	for i in 4:
 		if i != r:
 			_bot(i, dt)

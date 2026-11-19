@@ -58,6 +58,8 @@ var launch_tick_usec := 0
 var ff := 1.0
 var players: Array = []
 var players_3d: Array = []
+var ambient_player: AudioStreamPlayer
+var _ambient_kind := ""
 var master_volume_db := 0.0
 var streams := {}
 var chosen_route := "balanced"
@@ -122,6 +124,9 @@ func _ready() -> void:
 		p3.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
 		add_child(p3)
 		players_3d.append(p3)
+	ambient_player = AudioStreamPlayer.new()
+	ambient_player.volume_db = -18.0
+	add_child(ambient_player)
 	var args := OS.get_cmdline_user_args()
 	autotest = args.has("--autotest")
 	show_home()
@@ -156,6 +161,26 @@ func _ready() -> void:
 # ============================================================================
 # Utilities
 # ============================================================================
+func _update_ambient() -> void:
+	if ambient_player == null:
+		return
+	var want := ""
+	if not autotest and mode == "play" and sim != null:
+		match sim.phase:
+			"flight": want = "ambient_flight"
+			"surface": want = "ambient_moon"
+			_: want = "ambient_earth"
+	if want == _ambient_kind:
+		return
+	_ambient_kind = want
+	if want == "" or not streams.has(want):
+		if ambient_player.playing:
+			ambient_player.stop()
+		return
+	ambient_player.stream = streams[want]
+	ambient_player.play()
+
+
 func sfx(name: String, vol := -8.0, pitch_var := 0.08) -> void:
 	if not streams.has(name):
 		return
@@ -399,6 +424,7 @@ func _tick_touch() -> void:
 
 
 func _process(dt: float) -> void:
+	_update_ambient()
 	_tick_touch()
 	if is_instance_valid(fps_counter) and fps_counter.visible:
 		var fps := Engine.get_frames_per_second()
