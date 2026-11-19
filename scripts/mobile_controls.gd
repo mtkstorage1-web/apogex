@@ -23,6 +23,13 @@ const SATELLITES := [
 	["weapon", "B", 247.5],
 	["map", "MAP", 270.0],
 ]
+## Squad quick-command buttons above the arc: name, label, x offset from FIRE.
+const CMD_BUTTONS := [
+	["order", "CMD", -34.0],
+	["priority", "PING", 34.0],
+]
+const CMD_RADIUS := 27.0
+const CMD_RISE := 222.0
 const MOUSE_POINTER := 1000
 
 const SLATE := Color(0.08, 0.1, 0.16, 0.42)
@@ -113,6 +120,10 @@ func satellite_center(i: int) -> Vector2:
 	return fire_center() + Vector2(cos(a), sin(a)) * ARC_RADIUS
 
 
+func cmd_center(i: int) -> Vector2:
+	return fire_center() + Vector2(float(CMD_BUTTONS[i][2]), -CMD_RISE)
+
+
 func set_primary_label(text: String) -> void:
 	if text == _primary_label:
 		return
@@ -126,7 +137,10 @@ func primary_label() -> String:
 
 ## Leftmost x reached by the action cluster (outermost satellite at 180°).
 func cluster_left_edge() -> float:
-	return fire_center().x - ARC_RADIUS - SAT_RADIUS
+	var edge := fire_center().x - ARC_RADIUS - SAT_RADIUS
+	for i in CMD_BUTTONS.size():
+		edge = minf(edge, cmd_center(i).x - CMD_RADIUS)
+	return edge
 
 
 func _ripple(pos: Vector2, radius: float) -> void:
@@ -277,6 +291,15 @@ func _draw() -> void:
 		draw_circle(sc, r, SLATE if not held else Color(0.3, 0.2, 0.1, 0.6))
 		draw_arc(sc, r, 0, TAU, 40, AMBER if held else SLATE_EDGE, 2.0, true)
 		_label(sc, SATELLITES[i][1], 12, Color(1, 0.95, 0.88, 0.95))
+	# Squad quick-command buttons.
+	for i in CMD_BUTTONS.size():
+		var cid: String = CMD_BUTTONS[i][0]
+		var cc := cmd_center(i)
+		var cheld := _button_pointers.values().has(cid)
+		var cr := CMD_RADIUS * (0.86 if cheld or _pressed_flash.has(cid) else 1.0)
+		draw_circle(cc, cr, SLATE if not cheld else Color(0.3, 0.2, 0.1, 0.6))
+		draw_arc(cc, cr, 0, TAU, 40, AMBER if cheld else SLATE_EDGE, 2.0, true)
+		_label(cc, CMD_BUTTONS[i][1], 11, Color(1, 0.95, 0.88, 0.95))
 	# Tap ripples: crisp expanding translucent rings.
 	for rp in _ripples:
 		var k: float = rp["t"] / RIPPLE_TIME

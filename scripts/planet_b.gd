@@ -32,6 +32,8 @@ var magazines := [24, 24, 24, 24]
 var ammo: int:
 	get: return magazines[g.sim.selected]
 	set(value): magazines[g.sim.selected] = value
+var ko_streak := 0
+var ko_streak_clock := 0.0
 var reload_times := [0.0, 0.0, 0.0, 0.0]
 var reload_t: float:
 	get: return reload_times[g.sim.selected]
@@ -421,6 +423,11 @@ func tick(dt: float) -> void:
 		if step != "":
 			g.sfx_3d(step, a.global_position, -14)
 	combat_hud.set_crosshair_visible(down_t <= 0.0 and r != 3 and a.weapon_drawn)
+	combat_hud.set_reload_progress(1.0 - reload_t / 1.3 if reload_t > 0.0 else 0.0)
+	combat_hud.set_low_ammo(r != 3 and reload_t <= 0.0 and ammo <= 6)
+	combat_hud.set_compass_markers(_compass_markers(r))
+	ko_streak_clock = maxf(0.0, ko_streak_clock - dt)
+	if ko_streak_clock <= 0.0: ko_streak = 0
 	for i in 4:
 		if i != r:
 			if down_times[i] <= 0.0: _bot(i, dt)
@@ -429,6 +436,33 @@ func tick(dt: float) -> void:
 	_visuals(dt)
 	_first_person_tick()
 	for i in 4: actors[i].set_health(suit_hp[i] if down_times[i] <= 0.0 else 0.0, down_times[i] > 0.0)
+
+
+func _compass_markers(r: int) -> Array:
+	var s: Sim = g.sim
+	var markers: Array = []
+	var crew_carrying := false
+	for f in s.flags:
+		var st: String = f["state"]
+		if st != "site" and st != "ground" and st != "carried":
+			continue
+		var pos: Vector3 = f["position"]
+		var col := CRYSTAL
+		if st == "carried":
+			if f["owner"] != 0:
+				continue
+			crew_carrying = true
+			pos = actors[f["carrier"]].position
+			col = Sim.faction_color(0)
+		elif st == "ground":
+			col = Color("#ffd29a")
+		markers.append({"pos": pos, "color": col, "label": "FLAG %02d" % (int(f["id"]) + 1), "priority": int(f["id"]) == s.priority_flag})
+	if crew_carrying:
+		for m in markers:
+			if m["color"] == Sim.faction_color(0):
+				m["priority"] = false
+	markers.append({"pos": HATCH, "color": ACCENT, "label": "RAMP", "priority": crew_carrying})
+	return markers
 
 
 func _surface_dust(point: Vector3, previous: Vector3, sprinting: bool) -> void:
@@ -733,6 +767,7 @@ func _shoot() -> void:
 	combat_hud.trigger_bloom(9.0)
 	_recoil_kick(g.sim.selected)
 	var role: int = g.sim.selected
+	actor_node.trigger_weapon_kick(0.7 if role == 1 else (1.5 if role == 2 else 1.0))
 	var end_pt: Vector3 = from + dir * hit_t
 	var muzzle_col := Color("#38bdf8") if role == 1 else (Color("#f472b6") if role == 2 else Color(0.5, 0.8, 1.0))
 	preload("res://scripts/combat_fx.gd").impact(self, muzzle, muzzle_col, 0.35, 6)
@@ -759,6 +794,22 @@ func _shoot() -> void:
 		preload("res://scripts/combat_fx.gd").impact(self, end_pt, Sim.faction_color(hit_team), 0.65, 12)
 	elif hit_t < 119.5:
 		preload("res://scripts/combat_fx.gd").impact(self, end_pt, muzzle_col, 0.4, 8)
+
+
+func _register_ko_streak() -> void:
+	ko_streak = ko_streak + 1 if ko_streak_clock > 0.0 else 1
+	ko_streak_clock = 12.0
+	if ko_streak < 2: return
+	var title := "DOUBLE KO!"
+	var col := Color("#ffd866")
+	if ko_streak == 3:
+		title = "TRIPLE KO!"
+		col = Color("#ff9d2e")
+	elif ko_streak >= 4:
+		title = "UNSTOPPABLE!"
+		col = Color("#ff4a3a")
+	combat_hud.announce(title, "%d knockouts in a row" % ko_streak, col)
+	_feed(title, col)
 
 
 func _damage_rival(t: int, dmg: float, hit_pos: Variant = null) -> void:
@@ -972,14 +1023,14 @@ func _rivals_tick(dt: float) -> void:
 				if hit:
 					if s.shield > 0.0:
 						g.sfx("shield_hit", -8)
-						combat_hud.trigger_damage(true)
+						combat_hud.trigger_damage_from(ra.global_position, true)
 					else:
 						last_hit[s.selected] = 6.0
 						field_hp -= 9.0 * s.armor_mult * Sim.DIFFICULTY[s.difficulty]["damage"]
 						me.flash("hit", 0.28)
 						preload("res://scripts/combat_fx.gd").impact(self, me.position + Vector3.UP * 1.4, Color("#f56d65"), 0.6, 10)
 						g.hud.hurt(0.3)
-						combat_hud.trigger_damage(false)
+						combat_hud.trigger_damage_from(ra.global_position, false)
 						g.sfx("hurt", -8)
 						if field_hp <= 0.0:
 							_downed()

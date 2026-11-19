@@ -83,6 +83,18 @@ var ground_feet: Array = []
 var step_clock := 0.0
 var step_index := 0
 
+# Tactile movement feel
+const SPRINT_LEAN_MAX := deg_to_rad(6.0)
+const LAND_SETTLE_TIME := 0.14
+const WEAPON_KICK_TIME := 0.10
+var _lean := 0.0
+var _land_t := 0.0
+var _was_airborne := false
+var _holder_base_scale := Vector3.ONE
+var _weapon_rest_pos := Vector3.ZERO
+var _kick_t := 0.0
+var _kick_strength := 1.0
+
 # Used for floating idle animations
 var _tk_time := 0.0
 var _tk_hand := Vector3.ZERO  # palm position in actor space, updated by the pose modifier
@@ -158,6 +170,7 @@ func setup(model_path: String, p_role: int, p_color: Color, tag := "", tag_color
 		name_tag.position.y = visual_height + 0.55
 		add_child(name_tag)
 	stand_y = holder.position.y
+	_holder_base_scale = holder.scale
 	play("idle")
 	return self
 
@@ -202,6 +215,7 @@ func animate(dt: float, speed: float, working := "", _carrying := false) -> void
 		body_holder.position.y = lerpf(stand_y, 0.7, down_blend)
 	elif role != 1:
 		body_holder.position.y = stand_y
+	_update_tactile_feel(dt, speed, body_holder)
 	if is_downed:
 		set_weapon_drawn(false)
 		working = "hit"
@@ -226,6 +240,32 @@ func animate(dt: float, speed: float, working := "", _carrying := false) -> void
 	# Force the arm position procedurally if using Telekinesis
 	if carry_style == CarryStyle.TELEKINESIS:
 		_apply_procedural_tk_pose(dt)
+
+
+## Sprint forward-lean, jump-land squash and weapon kickback. Pivots sit at the feet, so feet stay grounded.
+func _update_tactile_feel(dt: float, speed: float, body_holder: Node3D) -> void:
+	var airborne := position.y > 0.05
+	if _was_airborne and not airborne and not is_downed:
+		_land_t = LAND_SETTLE_TIME
+	_was_airborne = airborne
+	var sprinting := speed > 4.0 and not airborne and not is_downed and down_blend <= 0.0
+	var lean_target := SPRINT_LEAN_MAX * clampf((speed - 4.0) / 3.0, 0.0, 1.0) if sprinting else 0.0
+	_lean = lerpf(_lean, lean_target, clampf(dt * 8.0, 0.0, 1.0))
+	# The holder is yawed by PI, so a positive local X rotation pitches the body forward.
+	body_holder.rotation.x = _lean
+	_land_t = maxf(0.0, _land_t - dt)
+	var f := 0.0 if is_downed else smoothstep(0.0, 1.0, _land_t / LAND_SETTLE_TIME)
+	body_holder.scale = _holder_base_scale * Vector3(1.0 + 0.04 * f, 1.0 - 0.08 * f, 1.0 + 0.04 * f)
+	_kick_t = maxf(0.0, _kick_t - dt)
+	if held_weapon:
+		var k := smoothstep(0.0, 1.0, _kick_t / WEAPON_KICK_TIME) * _kick_strength
+		held_weapon.position = _weapon_rest_pos + Vector3(0.0, 0.02, 0.14) * k
+
+
+## Snappy 3D kickback of the held weapon visual; recovers over 0.10s. Rotation and bone attachment are untouched.
+func trigger_weapon_kick(strength := 1.0) -> void:
+	_kick_strength = clampf(strength, 0.0, 3.0)
+	_kick_t = WEAPON_KICK_TIME
 
 
 func face(dir: Vector3, dt: float, rate := 10.0) -> void:
@@ -397,6 +437,7 @@ func install_weapon(path: String) -> void:
 	held_weapon.scale = Vector3.ONE * scale_factor
 	held_weapon.rotation.y = 0.0
 	held_weapon.position = Vector3(0, 0.06, -0.18)
+	_weapon_rest_pos = held_weapon.position
 	weapon_grip.add_child(held_weapon)
 	weapon_muzzle = Node3D.new()
 	weapon_muzzle.name = "Muzzle"
