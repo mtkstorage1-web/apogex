@@ -186,109 +186,112 @@ func _build() -> void:
 	damage_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(damage_flash)
 
-	# Brand.
-	var brand := UI.rich("[b]APOG[color=#eaa665]EX[/color][/b]", 26)
-	brand.add_theme_constant_override("outline_size", 6)
+	# Brand (compact top-left).
+	var brand := UI.rich("[b]APOG[color=#eaa665]EX[/color][/b]", 20)
+	brand.add_theme_constant_override("outline_size", 5)
 	brand.add_theme_color_override("font_outline_color", Color(0.07, 0.05, 0.11, 0.8))
-	brand.position = Vector2(24, 16)
-	brand.size = Vector2(200, 40)
+	brand.position = Vector2(16, 10)
+	brand.size = Vector2(140, 28)
 	add_child(brand)
 
-	# Phase strip + clock.
-	var strip := UI.panel(Vector2(0, 40), Color(0.1, 0.08, 0.14, 0.9))
+	# Compact phase strip + clock.
+	var strip := UI.panel(Vector2(0, 30), Color(0.08, 0.07, 0.13, 0.84))
 	strip.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	strip.position = Vector2(-330, 10)
-	strip.custom_minimum_size = Vector2(660, 40)
+	strip.position = Vector2(-260, 8)
+	strip.custom_minimum_size = Vector2(520, 30)
 	add_child(strip)
-	var sh := UI.hbox(10)
+	var sh := UI.hbox(7)
 	strip.add_child(sh)
 	for i in STEPS.size():
-		var l := UI.label(STEPS[i], 13, UI.DIM)
+		var l := UI.label(STEPS[i], 11, UI.DIM)
 		phase_labels.append(l)
 		sh.add_child(l)
 		if i < STEPS.size() - 1:
-			sh.add_child(UI.label("—", 13, Color(1, 1, 1, 0.15)))
-	sh.add_child(UI.spacer(0, 6, true))
-	clock = UI.mono_label("14:00", 20, UI.TEXT)
+			sh.add_child(UI.label("·", 11, Color(1, 1, 1, 0.2)))
+	sh.add_child(UI.spacer(0, 4, true))
+	clock = UI.mono_label("14:00", 16, UI.TEXT)
 	sh.add_child(clock)
 
-	# Crew cards.
-	var cards := UI.hbox(6)
+	# Slim crew cards.
+	var cards := UI.hbox(5)
 	cards.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	cards.position = Vector2(-310, 58)
+	cards.position = Vector2(-257, 42)
 	add_child(cards)
 	for i in 4:
-		var p := UI.panel(Vector2(150, 52), Color(0.1, 0.08, 0.14, 0.85))
+		var p := UI.panel(Vector2(124, 38), Color(0.08, 0.07, 0.13, 0.80))
 		var v := UI.vbox(1)
 		p.add_child(v)
-		var n := UI.label(Sim.SPECIALISTS[i]["name"], 14, Sim.role_color(i))
-		var r := UI.label(Sim.SPECIALISTS[i]["role"], 10, UI.MUTED)
-		var s := UI.label("STARTING", 10, UI.TEXT)
-		var b := UI.bar(Sim.role_color(i), 0.0, 3)
-		v.add_child(n)
-		v.add_child(r)
+		var top_row := UI.hbox(4)
+		var n := UI.label(Sim.SPECIALISTS[i]["name"], 11, Sim.role_color(i))
+		var r := UI.label(Sim.SPECIALISTS[i]["role"].left(3).to_upper(), 9, UI.MUTED)
+		top_row.add_child(n)
+		top_row.add_child(UI.spacer(0, 2, true))
+		top_row.add_child(r)
+		var s := UI.label("STARTING", 9, UI.TEXT)
+		var b := UI.bar(Sim.role_color(i), 0.0, 2)
+		v.add_child(top_row)
 		v.add_child(s)
 		v.add_child(b)
 		cards.add_child(p)
 		crew_cards.append({"panel": p, "status": s, "bar": b, "name": n})
 
-	# Title + objectives.
-	title = UI.label("PREPARE EXPEDITION", 19, UI.TEXT)
-	title.position = Vector2(24, 58)
+	# Compact title + objectives.
+	title = UI.label("PREPARE EXPEDITION", 13, UI.TEXT)
+	title.position = Vector2(16, 38)
 	add_child(title)
-	subtitle = UI.label("", 11, UI.TEXT)
-	subtitle.position = Vector2(20, 92)
+	subtitle = UI.label("", 10, UI.TEXT)
+	subtitle.position = Vector2(14, 58)
 	subtitle.add_theme_stylebox_override("normal", _pill_style())
 	add_child(subtitle)
-	var op := UI.panel(Vector2(280, 0), Color(0.1, 0.08, 0.14, 0.8))
-	op.position = Vector2(20, 124)
+	var op := UI.panel(Vector2(228, 0), Color(0.08, 0.07, 0.13, 0.76))
+	op.position = Vector2(14, 86)
 	add_child(op)
-	objectives = UI.rich("", 14)
-	objectives.custom_minimum_size = Vector2(250, 0)
-	var objective_box := UI.vbox(4)
-	objective_box.add_child(HudIcon.new("objective", UI.ACCENT, 16))
+	objectives = UI.rich("", 12)
+	objectives.custom_minimum_size = Vector2(204, 0)
+	var objective_box := UI.vbox(2)
+	objective_box.add_child(HudIcon.new("objective", UI.ACCENT, 13))
 	objective_box.add_child(objectives)
 	op.add_child(objective_box)
 
-	# Radar + faction board.
-	var right := UI.vbox(8)
+	# Compact radar + faction board.
+	var right := UI.vbox(6)
 	right.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	right.position = Vector2(-236, 14)
+	right.position = Vector2(-180, 10)
 	add_child(right)
-	var rp := UI.panel(Vector2(220, 0), Color(0.1, 0.08, 0.14, 0.85))
+	var rp := UI.panel(Vector2(168, 0), Color(0.08, 0.07, 0.13, 0.80))
 	right.add_child(rp)
-	var rv := UI.vbox(4)
+	var rv := UI.vbox(3)
 	rp.add_child(rv)
-	radar_title = UI.label("EARTH · BUILD", 11, UI.MUTED)
-	var radar_row := UI.hbox(6)
-	radar_row.add_child(HudIcon.new("radar", UI.MUTED, 14))
+	radar_title = UI.label("EARTH · BUILD", 10, UI.MUTED)
+	var radar_row := UI.hbox(4)
+	radar_row.add_child(HudIcon.new("radar", UI.MUTED, 12))
 	radar_row.add_child(radar_title)
 	rv.add_child(radar_row)
 	radar = Radar.new()
-	radar.custom_minimum_size = Vector2(190, 190)
+	radar.custom_minimum_size = Vector2(144, 144)
 	rv.add_child(radar)
-	var bp := UI.panel(Vector2(220, 0), Color(0.1, 0.08, 0.14, 0.85))
+	var bp := UI.panel(Vector2(168, 0), Color(0.08, 0.07, 0.13, 0.80))
 	right.add_child(bp)
-	board = UI.vbox(4)
+	board = UI.vbox(2)
 	bp.add_child(board)
-	board.add_child(UI.label("SCIENCE FLAGS · DELIVERED", 10, UI.MUTED))
+	board.add_child(UI.label("FLAGS · DELIVERED", 9, UI.MUTED))
 	for i in 4:
-		var row := UI.hbox(6)
-		var dot := UI.label(Sim.FACTIONS[i]["symbol"] + " " + Sim.FACTIONS[i]["name"], 12, Sim.faction_color(i))
-		dot.custom_minimum_size = Vector2(90, 0)
-		var ph := UI.label("building", 10, UI.MUTED)
+		var row := UI.hbox(4)
+		var dot := UI.label(Sim.FACTIONS[i]["symbol"] + " " + Sim.FACTIONS[i]["name"].left(6), 10, Sim.faction_color(i))
+		dot.custom_minimum_size = Vector2(68, 0)
+		var ph := UI.label("build", 9, UI.MUTED)
 		ph.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		ph.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		ph.custom_minimum_size.x = 40
-		var sc := UI.mono_label("0", 18, UI.TEXT)
+		ph.custom_minimum_size.x = 34
+		var sc := UI.mono_label("0", 14, UI.TEXT)
 		row.add_child(dot)
 		row.add_child(ph)
 		row.add_child(sc)
 		board.add_child(row)
 		board_rows.append({"phase": ph, "score": sc})
-	var pool := UI.label("", 10, UI.MUTED)
+	var pool := UI.label("", 9, UI.MUTED)
 	pool.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	pool.custom_minimum_size.x = 190
+	pool.custom_minimum_size.x = 148
 	board.add_child(pool)
 	board_rows.append({"pool": pool})
 
@@ -345,15 +348,15 @@ func _build() -> void:
 	station.custom_minimum_size = Vector2(280, 0)
 	station_panel.add_child(station)
 
-	# Role bar.
-	roles_box = UI.hbox(6)
+	# Compact role bar.
+	roles_box = UI.hbox(5)
 	roles_box.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	roles_box.position = Vector2(-230, -62)
+	roles_box.position = Vector2(-200, -54)
 	add_child(roles_box)
 	for i in 4:
-		var l := UI.label("%d  %s" % [i + 1, Sim.SPECIALISTS[i]["name"]], 12, UI.TEXT)
-		l.add_theme_stylebox_override("normal", UI.style(Color(0.1, 0.08, 0.14, 0.85), UI.LINE, 4, 10))
-		l.custom_minimum_size = Vector2(104, 40)
+		var l := UI.label("%d %s" % [i + 1, Sim.SPECIALISTS[i]["name"]], 11, UI.TEXT)
+		l.add_theme_stylebox_override("normal", UI.style(Color(0.08, 0.07, 0.13, 0.82), UI.LINE, 4, 8))
+		l.custom_minimum_size = Vector2(96, 32)
 		l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		roles_box.add_child(l)
 		role_buttons.append(l)
@@ -764,15 +767,14 @@ func update_shop(sim: Sim) -> void:
 		_summary_credits = -1
 	if not sim.shop_open and not is_instance_valid(shop_panel): return
 	if not is_instance_valid(shop_panel):
-		# Dock below the left objectives card so it never meets the centre role banner.
-		shop_panel = UI.panel(Vector2(300, 0), UI.PANEL_SOLID)
-		shop_panel.position = Vector2(16, 360)
+		# Ultra-compact 2-line ship summary pill docked neatly under the left objectives card.
+		shop_panel = UI.panel(Vector2(228, 0), Color(0.08, 0.07, 0.13, 0.78))
+		shop_panel.position = Vector2(14, 178)
 		shop_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		shop_summary = UI.wrapped_label("", 12)
-		shop_summary.custom_minimum_size.x = 270
+		shop_summary = UI.wrapped_label("", 11)
+		shop_summary.custom_minimum_size.x = 204
 		shop_summary.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var shop_box := UI.vbox(4)
-		shop_box.add_child(HudIcon.new("credits", UI.ACCENT, 16))
+		var shop_box := UI.vbox(2)
 		shop_box.add_child(shop_summary)
 		shop_panel.add_child(shop_box)
 		add_child(shop_panel)
@@ -782,7 +784,11 @@ func update_shop(sim: Sim) -> void:
 		_summary_loadout = sim.loadout.duplicate(true)
 		_summary_missing = missing.duplicate()
 		_summary_credits = sim.credits
-		shop_summary.text = UI.loadout_summary(sim)
+		var s := ShipCatalog.loadout_stats(sim.loadout)
+		shop_summary.text = "%s · %d CR · TWR %.2f · Δv %.0f\n%s" % [
+			str(s["design_name"]).to_upper(), s["cost"], s["twr"], s["dv"],
+			"%d slots left (E at shop)" % missing.size() if missing.size() > 0 else "Ready — E at desk to build"
+		]
 
 
 func _pulse(ratio: float) -> void:
