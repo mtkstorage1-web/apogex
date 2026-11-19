@@ -539,6 +539,15 @@ func apply_quality(settings) -> void:
 		_grass_material.set_shader_parameter("wind_strength", sway)
 	if _water_material != null:
 		_water_material.set_shader_parameter("wave_speed", sway)
+		_water_material.set_shader_parameter("water_quality", clampi(tier, 0, 3))
+	for light in apron_lights:
+		if is_instance_valid(light):
+			light.visible = tier >= 1
+	var living := get_node_or_null("LivingWorld")
+	if living != null:
+		var motes := living.get_node_or_null("SunlitMotes")
+		if motes != null:
+			motes.visible = tier >= 1
 
 
 func _apron_railing() -> void:

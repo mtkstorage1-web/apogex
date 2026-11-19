@@ -10,6 +10,7 @@ uniform vec4 sun_color : source_color = vec4(1.0, 0.93, 0.74, 1.0);
 uniform float wave_speed = 1.0;
 uniform float water_clarity = 0.82;
 uniform float pond_radius = 18.0;
+uniform int water_quality = 2;
 
 varying vec3 world_pos;
 
@@ -59,7 +60,10 @@ void fragment() {
 
 	float t = TIME * wave_speed;
 	vec2 p = world_pos.xz;
-	vec2 slope = wave_slope(p, t);
+	vec2 slope = vec2(0.0);
+	if (water_quality >= 1) {
+		slope = wave_slope(p, t) * (water_quality >= 3 ? 1.25 : (water_quality == 1 ? 0.55 : 1.0));
+	}
 	float edge_calm = 1.0 - smoothstep(0.76, 1.0, radial);
 	slope *= mix(0.35, 1.0, edge_calm);
 
@@ -82,10 +86,13 @@ void fragment() {
 	float depth_t = smoothstep(0.96, 0.25, radial);
 	vec3 water_body = mix(shallow_color.rgb, deep_color.rgb, depth_t);
 
-	// Subtle sunlit underwater caustics near the clear shallow edges.
-	float caustics = caustic_pattern(p * 0.55 + slope * 1.4, t);
-	float shallow_mask = (1.0 - depth_t * 0.72) * water_clarity;
-	water_body += vec3(0.18, 0.46, 0.38) * caustics * shallow_mask * 0.42;
+	// Subtle sunlit underwater caustics near the clear shallow edges (HIGH & ULTRA).
+	if (water_quality >= 2) {
+		float caustics = caustic_pattern(p * 0.55 + slope * 1.4, t);
+		float shallow_mask = (1.0 - depth_t * 0.72) * water_clarity;
+		float caustic_boost = water_quality >= 3 ? 0.72 : 0.42;
+		water_body += vec3(0.20, 0.50, 0.42) * caustics * shallow_mask * caustic_boost;
+	}
 
 	// Combine refracted body and reflected sky, plus subtle dark bank reflection near edges.
 	// Outer 35% mirrors deep emerald tree/bank silhouettes; a smooth analytic
