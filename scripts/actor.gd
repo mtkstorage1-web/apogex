@@ -182,13 +182,12 @@ func setup(model_path: String, p_role: int, p_color: Color, tag := "", tag_color
 	ring.position.y = 0.04
 	add_child(ring)
 	if tag != "":
-		name_tag = Gfx.label(tag, tag_color, 30)
-		# Constant on-screen size: crisp and compact whether the teammate is near or far.
+		name_tag = Gfx.label("◆ " + tag.to_upper(), tag_color.lightened(0.28), 32, 8)
+		# Premium fixed-size tactical nameplate above character head.
 		name_tag.fixed_size = true
-		name_tag.pixel_size = 0.0006
-		name_tag.font_size = 28
-		name_tag.outline_size = 6
-		name_tag.position.y = visual_height + 0.55
+		name_tag.pixel_size = 0.00072
+		name_tag.outline_modulate = Color(0.04, 0.06, 0.12, 0.96)
+		name_tag.position.y = visual_height + 0.58
 		add_child(name_tag)
 	stand_y = holder.position.y
 	_holder_base_scale = holder.scale

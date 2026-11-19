@@ -2020,6 +2020,8 @@ class Showcase extends Node3D:
 	var t := 0.0
 
 	var podium_rings: Array = []
+	var lobby_ships: Array = []   # {node, speed, y, z, x_min, x_max}
+	var lobby_planet: Node3D
 
 	func tick(dt: float) -> void:
 		t += dt
@@ -2038,14 +2040,25 @@ class Showcase extends Node3D:
 				if i < podium_rings.size():
 					var ring: MeshInstance3D = podium_rings[i]
 					ring.position = Vector3(base_x, 0.13, base_z)
-					var pulse := 1.0 + 0.05 * sin(t * 3.6 + i)
-					ring.scale = Vector3(pulse, 0.05, pulse) * (1.22 if i == sel else 0.92)
+					var pulse := 1.0 + 0.04 * sin(t * 3.4 + i)
+					ring.scale = Vector3(pulse, 0.05, pulse) * (1.18 if i == sel else 0.94)
+		# Animate distant spacecraft cruising outside the orbital hangar viewport + rotating planet.
+		if lobby_planet != null:
+			lobby_planet.rotation.y += dt * 0.04
+		for sh in lobby_ships:
+			var n: Node3D = sh["node"]
+			n.position.x += float(sh["speed"]) * dt
+			n.position.y = float(sh["y"]) + sin(t * 0.9 + float(sh["phase"])) * 0.45
+			if float(sh["speed"]) > 0.0 and n.position.x > float(sh["x_max"]):
+				n.position.x = float(sh["x_min"])
+			elif float(sh["speed"]) < 0.0 and n.position.x < float(sh["x_min"]):
+				n.position.x = float(sh["x_max"])
 		if kind == "home":
 			g.cam.position = Vector3(-0.6 + sin(t * 0.15) * 0.2, 1.9, 6.0)
 			g.cam.look_at(Vector3(1.9, 1.5, 0))
 		else:
-			g.cam.position = Vector3(0.0 + sin(t * 0.18) * 0.35, 1.85, 10.4)
-			g.cam.look_at(Vector3(0.0, 0.95, 0.0))
+			g.cam.position = Vector3(0.0 + sin(t * 0.14) * 0.28, 2.05, 10.6)
+			g.cam.look_at(Vector3(0.0, 1.15, -1.0))
 
 	func layout(p_kind: String, p_sel: int) -> void:
 		kind = p_kind
@@ -2069,35 +2082,112 @@ class Showcase extends Node3D:
 static func showcase(main) -> Node3D:
 	var s := Showcase.new()
 	s.g = main
-	# Bright Fortnite-style cerulean-blue lobby atmosphere.
-	s.add_child(Gfx.environment(Color("#1d78d8"), Color("#58baf7"), Color("#123966"), 0.95))
+	# Deep orbital galaxy & starfield space sky visible through the panoramic hangar windows.
+	s.add_child(Gfx.environment(Color("#040814"), Color("#12264a"), Color("#03060f"), 0.55))
+
+	# Dramatic orbital hangar lighting: cool blue galaxy backlight + warm golden deck rim lights.
+	var galaxy_back := OmniLight3D.new()
+	galaxy_back.light_color = Color("#70c4ff")
+	galaxy_back.light_energy = 3.2
+	galaxy_back.omni_range = 34.0
+	galaxy_back.position = Vector3(0, 5.5, -9.5)
+	s.add_child(galaxy_back)
 	var key := OmniLight3D.new()
-	key.light_color = Color("#fff1d6")
-	key.light_energy = 2.6
+	key.light_color = Color("#ffebd0")
+	key.light_energy = 2.4
 	key.omni_range = 24.0
-	key.position = Vector3(4, 6, 6)
+	key.position = Vector3(5, 6, 7)
 	s.add_child(key)
 	var fill := OmniLight3D.new()
-	fill.light_color = Color("#7cd4ff")
-	fill.light_energy = 1.8
+	fill.light_color = Color("#5eb8ff")
+	fill.light_energy = 1.6
 	fill.omni_range = 26.0
-	fill.position = Vector3(-6, 4, 5)
+	fill.position = Vector3(-7, 4.5, 6)
 	s.add_child(fill)
-	var sunl := Gfx.sun(Vector3(-34, 28, 0), Color("#ffe8c2"), 1.0)
-	s.add_child(sunl)
+	s.add_child(Gfx.sun(Vector3(-28, 22, 0), Color("#ffe4b8"), 0.95))
+
+	# Brushed dark-steel hangar deck floor.
+	var deck_mat := StandardMaterial3D.new()
+	deck_mat.albedo_color = Color("#252d3a")
+	deck_mat.roughness = 0.48
+	deck_mat.metallic = 0.35
 	var floor_mesh := PlaneMesh.new()
 	floor_mesh.size = Vector2(90, 90)
-	s.add_child(Gfx.mesh(floor_mesh, Gfx.mat(Color("#185aa6"), 0.65)))
+	s.add_child(Gfx.mesh(floor_mesh, deck_mat))
+
+	# Hangar interior architecture: steel window mullions, side bulkheads & glowing cyan consoles.
+	var steel_mat := Gfx.mat(Color("#2d3645"), 0.55)
+	var trim_mat := Gfx.mat(Color("#475569"), 0.45)
+	# Panoramic window frame posts (wide open center showing space, planets & cruising ships).
+	for wx in [-13.5, -7.2, 0.0, 7.2, 13.5]:
+		var post := Gfx.box(Vector3(0.55, 16.0, 0.9), Color("#2a3342"), Vector3(wx, 8.0, -9.5))
+		post.material_override = steel_mat
+		s.add_child(post)
+	var sill := Gfx.box(Vector3(32.0, 1.4, 1.2), Color("#242c38"), Vector3(0, 0.7, -9.5))
+	sill.material_override = trim_mat
+	s.add_child(sill)
+	var header := Gfx.box(Vector3(32.0, 1.2, 1.4), Color("#242c38"), Vector3(0, 14.5, -9.5))
+	header.material_override = steel_mat
+	s.add_child(header)
+	# Side hangar walls & glowing holographic console desks.
+	for side in [-1.0, 1.0]:
+		var wall := Gfx.box(Vector3(1.2, 16.0, 20.0), Color("#232b36"), Vector3(side * 14.2, 8.0, -1.0))
+		wall.material_override = steel_mat
+		s.add_child(wall)
+		var desk := Gfx.box(Vector3(2.2, 1.1, 3.6), Color("#2c3748"), Vector3(side * 11.4, 0.55, -4.5))
+		s.add_child(desk)
+		var screen := Gfx.box(Vector3(0.12, 1.1, 2.8), Color("#38bdf8"), Vector3(side * 10.6, 1.65, -4.5), 1.8)
+		s.add_child(screen)
+
+	# Giant glowing planet + distant moon outside the panoramic hangar window.
+	var planet := Gfx.planet(14.5, Color("#245994"), Color("#70c4ff"))
+	planet.position = Vector3(13.5, 9.5, -36.0)
+	s.add_child(planet)
+	s.lobby_planet = planet
+	var moon_orb := Gfx.sphere(2.8, Color("#cbd5e1"), Vector3(-11.0, 11.0, -32.0), 0.15, 24)
+	s.add_child(moon_orb)
+
+	# 4 moving spacecraft cruising across the starfield outside the viewport!
+	var hull_mat := Gfx.mat(Color("#cbd5e1"), 0.45)
+	var glow_cyan := Gfx.mat(Color("#38bdf8"), 0.2, 3.0)
+	var glow_amber := Gfx.mat(Color("#f59e0b"), 0.2, 3.0)
+	var ship_specs := [
+		[-14.0, 5.2, -18.0, 2.4, 0.9, glow_cyan],
+		[15.0, 7.8, -22.0, -1.9, 1.15, glow_amber],
+		[-18.0, 3.6, -25.0, 1.5, 0.75, glow_cyan],
+		[12.0, 9.4, -27.0, -2.6, 0.85, glow_cyan],
+	]
+	for idx in ship_specs.size():
+		var sp: Array = ship_specs[idx]
+		var craft := Node3D.new()
+		var body := Gfx.box(Vector3(2.4, 0.55, 0.95), Color("#cbd5e1"), Vector3.ZERO)
+		body.material_override = hull_mat
+		var wing := Gfx.box(Vector3(0.9, 0.14, 2.5), Color("#94a3b8"), Vector3(-0.2, 0, 0))
+		var thruster_x := -1.35 if float(sp[3]) > 0.0 else 1.35
+		var engine := Gfx.sphere(0.28, Color("#38bdf8"), Vector3(thruster_x, 0, 0), 2.5, 10)
+		engine.material_override = sp[5]
+		craft.add_child(body)
+		craft.add_child(wing)
+		craft.add_child(engine)
+		craft.scale = Vector3.ONE * float(sp[4])
+		craft.position = Vector3(float(sp[0]), float(sp[1]), float(sp[2]))
+		s.add_child(craft)
+		s.lobby_ships.append({
+			"node": craft, "speed": float(sp[3]), "y": float(sp[1]), "z": float(sp[2]),
+			"x_min": -26.0, "x_max": 26.0, "phase": float(idx) * 1.7,
+		})
+
+	# 4 sci-fi metallic pedestals with glowing cyan/gold rims.
 	for i in 4:
 		var base_x := -5.4 + i * 3.6
-		var podium := Gfx.disc(1.45, Color("#1f6bc2"), 0.10)
+		var podium := Gfx.disc(1.52, Color("#334155"), 0.14)
 		podium.position = Vector3(base_x, 0, 0)
 		s.add_child(podium)
-		var ring := Gfx.ring(1.48, 0.14, Color("#7ef9ff"), 0.92)
-		ring.position = Vector3(base_x, 0.13, 0)
+		var ring := Gfx.ring(1.54, 0.14, Color("#67e8f9"), 0.95)
+		ring.position = Vector3(base_x, 0.15, 0)
 		s.add_child(ring)
 		s.podium_rings.append(ring)
-	var hero := Gfx.disc(1.9, Color("#1c5ca8"), 0.12)
+	var hero := Gfx.disc(1.9, Color("#334155"), 0.14)
 	hero.position = Vector3(3.2, 0, 0)
 	s.add_child(hero)
 	for i in 4:
