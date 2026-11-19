@@ -2019,17 +2019,33 @@ class Showcase extends Node3D:
 	var sel := 3
 	var t := 0.0
 
+	var podium_rings: Array = []
+
 	func tick(dt: float) -> void:
 		t += dt
 		for i in actors.size():
 			var a: Actor = actors[i]
-			a.animate(dt, 0.0, "wave" if (kind == "select" and i == sel and fmod(t, 6.0) < 2.4) else "")
+			# Lively Fortnite-style staggered idle emotes, weight shifts, and glances (never stiff!).
+			var cycle := fmod(t + i * 2.1, 7.5)
+			var act := "wave" if (kind == "select" and (i == sel and cycle < 2.2 or i != sel and cycle > 5.8)) else ""
+			a.animate(dt, 0.0, act)
+			if kind == "select":
+				var base_x := -5.4 + i * 3.6
+				var base_z := 0.85 if i == sel else (0.15 if i % 2 == 1 else -0.35)
+				a.position = Vector3(base_x, 0.0, base_z)
+				var glance := sin(t * (0.9 + i * 0.17) + i * 1.4) * 0.22
+				a.rotation.y = PI + glance
+				if i < podium_rings.size():
+					var ring: MeshInstance3D = podium_rings[i]
+					ring.position = Vector3(base_x, 0.13, base_z)
+					var pulse := 1.0 + 0.05 * sin(t * 3.6 + i)
+					ring.scale = Vector3(pulse, 0.05, pulse) * (1.22 if i == sel else 0.92)
 		if kind == "home":
 			g.cam.position = Vector3(-0.6 + sin(t * 0.15) * 0.2, 1.9, 6.0)
 			g.cam.look_at(Vector3(1.9, 1.5, 0))
 		else:
-			g.cam.position = Vector3(-1.2 + sin(t * 0.12) * 0.3, 1.4, 9.6)
-			g.cam.look_at(Vector3(-1.2, 0.1, 0))
+			g.cam.position = Vector3(0.0 + sin(t * 0.18) * 0.35, 1.85, 10.4)
+			g.cam.look_at(Vector3(0.0, 0.95, 0.0))
 
 	func layout(p_kind: String, p_sel: int) -> void:
 		kind = p_kind
@@ -2042,44 +2058,46 @@ class Showcase extends Node3D:
 				a.rotation.y = PI - 0.35
 			else:
 				a.visible = true
-				a.position = Vector3(-8.0 + i * 3.9, 0, 0)
+				var base_z := 0.85 if i == sel else (0.15 if i % 2 == 1 else -0.35)
+				a.position = Vector3(-5.4 + i * 3.6, 0, base_z)
 				a.rotation.y = PI
-			a.scale = Vector3.ONE * (1.05 if kind == "home" else 1.0)
+			a.scale = Vector3.ONE * (1.08 if i == sel else 0.96)
+			if i < podium_rings.size():
+				(podium_rings[i] as Node3D).visible = kind == "select"
 
 
 static func showcase(main) -> Node3D:
 	var s := Showcase.new()
 	s.g = main
-	s.add_child(Gfx.environment(Color("#3a2440"), Color("#6a3a45"), Color("#24182c"), 0.6))
+	# Bright Fortnite-style cerulean-blue lobby atmosphere.
+	s.add_child(Gfx.environment(Color("#1d78d8"), Color("#58baf7"), Color("#123966"), 0.95))
 	var key := OmniLight3D.new()
-	key.light_color = Color("#ffb37a")
-	key.light_energy = 3.0
-	key.omni_range = 20.0
-	key.position = Vector3(5, 6, 5)
+	key.light_color = Color("#fff1d6")
+	key.light_energy = 2.6
+	key.omni_range = 24.0
+	key.position = Vector3(4, 6, 6)
 	s.add_child(key)
 	var fill := OmniLight3D.new()
-	fill.light_color = Color("#b98cff")
-	fill.light_energy = 1.6
-	fill.omni_range = 22.0
-	fill.position = Vector3(-6, 4, 4)
+	fill.light_color = Color("#7cd4ff")
+	fill.light_energy = 1.8
+	fill.omni_range = 26.0
+	fill.position = Vector3(-6, 4, 5)
 	s.add_child(fill)
-	var sunl := Gfx.sun(Vector3(-40, 30, 0), Color("#ffd2a8"), 0.6)
+	var sunl := Gfx.sun(Vector3(-34, 28, 0), Color("#ffe8c2"), 1.0)
 	s.add_child(sunl)
 	var floor_mesh := PlaneMesh.new()
-	floor_mesh.size = Vector2(80, 80)
-	s.add_child(Gfx.mesh(floor_mesh, Gfx.mat(Color("#3a2a40"), 0.7)))
-	var wall := Gfx.box(Vector3(60, 18, 0.5), Color("#5a2f3c"), Vector3(0, 9, -7))
-	s.add_child(wall)
-	for x in range(-24, 25, 6):
-		s.add_child(Gfx.box(Vector3(0.6, 18, 0.8), Color("#4a2a48"), Vector3(x, 9, -6.6)))
-	for y in [4.0, 10.0]:
-		var strip := Gfx.box(Vector3(60, 0.25, 0.3), Color("#ffb37a"), Vector3(0, y, -6.6), 1.2)
-		s.add_child(strip)
+	floor_mesh.size = Vector2(90, 90)
+	s.add_child(Gfx.mesh(floor_mesh, Gfx.mat(Color("#185aa6"), 0.65)))
 	for i in 4:
-		var podium := Gfx.disc(1.5, Color("#2a1e30"), 0.12)
-		podium.position = Vector3(-8.0 + i * 3.9, 0, 0)
+		var base_x := -5.4 + i * 3.6
+		var podium := Gfx.disc(1.45, Color("#1f6bc2"), 0.10)
+		podium.position = Vector3(base_x, 0, 0)
 		s.add_child(podium)
-	var hero := Gfx.disc(1.9, Color("#2a1e30"), 0.12)
+		var ring := Gfx.ring(1.48, 0.14, Color("#7ef9ff"), 0.92)
+		ring.position = Vector3(base_x, 0.13, 0)
+		s.add_child(ring)
+		s.podium_rings.append(ring)
+	var hero := Gfx.disc(1.9, Color("#1c5ca8"), 0.12)
 	hero.position = Vector3(3.2, 0, 0)
 	s.add_child(hero)
 	for i in 4:

@@ -915,163 +915,208 @@ func _footer() -> void:
 	menu_root.add_child(g)
 
 
+var _lobby_countdown_tween: Tween
+var _lobby_play_btn: Button
+var _lobby_ready_labels: Array = []
+
+
+func _cancel_lobby_countdown() -> void:
+	if _lobby_countdown_tween != null and _lobby_countdown_tween.is_valid():
+		_lobby_countdown_tween.kill()
+	_lobby_countdown_tween = null
+	if is_instance_valid(_lobby_play_btn):
+		_lobby_play_btn.text = "PLAY  ·  %s" % Sim.SPECIALISTS[opts["selected"]]["name"]
+
+
+func _toggle_lobby_countdown() -> void:
+	if _lobby_countdown_tween != null and _lobby_countdown_tween.is_valid():
+		_cancel_lobby_countdown()
+		sfx("ui_click", -10.0)
+		return
+	if not is_instance_valid(_lobby_play_btn):
+		show_loading_briefing()
+		return
+	sfx("ui_buy", -8.0)
+	_lobby_countdown_tween = create_tween()
+	for sec in [5, 4, 3, 2, 1, 0]:
+		var s_val: int = sec
+		_lobby_countdown_tween.tween_callback(func() -> void:
+			if not is_instance_valid(_lobby_play_btn):
+				return
+			_lobby_play_btn.text = "STARTING IN %d  (CANCEL)" % s_val if s_val > 0 else "LAUNCHING  0..."
+			sfx("ui_click", -8.0, 0.04)
+			var ready_idx := 5 - s_val
+			if ready_idx >= 0 and ready_idx < _lobby_ready_labels.size() and is_instance_valid(_lobby_ready_labels[ready_idx]):
+				(_lobby_ready_labels[ready_idx] as Label).text = "✓ READY"
+				(_lobby_ready_labels[ready_idx] as Label).add_theme_color_override("font_color", Color("#86efac"))
+		)
+		_lobby_countdown_tween.tween_interval(1.0 if s_val > 0 else 0.35)
+	_lobby_countdown_tween.tween_callback(show_loading_briefing)
+
+
 func show_select() -> void:
+	_cancel_lobby_countdown()
+	_lobby_ready_labels.clear()
 	mode = "menu"
 	_ensure_showcase()
 	showcase.layout("select", opts["selected"])
 	clear_menu()
 	_brand(menu_root)
 	var head := UI.vbox(2)
-	head.position = Vector2(40, 100)
+	head.position = Vector2(36, 74)
 	menu_root.add_child(head)
-	head.add_child(UI.label("LOBBY / CHOOSE YOUR JOB. YOUR CREW NEEDS ALL FOUR ROLES.", 12, UI.ACCENT))
-	head.add_child(UI.heading("ASSEMBLE ", "YOUR CREW.", 46))
-	var cards := UI.hbox(14)
-	cards.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	cards.position = Vector2(40, -370)
-	menu_root.add_child(cards)
+	head.add_child(UI.label("SQUAD LOBBY · 16/16 PLAYERS · CLICK A BANNER TO SWITCH SPECIALIST", 11, Color("#ffe066")))
+
+	# Fortnite-style 4 vertical colored squad banners across the lobby.
+	var banners := UI.hbox(14)
+	banners.position = Vector2(40, 114)
+	menu_root.add_child(banners)
+	var banner_colors := [Color("#ec4899"), Color("#84cc16"), Color("#0ea5e9"), Color("#475569")]
 	for i in 4:
 		var s = Sim.SPECIALISTS[i]
-		var p := UI.panel(Vector2(250, 250), Color(0.12, 0.09, 0.17, 0.55 if i != opts["selected"] else 0.82))
-		p.add_theme_stylebox_override("panel", UI.style(Color(0.12, 0.09, 0.17, 0.5 if i != opts["selected"] else 0.8), UI.ACCENT if i == opts["selected"] else UI.LINE, 6, 14, 2 if i == opts["selected"] else 1))
-		var v := UI.vbox(4)
+		var selected: bool = i == int(opts["selected"])
+		var bc: Color = banner_colors[i]
+		var p := UI.panel(Vector2(210, 112), Color(bc.r, bc.g, bc.b, 0.88 if selected else 0.62))
+		p.add_theme_stylebox_override("panel", UI.style(
+			Color(bc.r, bc.g, bc.b, 0.86 if selected else 0.56),
+			Color("#ffe066") if selected else Color(1, 1, 1, 0.25), 6, 10, 3 if selected else 1
+		))
+		var v := UI.vbox(3)
 		p.add_child(v)
-		v.add_child(UI.label(("HUMAN / " if i == opts["selected"] else "BOT / ") + s["role"], 11, UI.MUTED))
-		v.add_child(UI.spacer(0, 0, true))
-		v.add_child(UI.label(s["tag"], 12, UI.TEXT))
-		v.add_child(UI.label(s["name"], 40, Color("#f2e6d8")))
-		v.add_child(UI.label(s["role"], 11, UI.ACCENT))
-		var j := UI.label(s["job"], 12, UI.MUTED)
-		j.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		v.add_child(j)
+		v.add_child(UI.label(("★ " if selected else "") + s["name"], 18, Color.WHITE))
+		var rl := UI.label("✓ READY" if selected else "Standby · Bot", 11, Color("#fef08a") if selected else Color(1, 1, 1, 0.82))
+		v.add_child(rl)
+		_lobby_ready_labels.append(rl)
+		v.add_child(UI.label(s["role"], 10, Color(1, 1, 1, 0.78)))
 		var idx := i
-		v.add_child(UI.button("SELECTED ✓" if i == opts["selected"] else "CHOOSE SPECIALIST ↗", _set_opt.bind("selected", idx), false, 0, 34))
-		cards.add_child(p)
-	# Right column: rivals + options.
-	var right := UI.panel(Vector2(330, 0))
+		v.add_child(UI.button("SELECTED ✓" if selected else "SELECT", _set_opt.bind("selected", idx), false, 0, 26))
+		banners.add_child(p)
+
+	# Right column: Squads + Match Options + bright Fortnite PLAY button with 5->0 countdown.
+	var right := UI.panel(Vector2(310, 0), Color(0.08, 0.14, 0.28, 0.82))
 	right.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	right.position = Vector2(-370, 100)
+	right.position = Vector2(-340, 74)
 	menu_root.add_child(right)
-	var rv := UI.vbox(8)
+	var rv := UI.vbox(7)
 	right.add_child(rv)
-	rv.add_child(UI.label("OFFLINE · 1 PLAYER + 15 BOTS · 16/16 READY", 11, UI.MUTED))
-	rv.add_child(UI.label("RIVAL CREWS / 12 BOTS", 11, UI.MUTED))
+	rv.add_child(UI.label("SQUADS · 4v4v4v4 SPACE RACE", 12, Color("#ffe066")))
 	for t in range(1, 4):
 		var row := UI.hbox(6)
-		row.add_child(UI.label("● " + Sim.FACTIONS[t]["name"], 13, Sim.faction_color(t)))
+		row.add_child(UI.label("● " + Sim.FACTIONS[t]["name"], 12, Sim.faction_color(t)))
 		row.add_child(UI.spacer(0, 0, true))
-		row.add_child(UI.label("FINN · CHIP · BARBARA · FERNANDO", 10, UI.MUTED))
+		row.add_child(UI.label("READY", 10, Color("#86efac")))
 		rv.add_child(row)
-	rv.add_child(UI.spacer(6))
-	rv.add_child(UI.label("DIFFICULTY", 12, UI.TEXT))
-	var dh := UI.hbox(6)
+	rv.add_child(UI.label("DIFFICULTY", 10, UI.MUTED))
+	var dh := UI.hbox(5)
 	for k in ["cadet", "standard", "expert"]:
 		var key: String = k
-		dh.add_child(UI.toggle(Sim.DIFFICULTY[k]["label"], opts["difficulty"] == k, _set_opt.bind("difficulty", key), 92))
+		dh.add_child(UI.toggle(Sim.DIFFICULTY[k]["label"], opts["difficulty"] == k, _set_opt.bind("difficulty", key), 86))
 	rv.add_child(dh)
-	rv.add_child(UI.label("MATCH LENGTH", 12, UI.TEXT))
-	var lh := UI.hbox(6)
+	rv.add_child(UI.label("MATCH LENGTH", 10, UI.MUTED))
+	var lh := UI.hbox(5)
 	for k in ["short", "standard", "long"]:
 		var key: String = k
-		lh.add_child(UI.toggle(Sim.LENGTHS[k]["label"].replace(" MIN", "M"), opts["length"] == k, _set_opt.bind("length", key), 92))
+		lh.add_child(UI.toggle(Sim.LENGTHS[k]["label"].replace(" MIN", "M"), opts["length"] == k, _set_opt.bind("length", key), 86))
 	rv.add_child(lh)
-	rv.add_child(UI.label("CONSTRUCTION", 12, UI.TEXT))
-	var ch := UI.hbox(6)
-	ch.add_child(UI.toggle("HANDS-ON + CREW", not opts["fast"], _set_opt.bind("fast", false), 140))
-	ch.add_child(UI.toggle("FAST ASSEMBLY", opts["fast"], _set_opt.bind("fast", true), 140))
-	rv.add_child(ch)
-	rv.add_child(UI.button("QUICK DEPLOY · SKIP TO FLIGHT   ↗", quick_deploy, true, 300, 38))
-	rv.add_child(UI.label("Ready ship · synchronized rival launch · same scoring", 10, UI.MUTED))
-	var bottom := UI.hbox(12)
+	rv.add_child(UI.button("QUICK DEPLOY (SKIP TO FLIGHT)", quick_deploy, false, 280, 32))
+	rv.add_child(UI.button("ASSIGN BUILD PARTS", show_manifest, false, 280, 30))
+
+	# Big Fortnite-style yellow PLAY button with 5->0 countdown.
+	var bottom := UI.hbox(10)
 	bottom.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	bottom.position = Vector2(-680, -96)
+	bottom.position = Vector2(-470, -104)
 	menu_root.add_child(bottom)
-	bottom.add_child(UI.button("BACK", show_home, false, 110))
-	bottom.add_child(UI.button("ASSIGN PARTS", show_manifest, false, 170))
-	bottom.add_child(UI.button("READY UP · PLAY AS %s   ↗" % Sim.SPECIALISTS[opts["selected"]]["name"], show_loading_briefing, true, 340))
+	bottom.add_child(UI.button("BACK", show_home, false, 110, 56))
+	_lobby_play_btn = UI.button("PLAY  ·  %s" % Sim.SPECIALISTS[opts["selected"]]["name"], _toggle_lobby_countdown, true, 320, 56)
+	var play_sb := StyleBoxFlat.new()
+	play_sb.bg_color = Color("#facc15")
+	play_sb.set_corner_radius_all(6)
+	play_sb.content_margin_left = 14
+	play_sb.content_margin_right = 14
+	_lobby_play_btn.add_theme_stylebox_override("normal", play_sb)
+	_lobby_play_btn.add_theme_color_override("font_color", Color("#111827"))
+	_lobby_play_btn.add_theme_font_size_override("font_size", 20)
+	bottom.add_child(_lobby_play_btn)
 	_footer()
 
 
 func show_loading_briefing() -> void:
+	_cancel_lobby_countdown()
 	mode = "menu"
 	clear_menu()
 	sfx("ui_click", -8.0)
 	var bg := ColorRect.new()
-	bg.color = Color(0.05, 0.06, 0.10, 0.94)
+	bg.color = Color(0.05, 0.08, 0.14, 0.96)
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	menu_root.add_child(bg)
 	_brand(menu_root)
 
-	var center := UI.vbox(14)
-	center.set_anchors_preset(Control.PRESET_CENTER)
-	center.position = Vector2(-320, -110)
-	center.custom_minimum_size = Vector2(640, 220)
-	menu_root.add_child(center)
-	center.add_child(UI.label("DEPLOYING TO EARTH LAUNCH COMPLEX · 16/16 PLAYERS READY", 12, UI.ACCENT, HORIZONTAL_ALIGNMENT_CENTER))
-	center.add_child(UI.heading("PREPARING ", "EXPEDITION", 42))
-	var status := UI.label("Fueling cryo propellant tanks & syncing rival crews...", 14, UI.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
-	center.add_child(status)
-	var bar := UI.bar(UI.ACCENT, 0.0, 10)
-	bar.custom_minimum_size = Vector2(640, 12)
-	center.add_child(bar)
-	var tip := UI.label("TIP: Press F9 (or tap TOUCH UI) anytime for mobile twin-stick controls · Left Alt to Dash.", 12, UI.MUTED, HORIZONTAL_ALIGNMENT_CENTER)
-	center.add_child(tip)
+	var wrap := UI.vbox(14)
+	wrap.set_anchors_preset(Control.PRESET_CENTER)
+	wrap.position = Vector2(-540, -280)
+	wrap.custom_minimum_size = Vector2(1080, 560)
+	menu_root.add_child(wrap)
+	wrap.add_child(UI.label("LOADING EXPEDITION · 4-PHASE MISSION GUIDE", 12, Color("#facc15"), HORIZONTAL_ALIGNMENT_CENTER))
+	wrap.add_child(UI.heading("THE 4-PHASE ", "SPACE RACE", 36))
+
+	# 4 visual phase cards with real in-game images + "Better Than..." strategy tips.
+	var row := UI.hbox(14)
+	wrap.add_child(row)
+	var phases := [
+		["1 · BUILD", "res://shots/sp04_workshop.png", Color("#f59e0b"),
+			"Confirm all 12 rocket parts at the white Parts Shop (E), then start assembly at the Desk.",
+			"PRO TIP: Using Quick Build is much faster than hand-picking 12 parts on your first match!"],
+		["2 · LAUNCH", "res://shots/sp09_liftoff.png", Color("#38bdf8"),
+			"Complete the 3 pad checks (E) and blast off into orbit toward the Moon.",
+			"PRO TIP: Boosting early out of atmosphere beats slow cruising — watch rival launches!"],
+		["3 · CAPTURE", "res://shots/sp11_orbit.png", Color("#34d399"),
+			"Press B to draw your weapon, fight rival squads, and escort Fernando [4] to extract Science Flags.",
+			"PRO TIP: Using Left Alt Dash to dodge Scattergun fire saves your shield better than backpedaling!"],
+		["4 · DELIVER", "res://shots/sp07_stacked.png", Color("#a78bfa"),
+			"Load flags up your ship ramp, fly back to Earth, and deliver them to win.",
+			"PRO TIP: Delivering 2–3 flags early is safer than hoarding 6 and risking a rival ambush!"],
+	]
+	for ph in phases:
+		var card := UI.panel(Vector2(256, 330), Color(0.09, 0.12, 0.20, 0.94))
+		var cv := UI.vbox(8)
+		card.add_child(cv)
+		cv.add_child(UI.label(ph[0], 14, ph[2]))
+		if ResourceLoader.exists(ph[1]):
+			var tex := TextureRect.new()
+			tex.texture = load(ph[1]) as Texture2D
+			tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			tex.custom_minimum_size = Vector2(232, 128)
+			cv.add_child(tex)
+		var desc := UI.wrapped_label(ph[3], 11, UI.TEXT)
+		desc.custom_minimum_size.x = 232
+		cv.add_child(desc)
+		var tip := UI.wrapped_label(ph[4], 11, Color("#fde68a"))
+		tip.custom_minimum_size.x = 232
+		cv.add_child(tip)
+		row.add_child(card)
+
+	var status := UI.label("Syncing launch complex, weather & 16 crew specialists...", 13, UI.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
+	wrap.add_child(status)
+	var bar := UI.bar(Color("#facc15"), 0.0, 10)
+	bar.custom_minimum_size = Vector2(1080, 12)
+	wrap.add_child(bar)
+	var act := UI.hbox(12)
+	act.add_child(UI.label("Controls: WASD Move · Shift Sprint · Alt Dash · Space Jump · E Interact · B Weapon · F9 Touch UI", 11, UI.MUTED))
+	act.add_child(UI.spacer(0, 0, true))
+	var drop_btn := UI.button("DROP IN NOW   ↗", start_match, true, 220, 38)
+	act.add_child(drop_btn)
+	wrap.add_child(act)
 
 	var tw := create_tween()
-	tw.tween_property(bar, "value", 38.0, 0.45).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(bar, "value", 45.0, 0.8).set_trans(Tween.TRANS_SINE)
 	tw.tween_callback(func() -> void:
-		if is_instance_valid(status): status.text = "Calibrating telemetry, weather & lunar trajectory..."
+		if is_instance_valid(status): status.text = "Cryo tanks pressurized · Launch pad clear!"
 	)
-	tw.tween_property(bar, "value", 78.0, 0.45).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(bar, "value", 100.0, 0.9).set_trans(Tween.TRANS_SINE)
 	tw.tween_callback(func() -> void:
-		if is_instance_valid(status): status.text = "Launch pad clear — opening mission briefing..."
+		if is_instance_valid(status): status.text = "READY! Click DROP IN NOW or wait to deploy..."
 	)
-	tw.tween_property(bar, "value", 100.0, 0.35).set_trans(Tween.TRANS_SINE)
-	tw.tween_callback(show_mission_reminder)
-
-
-func show_mission_reminder() -> void:
-	mode = "menu"
-	clear_menu()
-	var bg := ColorRect.new()
-	bg.color = Color(0.05, 0.06, 0.10, 0.90)
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	menu_root.add_child(bg)
-	_brand(menu_root)
-
-	var card := UI.panel(Vector2(760, 0), Color(0.09, 0.08, 0.14, 0.96))
-	card.set_anchors_preset(Control.PRESET_CENTER)
-	card.position = Vector2(-380, -230)
-	menu_root.add_child(card)
-	var v := UI.vbox(12)
-	card.add_child(v)
-	v.add_child(UI.label("MISSION BRIEFING · YOUR 4-STEP GAME PLAN", 12, UI.ACCENT))
-	v.add_child(UI.heading("HOW TO ", "WIN THE RACE", 34))
-
-	var steps := [
-		["1 · BUILD", "Walk to the white PARTS SHOP (E), hit QUICK BUILD (or pick 12 parts), then press E at the Desk.", UI.ACCENT],
-		["2 · LAUNCH", "Finish the 3 pad system checks (E) and blast off into orbit toward the Moon.", Color("#68cce2")],
-		["3 · CAPTURE", "On the Moon, press B to draw your weapon, fight rivals, and escort Fernando [4] to extract Science Flags.", Color("#5eead4")],
-		["4 · DELIVER", "Load flags up your ship ramp, fly back to Earth, and deliver them to score & win!", Color("#86efac")],
-	]
-	for st in steps:
-		var row := UI.panel(Vector2(710, 0), Color(0.13, 0.11, 0.19, 0.85))
-		var rh := UI.hbox(14)
-		row.add_child(rh)
-		var badge := UI.label(st[0], 13, st[2])
-		badge.custom_minimum_size = Vector2(120, 0)
-		var desc := UI.wrapped_label(st[1], 13, UI.TEXT)
-		desc.custom_minimum_size.x = 540
-		rh.add_child(badge)
-		rh.add_child(desc)
-		v.add_child(row)
-
-	v.add_child(UI.label("Controls: WASD Move · Shift Sprint · Alt Dash · Space Jump · E Interact · B Weapon · 1–4 Switch Crew · F9 Touch UI", 11, UI.MUTED))
-	var actions := UI.hbox(12)
-	actions.add_child(UI.button("BACK TO LOBBY", show_select, false, 180, 42))
-	actions.add_child(UI.spacer(0, 0, true))
-	actions.add_child(UI.button("DROP IN NOW   ↗", start_match, true, 260, 42))
-	v.add_child(actions)
 
 
 func show_manifest() -> void:
