@@ -16,8 +16,13 @@ void fragment() {
 	float daylight = dot(n, sun_direction);
 	float twilight = smoothstep(-0.16, 0.15, daylight);
 	float cover = cloud_cover(p);
-	vec3 color = mix(vec3(0.30, 0.40, 0.58), vec3(0.86, 0.91, 0.96), cover)
-		* (0.035 + 0.54 * twilight + 0.45 * max(0.0, daylight));
+	// Volumetric look: dense cores self-shadow blue-grey, thin edges catch warm sun.
+	float dense = smoothstep(0.55, 1.0, cover);
+	vec3 shadow_col = vec3(0.30, 0.38, 0.55);
+	vec3 lit_col = mix(vec3(0.94, 0.96, 1.0), vec3(1.0, 0.90, 0.74), (1.0 - twilight) * 0.8 + pow(max(daylight, 0.0), 0.2) * 0.0);
+	vec3 color = mix(shadow_col, lit_col, mix(0.55, 1.0, 1.0 - dense * 0.45) * cover + (1.0 - cover) * 0.5)
+		* (0.035 + 0.50 * twilight + 0.55 * max(0.0, daylight));
+	color += vec3(1.0, 0.78, 0.52) * (1.0 - cover) * cover * 0.6 * twilight;
 	ALPHA = cover * observer_fade * 0.88;
 	ALBEDO = OUTPUT_IS_SRGB ? pow(max(color, vec3(0.0)), vec3(1.0 / 2.2)) : color;
 }

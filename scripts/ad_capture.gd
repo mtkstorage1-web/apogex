@@ -1,5 +1,5 @@
 ## Deterministic Movie Maker driver: --write-movie artifacts/ad/raw.avi --fixed-fps 30 -- --ad
-## Uses existing paid construction, cinematics and flag interaction; time jumps are edit cuts.
+## Captures the pad-to-Moon flight and entry into Arena Clash.
 extends RefCounted
 var g
 var frame := 0
@@ -54,78 +54,21 @@ func title(text: String, subtitle: String) -> CanvasLayer:
 
 func run(main) -> void:
 	g = main
-	seed(47)
-	var intro := title("T-MINUS", "BUILD. LAUNCH. CAPTURE. RETURN.")
+	var intro := title("T-MINUS", "BUILD. BOARD. FLY. FIGHT.")
 	await frames(30)
 	intro.queue_free()
-	g.show_select()
-	await frames(15)
-	g.opts["seed"] = 47
-	g.new_sim()
-	for p in g.sim.parts: g.sim.buy_part(p["id"])
-	g.start_match()
-	g._end_cine("intro")
-	var s: Sim = g.sim
-	var a = g.world
-	s.shop_open = false
-	s.auto_build["enabled"] = true
-	a.pad_stage = "build"
-	g.begin_cine("build", 15.8)
-	mark("assembly")
-	await frames(90, func():
-		s.auto_assemble(15.8 / 90.0)
-		g.cine["t"] = minf(15.7, float(g.cine["t"]) + 15.8 / 90.0)
-	)
-	g._end_cine("build")
-	await frames(21, func(): g.cine["t"] = minf(6.4, float(g.cine["t"]) + 6.5 / 21.0))
-	g._end_cine("outfit")
-	g.begin_cine("erect", 7.0)
-	await frames(21, func(): g.cine["t"] = minf(6.9, float(g.cine["t"]) + 7.0 / 21.0))
-	g._end_cine("erect")
-	await frames(18, func(): g.cine["t"] = minf(6.9, float(g.cine["t"]) + 7.0 / 18.0))
-	g._end_cine("boosters")
-	g.chosen_route = "sheltered"
-	g.launch()
-	mark("launch")
-	await frames(120, func():
-		if g.mode == "cine": g.cine["t"] = float(g.cine["t"]) + PlanetA.LAUNCH_DURATION / 120.0 - 1.0 / 30.0
-	)
-	if not g.world is Flight: g._end_cine("launch")
-	s.selected = 2
-	g.lmb = true
-	mark("flight")
-	await frames(60)
-	g.lmb = false
-	s.flight_time = s.flight_duration()
-	await frames(3)
-	g._end_cine("landing")
-	await frames(9)
-	s.selected = 3
-	var b = g.world
-	var f = s.flags[6]
-	var ra: Actor = b.actor(3)
-	ra.position = f["position"] + Vector3(0, 0, 2.6)
-	g.yaw = 0.0
-	g.pitch = -0.3
-	g.lmb = true
-	mark("capture")
-	await frames(90, func(): b.tick(0.04))
-	g.lmb = false
-	print("AD captured=", s.carried_flag(0, 3) != null)
-	await frames(15)
-	ra.position = PlanetB.HATCH + Vector3(0, 0, -1)
+	LobbyPages.play_mode = "arena_clash"
+	g.quick_deploy()
+	mark("pad")
+	var demo := Autotest.new()
+	demo.g = g
+	demo.dir = ProjectSettings.globalize_path("res://shots")
+	if not await demo.fly_to("planet_c"):
+		g.get_tree().quit(1)
+		return
 	await tap(KEY_E)
-	print("AD onboard=", s.flag_counts(0)["onboard"])
-	await tap(KEY_T)
-	mark("return")
-	await frames(45)
-	s.flight_time = s.flight_duration()
-	await frames(3)
-	g._end_cine("docking")
-	g.world.actor(s.selected).position = Sim.DELIVERY_PAD + Vector3(0, 0, -2)
-	await frames(21)
-	title("PLAY NOW", "T-MINUS  /  THE FIRST FRONTIER")
-	mark("endcard")
+	mark("arena")
+	await frames(120)
+	title("PLAY NOW", "T-MINUS / ARENA CLASH")
 	await frames(100)
-	mark("complete")
 	g.get_tree().quit()

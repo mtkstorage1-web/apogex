@@ -97,7 +97,7 @@ static func update_hologram(kiosk: Node3D, loadout: Dictionary) -> void:
 	if hologram == null:
 		return
 
-	var ship := ShipModel.full(HOLOGRAM, loadout)
+	var ship := ShipModel.full(HOLOGRAM, loadout, true)
 	ship.name = "Spacecraft"
 	var bounds := [null]
 	Actor._aabb(ship, Transform3D.IDENTITY, bounds)

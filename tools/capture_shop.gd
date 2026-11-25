@@ -76,8 +76,8 @@ func run() -> void:
 	var g = load("res://main.tscn").instantiate()
 	root.add_child(g)
 	g.set_process(false)
+	LobbyPages.play_mode = "practice"
 	g.start_match()
-	g._end_cine("intro")
 	g._refresh_hud()
 	g.hud.banner_time = 0.0
 	g.hud.tick(0.1)

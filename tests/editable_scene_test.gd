@@ -31,6 +31,15 @@ func _check_scenes() -> void:
             continue
         if path.ends_with("PlanetAEnvironment.tscn") and not root.has_node("CollisionFootprints"):
             failed += 1
+        if path.ends_with("PlanetAEnvironment.tscn"):
+            for group in ["Buildings/PartsShop/Terminal", "Buildings/PartsShop/ShopDesk", "Cranes/Pedestals/Pedestal3",
+                    "Cranes/Elevators/Elevator3/Platform", "Cranes/Conveyors/Lane3/Dispatch", "Cranes/PickupBays/Bay3",
+                    "Cranes/ScannerArches/Lane3_Arch1", "BoardingRig/Platform", "Stations/PropellantService",
+                    "Stations/Cargo/AftCargoHatch", "Stations/MissionDesk/Ring", "Infrastructure/Fence",
+                    "Environment/SidePonds/Pond3/Water", "Environment/ApronLights/ApronLight7"]:
+                if not root.has_node(group) or root.get_node(group).owner != root and root.get_node(group).owner != null:
+                    push_error("Planet A scene is missing editable node: " + group)
+                    failed += 1
         if path.ends_with("WorkshopEnvironment.tscn") and not root.has_node("WorkshopBuilding/RobotArmPivot"):
             failed += 1
         if path.ends_with("OrbitShipInterior.tscn") and not root.has_node("Stations/cockpit"):

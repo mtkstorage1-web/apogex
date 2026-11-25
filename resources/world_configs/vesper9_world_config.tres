@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WorldConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/WorldConfig.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+world_seed = 4209
+planet_name = "VESPER-9"
+planet_radius = 12000.0
+atmosphere_radius = 13200.0
+surface_gravity = 9.81
+star_direction = Vector3(0.68, 0.34, 0.65)
+quality_preset = "HIGH"

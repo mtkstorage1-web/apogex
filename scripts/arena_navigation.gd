@@ -27,6 +27,8 @@ func build(blockers: Array) -> void:
 
 func safe_cell(at: Vector3) -> Vector2i:
 	var base := Vector2i(roundi(at.x / 2.0), roundi(at.z / 2.0))
+	if grid.is_in_boundsv(base) and not grid.is_point_solid(base):
+		return base
 	var best := base
 	var cost := INF
 	for x in range(-6, 7):
@@ -42,6 +44,7 @@ func safe_cell(at: Vector3) -> Vector2i:
 func next_point(id: int, at: Vector3, target: Vector3) -> Vector3:
 	var end := safe_cell(target)
 	var start := safe_cell(at)
+	if not grid.is_in_boundsv(start) or not grid.is_in_boundsv(end): return at
 	if grid.is_point_solid(start) or grid.is_point_solid(end): return at
 	var cached: Dictionary = paths.get(id, {})
 	if cached.is_empty() or cached["goal"] != end:

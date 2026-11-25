@@ -19,10 +19,6 @@ func build() -> void:
 	var stage := Node3D.new()
 	stage.name = "AerospaceHardwarePreview"
 	root.add_child(stage)
-	var booster := Hardware.booster(1.5,16.0,"B01")
-	booster.position = Vector3(5,2,0)
-	stage.add_child(booster)
-	save(booster,"res://scenes/prefabs/FlightBooster.tscn")
 	var machine := Node3D.new()
 	machine.name = "IndustrialAssemblyRobot"
 	stage.add_child(machine)

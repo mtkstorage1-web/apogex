@@ -1,0 +1,278 @@
+{
+  "project": "APOGEX",
+  "world": "VESPER-9",
+  "wave": 3,
+  "milestone": 4,
+  "kit": "Surface Industrial Facilities 3D Kit",
+  "units": "meters",
+  "coordinate_system": "glTF Y-up. Bounding-box axes are X, Y, Z. Nominal ground is Y=0. Foundation skirts extend below ground.",
+  "visual_qa": {
+    "application": "Blender 5.3.0",
+    "view": "Material preview, multiple angles",
+    "inspected_assets": [
+      "extraction_spire_core",
+      "mining_drill_tower",
+      "ore_crusher_hopper",
+      "refinery_tower_cluster",
+      "storage_silo_bank",
+      "launch_service_tower",
+      "hab_module_derelict",
+      "power_pylon_tower"
+    ]
+  },
+  "assets": [
+    {
+      "path": "assets/models/apogex/surface/extraction_spire_core.glb",
+      "purpose": "Central Terminus Basin extraction landmark with three plasma rings, a docking collar and a telemetry crown.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounding_box": {
+        "min": [
+          -18.0,
+          -0.5,
+          -18.0
+        ],
+        "max": [
+          18.0,
+          205.0,
+          18.0
+        ]
+      },
+      "width_m": 36,
+      "depth_m": 36,
+      "height_above_ground_m": 205,
+      "foundation_skirt_depth_m": 0.5,
+      "triangle_count": 13882,
+      "mesh_count": 7,
+      "material_count": 13,
+      "file_size_bytes": 635184,
+      "sha256": "0f56de399b87ab05cf96dc24fc9bd3d5d86ad386f775ab8045a0b2253ca95d8d",
+      "animations": []
+    },
+    {
+      "path": "assets/models/apogex/surface/mining_drill_tower.glb",
+      "purpose": "Heavy planetary mining derrick with rotary cutting string and overhead maintenance crane.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounding_box": {
+        "min": [
+          -8.0,
+          -0.45,
+          -8.0
+        ],
+        "max": [
+          8.0,
+          32.0,
+          8.0
+        ]
+      },
+      "width_m": 16,
+      "depth_m": 16,
+      "height_above_ground_m": 32,
+      "foundation_skirt_depth_m": 0.45,
+      "triangle_count": 9754,
+      "mesh_count": 5,
+      "material_count": 11,
+      "file_size_bytes": 405704,
+      "sha256": "87c36bafda3a54e221affd402836361d821695a9350899fbe95bc70b19d78392",
+      "animations": []
+    },
+    {
+      "path": "assets/models/apogex/surface/ore_crusher_hopper.glb",
+      "purpose": "Open ore intake and jaw crusher with service catwalk and lower belt discharge.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounding_box": {
+        "min": [
+          -7.0,
+          -0.45,
+          -5.0
+        ],
+        "max": [
+          7.0,
+          12.0,
+          5.0
+        ]
+      },
+      "width_m": 14,
+      "depth_m": 10,
+      "height_above_ground_m": 12,
+      "foundation_skirt_depth_m": 0.45,
+      "triangle_count": 5936,
+      "mesh_count": 5,
+      "material_count": 11,
+      "file_size_bytes": 295488,
+      "sha256": "d8f63df4eecc5829e62333c0741d855c47976b7eb18f4ff85dfa3cecfb20af73",
+      "animations": []
+    },
+    {
+      "path": "assets/models/apogex/surface/refinery_tower_cluster.glb",
+      "purpose": "Twin catalytic cracking columns with staged catwalks, pressure vessels, manifolds and flare stacks.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounding_box": {
+        "min": [
+          -9.0,
+          -0.45,
+          -7.0
+        ],
+        "max": [
+          9.0,
+          28.0,
+          7.0
+        ]
+      },
+      "width_m": 18,
+      "depth_m": 14,
+      "height_above_ground_m": 28,
+      "foundation_skirt_depth_m": 0.45,
+      "triangle_count": 13526,
+      "mesh_count": 6,
+      "material_count": 12,
+      "file_size_bytes": 634728,
+      "sha256": "0dbfd2fa85bb0f265a92756ab208c671c53adf723e0cc77843ae93d9e9e53dd6",
+      "animations": []
+    },
+    {
+      "path": "assets/models/apogex/surface/storage_silo_bank.glb",
+      "purpose": "Three ribbed storage silos with a shared transfer catwalk, caged ladder and feed lines.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounding_box": {
+        "min": [
+          -9.0,
+          -0.45,
+          -5.0
+        ],
+        "max": [
+          9.0,
+          14.0,
+          5.0
+        ]
+      },
+      "width_m": 18,
+      "depth_m": 10,
+      "height_above_ground_m": 14,
+      "foundation_skirt_depth_m": 0.45,
+      "triangle_count": 11956,
+      "mesh_count": 6,
+      "material_count": 11,
+      "file_size_bytes": 492788,
+      "sha256": "0caff7c90cfdf172096c2ea0699e7e0352520f1221af14cf044ff09367b6caa4",
+      "animations": []
+    },
+    {
+      "path": "assets/models/apogex/surface/launch_service_tower.glb",
+      "purpose": "Rocket service tower with a blast-shielded core, three umbilical arms and lightning arrestor.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounding_box": {
+        "min": [
+          -7.0,
+          -0.45,
+          -7.0
+        ],
+        "max": [
+          7.0,
+          48.0,
+          7.0
+        ]
+      },
+      "width_m": 14,
+      "depth_m": 14,
+      "height_above_ground_m": 48,
+      "foundation_skirt_depth_m": 0.45,
+      "triangle_count": 8850,
+      "mesh_count": 5,
+      "material_count": 12,
+      "file_size_bytes": 426672,
+      "sha256": "83270a58ffa1b6a5321e025f9474e5d37d53568a4c54eb17ef923a2abcb6b139",
+      "animations": []
+    },
+    {
+      "path": "assets/models/apogex/surface/hab_module_derelict.glb",
+      "purpose": "Abandoned Vesper-9 habitat with a recessed airlock, damaged roof hardware and emergency strobe.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounding_box": {
+        "min": [
+          -7.0,
+          -0.45,
+          -4.5
+        ],
+        "max": [
+          7.0,
+          5.5,
+          4.5
+        ]
+      },
+      "width_m": 14,
+      "depth_m": 9,
+      "height_above_ground_m": 5.5,
+      "foundation_skirt_depth_m": 0.45,
+      "triangle_count": 7037,
+      "mesh_count": 6,
+      "material_count": 13,
+      "file_size_bytes": 255904,
+      "sha256": "c8f2457d2fae7d65d1f19f2135e1bbab96ffa25a02a1ba1d29dddd45cb24c956",
+      "animations": [
+        {
+          "name": "Emergency Strobe",
+          "duration_seconds": 2.0
+        }
+      ]
+    },
+    {
+      "path": "assets/models/apogex/surface/power_pylon_tower.glb",
+      "purpose": "Tapered planetary power pylon with two transmission crossarms and hanging ceramic insulators.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "bounding_box": {
+        "min": [
+          -3.0,
+          -0.45,
+          -3.0
+        ],
+        "max": [
+          3.0,
+          22.0,
+          3.0
+        ]
+      },
+      "width_m": 6,
+      "depth_m": 6,
+      "height_above_ground_m": 22,
+      "foundation_skirt_depth_m": 0.45,
+      "triangle_count": 7434,
+      "mesh_count": 4,
+      "material_count": 11,
+      "file_size_bytes": 339684,
+      "sha256": "995244e5e92d2d3e9614c81a731eaa9ed5f7e832ebb270bfec9d024cc4c501e6",
+      "animations": []
+    }
+  ]
+}

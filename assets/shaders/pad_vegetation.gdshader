@@ -3,26 +3,32 @@ render_mode cull_disabled;
 
 uniform bool flag = false;
 uniform bool ultra_detail = false;
+uniform bool canopy = false;
 uniform float wind_strength = 1.0;
 varying vec4 tint;
 varying float gust_sheen;
+varying vec2 growth_variation;
 
 void vertex() {
-	vec2 world_xz = MODEL_MATRIX[3].xz;
+	vec2 site = INSTANCE_CUSTOM.w > 0.5 ? INSTANCE_CUSTOM.xy * 1200.0 - 600.0 : MODEL_MATRIX[3].xz;
+	float patch = sin(dot(site, vec2(0.092, 0.061))) * sin(dot(site, vec2(-0.034, 0.083)));
+	float individual = INSTANCE_CUSTOM.w > 0.5 ? INSTANCE_CUSTOM.z : fract(sin(dot(floor(site * 2.0), vec2(127.1, 311.7))) * 43758.5453);
+	growth_variation = vec2(patch, individual);
 	gust_sheen = 0.0;
 	if (flag) {
-		float phase = dot(world_xz, vec2(0.13, 0.19));
+		float phase = dot(site, vec2(0.13, 0.19));
 		VERTEX.z += sin(TIME * 4.1 - VERTEX.x * 3.0 + phase) * max(VERTEX.x, 0.0) * 0.22 * wind_strength;
 	} else if (wind_strength > 0.0) {
-		float tip = UV.y;
+		float tip = canopy ? smoothstep(1.9, 6.8, VERTEX.y) : UV.y;
 		vec2 wind = vec2(0.86, 0.51);
-		float swell = sin(dot(world_xz, wind) * 0.14 - TIME * 2.1);
-		float breeze = sin(dot(world_xz, vec2(-0.32, 0.24)) - TIME * 1.45) * 0.35;
-		vec2 bend = wind * (0.08 + (swell + breeze) * 0.11);
+		float swell = sin(dot(site, wind) * 0.092 - TIME * 1.48);
+		float breeze = sin(dot(site, vec2(-0.32, 0.24)) - TIME * 2.37) * 0.35;
+		float front = smoothstep(-0.25, 0.94, swell + breeze);
+		vec2 bend = wind * (0.045 + front * 0.19) + vec2(-wind.y, wind.x) * (breeze * 0.13);
 		gust_sheen = smoothstep(0.05, 0.72, 0.55 * swell + 0.35 * breeze) * wind_strength;
 		if (ultra_detail) {
 			vec2 crosswind = vec2(-wind.y, wind.x);
-			float gust = sin(dot(world_xz, vec2(0.20, -0.30)) - TIME * 3.2 + swell * 0.5);
+			float gust = sin(dot(site, vec2(0.20, -0.30)) - TIME * 3.2 + swell * 0.5);
 			bend += wind * (0.07 + 0.12 * gust) + crosswind * (0.09 * gust);
 			gust_sheen = smoothstep(0.05, 0.62, 0.42 * swell + 0.34 * gust) * wind_strength;
 		}
@@ -30,6 +36,7 @@ void vertex() {
 		vec3 world_bend = vec3(bend.x, 0.0, bend.y);
 		vec2 local_bend = vec2(dot(world_bend, normalize(MODEL_MATRIX[0].xyz)),
 			dot(world_bend, normalize(MODEL_MATRIX[2].xyz)));
+		local_bend *= canopy ? 0.22 : 1.0;
 		float magnitude = length(local_bend);
 		vec2 direction = local_bend / max(magnitude, 0.0001);
 		// Integrate the bent centerline as a circular arc with the original blade length.
@@ -60,12 +67,19 @@ void fragment() {
 		vec3 tip_col = tint.rgb * vec3(0.95, 1.02, 0.56);
 		vec3 blade = mix(root_col, mid_col, smoothstep(0.0, 0.58, tip));
 		blade = mix(blade, tip_col, smoothstep(0.56, 1.0, tip));
+		float warmth = clamp(0.48 + growth_variation.x * 0.43 + (growth_variation.y - 0.5) * 0.44, 0.0, 1.0);
+		blade *= mix(vec3(0.7, 1.03, 0.89), vec3(1.34, 0.91, 0.48), warmth);
 		blade *= 1.0 + gust_sheen * exposed * 0.10;
+		if (canopy) {
+			float needles = fract(UV.x * 19.0 + UV.y * 8.0);
+			float detail = 1.0 - smoothstep(0.10, 0.46, fwidth(UV.x * 19.0 + UV.y * 8.0));
+			blade *= mix(1.0, 0.83 + 0.28 * smoothstep(0.28, 0.62, needles), detail);
+		}
 
 		ALBEDO = blade;
 		// Subtle warm sunlit subsurface translucency (BSL/SEUS feel without neon wash).
-		float sss_boost = ultra_detail ? 0.36 : 0.24;
-		BACKLIGHT = blade * exposed * vec3(0.72, 0.84, 0.30) * sss_boost;
+		float sss_boost = canopy ? 0.24 : (ultra_detail ? 0.49 : 0.38);
+		BACKLIGHT = blade * mix(0.3, 1.0, exposed) * vec3(0.86, 1.0, 0.43) * sss_boost;
 		ROUGHNESS = mix(0.90, 0.62, exposed) - gust_sheen * exposed * 0.08;
 		SPECULAR = mix(0.20, 0.42 + gust_sheen * 0.10, exposed);
 	}

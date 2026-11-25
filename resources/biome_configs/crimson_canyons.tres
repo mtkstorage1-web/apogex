@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BiomeConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/BiomeConfig.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"crimson_canyons"
+display_name = "Crimson Canyons"
+primary_color = Color(0.48, 0.15, 0.09, 1)
+secondary_color = Color(0.69, 0.31, 0.17, 1)
+roughness_base = 0.86
+metallic_base = 0.14
+elevation_bias = 30.0
+slope_steepness = 0.92
+volcanic_activity = 0.12
+dust_intensity = 0.52

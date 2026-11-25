@@ -3,6 +3,8 @@
 class_name ShipCatalog
 extends RefCounted
 
+const BUILD_ORDER := ["reactor", "engine", "bridge", "keel", "port", "thruster", "battery", "coolant", "scrubber", "stores", "cargo", "antenna"]
+
 const FAMILIES := {
   "kestrel": {
     "id": "kestrel",

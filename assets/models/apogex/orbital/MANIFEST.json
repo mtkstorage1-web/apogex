@@ -1,0 +1,443 @@
+{
+  "project": "APOGEX",
+  "world": "VESPER-9",
+  "wave": 5,
+  "milestone": 6,
+  "kit": "Orbital Structures & Debris Fields 3D Kit",
+  "parts": [
+    "10.3",
+    "10.4"
+  ],
+  "units": "meters",
+  "coordinate_system": "glTF Y-up. Bounds are rest-pose X, Y, Z in meters. Every root and bounding-box center is at the origin.",
+  "validation": {
+    "source": "GLB binary accessors and scene hierarchy",
+    "bounds_tolerance_m": 1e-05,
+    "normal_length_tolerance": 1e-05,
+    "degenerate_triangle_area_threshold_m2": 1e-10,
+    "satellite_animation_reimport": "Verified on/off scale at frames 0, 15, 34, 40, and 48 in Blender at 24 fps."
+  },
+  "visual_qa": {
+    "application": "Blender 5.3.0 via Blender MCP",
+    "view": "Material preview via Blender MCP look",
+    "angle_counts": {
+      "abandoned_research_station": 3,
+      "broken_orbital_refinery": 3,
+      "orbital_docking_hub": 3,
+      "broken_satellite": 3,
+      "solar_array_fragment": 2,
+      "rocket_stage_hulk": 2,
+      "hull_wreckage_slab": 2,
+      "nav_beacon_array": 2
+    }
+  },
+  "assets": [
+    {
+      "path": "assets/models/apogex/orbital/broken_satellite.glb",
+      "category": "debris",
+      "purpose": "Fractured Vesper-9 telemetry satellite with an animated amber distress beacon.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "dimensions_m": [
+        14.0,
+        6.0,
+        8.0
+      ],
+      "bounding_box": {
+        "min": [
+          -7.0,
+          -3.0,
+          -4.0
+        ],
+        "max": [
+          7.0,
+          3.0,
+          4.0
+        ]
+      },
+      "triangle_budget": [
+        600,
+        3500
+      ],
+      "triangle_count": 2614,
+      "degenerate_triangles": 0,
+      "minimum_triangle_area_m2": 0.00099781524,
+      "mesh_count": 6,
+      "primitive_count": 35,
+      "material_count": 16,
+      "texture_count": 7,
+      "pbr_workflow": "glTF metallic-roughness",
+      "emissive_materials": [
+        "amber distress",
+        "cyan navigation"
+      ],
+      "normal_count": 4852,
+      "non_finite_normals": 0,
+      "non_unit_normals": 0,
+      "max_normal_length_error": 1.0571467e-07,
+      "animations": [
+        {
+          "name": "Vesper-9 Amber Distress Pulse",
+          "duration_seconds": 2.0,
+          "loop_in_runtime": true
+        }
+      ],
+      "file_size_bytes": 356620,
+      "sha256": "392cbde152867b8693bc03f4f8ea5caf242e6a04dac7635ca8631f361542b513"
+    },
+    {
+      "path": "assets/models/apogex/orbital/solar_array_fragment.glb",
+      "category": "debris",
+      "purpose": "Single-mesh drifting photovoltaic wing with missing cells, a tilted section, and an exposed boom.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "dimensions_m": [
+        12.0,
+        1.2,
+        5.0
+      ],
+      "bounding_box": {
+        "min": [
+          -6.0,
+          -0.6,
+          -2.5
+        ],
+        "max": [
+          6.0,
+          0.6,
+          2.5
+        ]
+      },
+      "triangle_budget": [
+        600,
+        3500
+      ],
+      "triangle_count": 1428,
+      "degenerate_triangles": 0,
+      "minimum_triangle_area_m2": 0.0012990674,
+      "mesh_count": 1,
+      "primitive_count": 11,
+      "material_count": 11,
+      "texture_count": 3,
+      "pbr_workflow": "glTF metallic-roughness",
+      "emissive_materials": [
+        "standby amber"
+      ],
+      "normal_count": 2856,
+      "non_finite_normals": 0,
+      "non_unit_normals": 0,
+      "max_normal_length_error": 9.8286846e-08,
+      "animations": [],
+      "file_size_bytes": 169576,
+      "sha256": "171bfa2d5d7c2521e2ac66d17014fe42a9afd92431126f3791bd8405715d3fb3"
+    },
+    {
+      "path": "assets/models/apogex/orbital/rocket_stage_hulk.glb",
+      "category": "debris",
+      "purpose": "Ribbed spent upper stage aligned along glTF Z with a ruptured collar and two charred engine bells.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "dimensions_m": [
+        6.0,
+        6.0,
+        22.0
+      ],
+      "bounding_box": {
+        "min": [
+          -3.0,
+          -3.0,
+          -11.0
+        ],
+        "max": [
+          3.0,
+          3.0,
+          11.0
+        ]
+      },
+      "triangle_budget": [
+        600,
+        3500
+      ],
+      "triangle_count": 3292,
+      "degenerate_triangles": 0,
+      "minimum_triangle_area_m2": 0.004224538,
+      "mesh_count": 1,
+      "primitive_count": 11,
+      "material_count": 11,
+      "texture_count": 5,
+      "pbr_workflow": "glTF metallic-roughness",
+      "emissive_materials": [
+        "amber distress",
+        "standby amber"
+      ],
+      "normal_count": 5384,
+      "non_finite_normals": 0,
+      "non_unit_normals": 0,
+      "max_normal_length_error": 1.1538968e-07,
+      "animations": [],
+      "file_size_bytes": 306888,
+      "sha256": "33cfdc67ce1d56f11c623f05fb54753e52e4944451e8b87795b56c59df3517f9"
+    },
+    {
+      "path": "assets/models/apogex/orbital/hull_wreckage_slab.glb",
+      "category": "debris",
+      "purpose": "Layered capital-ship armor with a scorched perimeter and projecting sheared girders.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "dimensions_m": [
+        16.0,
+        4.0,
+        10.0
+      ],
+      "bounding_box": {
+        "min": [
+          -8.0,
+          -2.0,
+          -5.0
+        ],
+        "max": [
+          8.0,
+          2.0,
+          5.0
+        ]
+      },
+      "triangle_budget": [
+        600,
+        3500
+      ],
+      "triangle_count": 2368,
+      "degenerate_triangles": 0,
+      "minimum_triangle_area_m2": 0.0014186866,
+      "mesh_count": 1,
+      "primitive_count": 8,
+      "material_count": 8,
+      "texture_count": 4,
+      "pbr_workflow": "glTF metallic-roughness",
+      "emissive_materials": [
+        "standby amber"
+      ],
+      "normal_count": 4452,
+      "non_finite_normals": 0,
+      "non_unit_normals": 0,
+      "max_normal_length_error": 8.7705984e-08,
+      "animations": [],
+      "file_size_bytes": 245700,
+      "sha256": "3c4e338a3d8a5fb878a523802a42b5c324e728c0aef8f9320aab717d29a8d3cf"
+    },
+    {
+      "path": "assets/models/apogex/orbital/abandoned_research_station.glb",
+      "category": "structure",
+      "purpose": "Derelict science station with a fractured partial gravity ring, pressurized spindle, cupola, and solar spars.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "dimensions_m": [
+        85.0,
+        60.0,
+        85.0
+      ],
+      "bounding_box": {
+        "min": [
+          -42.5,
+          -30.0,
+          -42.5
+        ],
+        "max": [
+          42.5,
+          30.0,
+          42.5
+        ]
+      },
+      "triangle_budget": [
+        4000,
+        14000
+      ],
+      "triangle_count": 13220,
+      "degenerate_triangles": 0,
+      "minimum_triangle_area_m2": 0.0040058352,
+      "mesh_count": 4,
+      "primitive_count": 36,
+      "material_count": 18,
+      "texture_count": 6,
+      "pbr_workflow": "glTF metallic-roughness",
+      "emissive_materials": [
+        "amber distress",
+        "cyan navigation",
+        "standby amber"
+      ],
+      "normal_count": 24820,
+      "non_finite_normals": 0,
+      "non_unit_normals": 0,
+      "max_normal_length_error": 1.1478056e-07,
+      "animations": [],
+      "file_size_bytes": 1034652,
+      "sha256": "43d3b4e8909ceb050308f3bdd28c99712284cd104c12cd2a072c7a80faa5e3ef"
+    },
+    {
+      "path": "assets/models/apogex/orbital/broken_orbital_refinery.glb",
+      "category": "structure",
+      "purpose": "Open-truss ore refinery with four storage drums, a damaged drum, a smelter, a cargo berth, and a comms mast.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "dimensions_m": [
+        95.0,
+        55.0,
+        70.0
+      ],
+      "bounding_box": {
+        "min": [
+          -47.5,
+          -27.5,
+          -35.0
+        ],
+        "max": [
+          47.5,
+          27.5,
+          35.0
+        ]
+      },
+      "triangle_budget": [
+        4000,
+        14000
+      ],
+      "triangle_count": 13788,
+      "degenerate_triangles": 0,
+      "minimum_triangle_area_m2": 0.01061989,
+      "mesh_count": 8,
+      "primitive_count": 61,
+      "material_count": 13,
+      "texture_count": 6,
+      "pbr_workflow": "glTF metallic-roughness",
+      "emissive_materials": [
+        "amber distress",
+        "cyan navigation",
+        "standby amber"
+      ],
+      "normal_count": 24892,
+      "non_finite_normals": 0,
+      "non_unit_normals": 0,
+      "max_normal_length_error": 1.2000172e-07,
+      "animations": [],
+      "file_size_bytes": 1040832,
+      "sha256": "aa10b0673e94ee36a53ecdc41998ac644e7f1b75a1be05b5a3e4acd4a6e5ad94"
+    },
+    {
+      "path": "assets/models/apogex/orbital/nav_beacon_array.glb",
+      "category": "structure",
+      "purpose": "Armored relay buoy with four radial dipole booms and cyan and amber navigation rings.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "dimensions_m": [
+        12.0,
+        24.0,
+        12.0
+      ],
+      "bounding_box": {
+        "min": [
+          -6.0,
+          -12.0,
+          -6.0
+        ],
+        "max": [
+          6.0,
+          12.0,
+          6.0
+        ]
+      },
+      "triangle_budget": [
+        4000,
+        14000
+      ],
+      "triangle_count": 9820,
+      "degenerate_triangles": 0,
+      "minimum_triangle_area_m2": 0.00084185816,
+      "mesh_count": 4,
+      "primitive_count": 24,
+      "material_count": 11,
+      "texture_count": 4,
+      "pbr_workflow": "glTF metallic-roughness",
+      "emissive_materials": [
+        "amber distress",
+        "cyan navigation",
+        "standby amber"
+      ],
+      "normal_count": 17584,
+      "non_finite_normals": 0,
+      "non_unit_normals": 0,
+      "max_normal_length_error": 1.0552015e-07,
+      "animations": [],
+      "file_size_bytes": 732036,
+      "sha256": "154a30a4127958959086cb77b18ce97ed3a6b48eedf9a40a57b7d6a789967c3b"
+    },
+    {
+      "path": "assets/models/apogex/orbital/orbital_docking_hub.glb",
+      "category": "structure",
+      "purpose": "Orbital command hub with four symmetric docking collars, approach lights, a dorsal dish, and two solar arrays.",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "dimensions_m": [
+        48.0,
+        28.0,
+        48.0
+      ],
+      "bounding_box": {
+        "min": [
+          -24.0,
+          -14.0,
+          -24.0
+        ],
+        "max": [
+          24.0,
+          14.0,
+          24.0
+        ]
+      },
+      "triangle_budget": [
+        4000,
+        14000
+      ],
+      "triangle_count": 13372,
+      "degenerate_triangles": 0,
+      "minimum_triangle_area_m2": 0.00041934757,
+      "mesh_count": 7,
+      "primitive_count": 61,
+      "material_count": 15,
+      "texture_count": 4,
+      "pbr_workflow": "glTF metallic-roughness",
+      "emissive_materials": [
+        "amber distress",
+        "cyan navigation"
+      ],
+      "normal_count": 24064,
+      "non_finite_normals": 0,
+      "non_unit_normals": 0,
+      "max_normal_length_error": 1.077958e-07,
+      "animations": [],
+      "file_size_bytes": 992488,
+      "sha256": "920ba57f1b1a0aa86fecb203e034f70fec69556eb6fd55f876e7c200c661015b"
+    }
+  ]
+}

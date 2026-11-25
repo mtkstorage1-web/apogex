@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/vehicles/RoverController.gd" id="1"]
+
+[node name="CinderRover" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("1")
+vehicle_id = "cinder_rover"
+vehicle_type = "rover"
+faction = "cinder"
+display_name = "Cinder Siege Rover"
+dimensions = Vector3(4, 3, 7)
+max_health = 230.0
+max_shield = 52.0
+drive_speed = 28.0

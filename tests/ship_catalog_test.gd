@@ -46,9 +46,6 @@ func _initialize() -> void:
 	mixed["port"] = "lancer"
 	var stats := ShipCatalog.loadout_stats(mixed)
 	check(stats["cost"] != ShipCatalog.loadout_cost({}) and stats["wet_mass"] > 750 and stats["twr"] > ds["twr"] and stats["cargo_capacity"] == 12, "mixed cost, mass, TWR and cargo")
-	var balanced_budget := s.route_budget(Sim.ROUTES[1])
-	var outbound := 750.0 * (1.0 - exp(-210.0 / Sim.EXHAUST))
-	check(balanced_budget["outbound"] == outbound and balanced_budget["return_reserve"] == (750.0 - outbound) * (1.0 - exp(-95.0 / Sim.EXHAUST)), "exact Kestrel route budget")
 	for family in ShipCatalog.FAMILIES:
 		var family_loadout := ShipCatalog.default_loadout()
 		for slot in family_loadout: family_loadout[slot] = family

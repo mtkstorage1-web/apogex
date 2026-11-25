@@ -16,9 +16,7 @@ func _initialize() -> void:
 	check(s.cycle_order() == "recover" and s.cycle_order() == "regroup" and s.cycle_order() == "escort", "crew orders cycle")
 	check(not s.set_priority(-1) and not s.set_priority(99), "priority rejects invalid flags")
 	check(s.set_priority(8) and s.frontier_target(Vector3.ZERO)["id"] == 8, "priority changes the crew target")
-	s.phase = "surface"
-	s.teams[0]["planet"] = "B"
-	s.teams[0]["phase"] = "surface"
+	s.set_location("planet_c")
 	for i in 60: s.scan_flag(8, 0, 3, 0.1, 1.0)
 	check(s.metrics["captures"] == 1, "extraction counted once")
 	check(s.drop_flag(0, 3, Vector3.ZERO), "raider drops sample")

@@ -1,5 +1,5 @@
 ## T-MINUS / APOGEX offline crew match rules.
-## Ported from the web build: expedition-core.js (build, outfit, route, flight systems)
+## Crew construction, ship systems, and flag-match rules.
 ## and science-match.js (finite pool of twelve Science Flags, rival crews, scoring).
 class_name Sim
 extends RefCounted
@@ -7,6 +7,8 @@ extends RefCounted
 signal shop_changed
 
 ## Ship is built at K x the original size so 1.75 m crew (2.5 units) fit inside the hull.
+const ArenaClashRules := preload("res://scripts/arena_clash_sim.gd")
+
 const SHIP_K := 1.5
 const SHIP_SCALE := 3.6 * SHIP_K
 const SHIP_Y := (0.22 + 0.41 * 3.6) * SHIP_K
@@ -37,19 +39,19 @@ const SPECIALISTS := [
 	{"name": "FINN", "role": "PILOT", "species": "Frog", "color": "#f6a052", "tag": "Find the way home.",
 	 "job": "Pilot, evade, navigate and protect the return reserve.",
 	 "description": "Finn the Frog flies with twin maneuver-thrusters and a steady hand.",
-	 "weapon": "Pulse carbine", "skill": "Afterburner", "model": "res://assets/characters/frog.glb"},
+	 "weapon": "Pulse carbine", "skill": "Afterburner", "model": "res://assets/characters/crew/pilot.glb"},
 	{"name": "CHIP", "role": "ENGINEER", "species": "Maintenance robot", "color": "#f5be76", "tag": "Every system matters.",
 	 "job": "Repair propulsion, power, cooling and life support.",
 	 "description": "Chip carries a rectangular service pack and a modular repair tool.",
-	 "weapon": "Arc projector", "skill": "Power reroute", "model": "res://assets/characters/Robot.fbx"},
+	 "weapon": "Arc projector", "skill": "Power reroute", "model": "res://assets/characters/crew/engineer.glb"},
 	{"name": "BARBARA", "role": "GUNNER", "species": "Bee", "color": "#f7ce59", "tag": "Keep the corridor clear.",
 	 "job": "Operate the dorsal turret, communications and defensive cover.",
 	 "description": "Barbara the Bee brings an antenna harness, wings and disciplined covering fire.",
-	 "weapon": "Vulcan repeater", "skill": "Turret overdrive", "model": "res://assets/characters/bee.glb"},
+	 "weapon": "Vulcan repeater", "skill": "Turret overdrive", "model": "res://assets/characters/crew/gunner.glb"},
 	{"name": "FERNANDO", "role": "RAIDER", "species": "Flamingo", "color": "#f7a28f", "tag": "Discovery is only the beginning.",
 	 "job": "Scan, stabilize and extract Science Flags; carry them to the ship.",
 	 "description": "Fernando the Flamingo carries a scanner arm and a protective sample case.",
-	 "weapon": "Scientific scanner", "skill": "Scanner boost", "model": "res://assets/characters/flamingo.glb"},
+	 "weapon": "Scientific scanner", "skill": "Scanner boost", "model": "res://assets/characters/crew/raider.glb"},
 ]
 
 const PARTS_DEF := [
@@ -74,12 +76,6 @@ const CARGO_DEF := [
 	{"id": "spares", "name": "EVA replacement plates", "owner": 3, "lesson": "Replacement plates restore structural protection after damaged material is removed."},
 ]
 
-const ROUTES := [
-	{"id": "sheltered", "name": "Shielded passage", "dv": 120.0, "duration": 100.0, "hazard": 0.65, "note": "A longer, lower-energy rendezvous corridor. Less debris, more time for other teams to catch up."},
-	{"id": "balanced", "name": "Transfer corridor", "dv": 210.0, "duration": 82.0, "hazard": 1.0, "note": "A moderate maneuver with a balanced travel time and obstacle exposure."},
-	{"id": "slingshot", "name": "Debris slingshot", "dv": 320.0, "duration": 65.0, "hazard": 1.5, "note": "A faster local departure with higher propellant use and more debris."},
-]
-
 const UPGRADES := [
 	{"id": "weapons", "name": "Heavy dorsal turret", "cost": 1100, "mass": 75.0, "power": 1.8, "cargo": 0, "fuel": 0.0, "description": "Higher damage, but more mass and electrical demand."},
 	{"id": "cargo", "name": "Expanded sample racks", "cost": 950, "mass": 80.0, "power": 0.15, "cargo": 2, "fuel": 0.0, "description": "Carry eight flags instead of six. More cargo capacity adds dry mass."},
@@ -92,6 +88,15 @@ const FACTIONS := [
 	{"name": "VIOLET", "color": "#a486d4", "symbol": "◆"},
 	{"name": "LIME", "color": "#b9d75b", "symbol": "■"},
 ]
+
+const EmpireRules = preload("res://scripts/empire_sim.gd")
+const EMPIRE_COLORS := {
+	"orange": "#f79442", "cyan": "#53d3db", "violet": "#a486d4", "lime": "#b9d75b",
+	"crimson": "#ff5968", "amber": "#ffc45d", "obsidian": "#b4a8cf", "cobalt": "#669aff",
+}
+const VAULT_FLAG_OFFSETS := [Vector2(-3, -3), Vector2(3, -3), Vector2(-3, 3), Vector2(3, 3)]
+const GOLD_FLAG_SITES := [Vector2(-45, -15), Vector2(45, -15)]
+const EMPIRE_FOURTH_BAY := Vector2(0, -91)
 
 const FLAG_SITES := [[-28, -22], [-19, -26], [-28, -4], [-20, 8], [-6, -10], [6, -10], [-6, 10], [6, 10], [22, -24], [30, -14], [24, 6], [31, 19]]
 const LANDING_BAYS := [[0, 58], [-58, -30], [58, -30], [0, -62]]
@@ -136,11 +141,12 @@ var cargo_capacity := 6
 var extra_load := 0.0
 var scan_boost := 0.0
 var overdrive := 0.0
-var flight_leg := "outbound"
-var phase := "assembly"
+var location := "planet_a"
 var selected := 3
 var parts: Array = []
 var auto_build := {"enabled": false, "t": 0.0}
+## When true, the 15 s auto-build never completes by itself: buying all 12 parts goes straight to manual crane assembly.
+var manual_crane_build := true
 var shop_open := false   ## true while the crew is buying modules at the 3D parts shop (assembly waits)
 var ai_assist := true
 var carry: Array = [null, null, null, null]
@@ -149,9 +155,6 @@ var cargo: Array = []
 var checks := {"pressure": 0.0, "power": 0.0, "engine": 0.0}
 var check_readings := {"pressure": 80.0, "power": 45.0, "engine": 50.0}
 var flight_time := 0.0
-var manual_flight := false
-var destination_reached := false
-var route: Variant = null
 var hull := 100.0
 var power := 3.6
 var power_capacity := 6.0
@@ -187,6 +190,12 @@ var winner: Variant = null
 var flags: Array = []
 var teams: Array = []
 var wrecks: Array = []
+var empire: EmpireRules
+var empire_squad := "orange"
+var empire_home := "planet_a"
+var empire_enemy := "planet_b"
+var empire_action: Callable
+var empire_pending_flags := {}
 var events: Array = []
 
 # Offline crew tactics and match telemetry. Scoring still requires delivery.
@@ -194,6 +203,7 @@ var navigation: RefCounted
 var crew_order := "escort"
 var priority_flag := -1
 var quick_deploy := false
+var arena_clash: ArenaClashRules
 var metrics := {"captures": 0, "recoveries": 0, "loads": 0, "stuns": 0, "downs": 0, "repairs": 0, "hazards": 0, "shots": 0, "hits": 0}
 var announced := {}
 
@@ -228,25 +238,43 @@ func frontier_target(position: Vector3, team := 0) -> Variant:
 			best = f
 	return best
 
-func objective_advice() -> String:
-	match phase:
-		"assembly": return "Buy modules at the shop, then build your assigned parts. 1–4 changes specialist."
-		"outfit": return "Finish cargo and systems checks. Watch the crew cards for unfinished work."
-		"route": return "Choose a route with positive fuel margin. Save enough for the return leg."
-		"flight":
-			if fault != null: return "SYSTEM FAULT: switch to Chip [2] and service the affected system."
-			if panels.any(func(p): return p["health"] < 60.0): return "HULL BREACH: Fernando [4] can remove and replace damaged plates."
-			return "Pilot [1] avoids debris · Gunner [3] clears drones · Q skill · F ultimate."
-		"surface":
-			var c := flag_counts(0)
-			if c["carried"] > 0: return "Samples in the field: escort carriers back to the ramp. E loads your sample."
-			if c["onboard"] >= cargo_capacity: return "CARGO FULL. Regroup at the ramp and press T to bring your science home."
-			if limit - time < 95.0: return "RETURN WINDOW CLOSING. Reach the ramp and depart; undelivered samples do not score."
-			return "Z marks a flag · C changes crew orders · M tactical map · Raider [4] extracts samples."
-		"delivery", "docking": return "Hold E at the delivery pad. Only science delivered home counts toward victory."
-		"delivered", "spectator": return "F5 accelerates the remaining race. Review the final standings at debrief."
-	return "Bring your crew and science home."
+func in_space() -> bool:
+	return location == "space"
 
+
+func on_surface(planet: String) -> bool:
+	return location == planet
+
+
+func flight_capable() -> bool:
+	if arena_clash != null:
+		return arena_clash.squads[arena_clash.player_squad]["flight_capable"]
+	return ArenaClashRules.FLIGHT_PARTS.all(func(slot: String) -> bool: return part_by_id(slot)["stage"] == "secured")
+
+
+func construction_supplied() -> bool:
+	return ArenaClashRules.FLIGHT_PARTS.all(slot_confirmed)
+
+
+func set_location(planet: String) -> void:
+	location = planet
+	# The crew-match data uses A/B for home/frontier. Opposite Earth is a separate destination.
+	var player: Dictionary = teams[0]
+	player["planet"] = "space" if in_space() else ("B" if on_surface("planet_c") else ("A" if on_surface(empire_home) else "away"))
+	player["phase"] = "in space" if in_space() else ("surface" if on_surface("planet_c") else "landed")
+	player["progress"] = 0.6 if on_surface("planet_c") else (0.45 if in_space() else 0.0)
+
+
+func objective_advice() -> String:
+	if in_space():
+		return "Fly toward a planet. Press L when in landing range."
+	if on_surface("planet_c"):
+		return "Raider [4] extracts flags. Load at the ship and deliver at home."
+	if on_surface(empire_home) and flag_counts(0)["onboard"] > 0:
+		return "Hold E at the home delivery pad."
+	if flight_capable():
+		return "Press E at the cockpit to board."
+	return "Build a reactor, engine and bridge."
 
 
 static func ship_point(p: Array) -> Vector3:
@@ -257,12 +285,12 @@ static func ship_size(p: Array) -> Vector3:
 	return Vector3(p[0] * SHIP_SCALE, p[1] * SHIP_SCALE, p[2] * SHIP_SCALE)
 
 
-func _init(p_seed: int = 0, p_difficulty := "standard", p_length := "standard") -> void:
+func _init(p_seed: int = 0, p_difficulty := "standard", p_length := "standard", empire_preset := "") -> void:
 	match_seed = p_seed if p_seed > 0 else int(Time.get_unix_time_from_system()) % 999999 + 1
 	rng_state = match_seed
 	difficulty = p_difficulty
 	length = p_length
-	limit = LENGTHS[length]["limit"]
+	limit = LENGTHS.get(length, LENGTHS["standard"])["limit"]
 	fault_clock = 17.0
 	for d in PARTS_DEF:
 		var p: Dictionary = d.duplicate(true)
@@ -284,9 +312,178 @@ func _init(p_seed: int = 0, p_difficulty := "standard", p_length := "standard") 
 	]
 	_create_match()
 	refresh_loadout()
+	if empire_preset in ["standard", "short"]:
+		enable_empire(empire_preset, "orange", Callable())
 
 
 ## Reapply after restoring a serialized loadout. Preserve spent fuel and upgrade mass.
+func enable_empire(preset: String, squad_id: String, dispatch: Callable) -> void:
+	empire = EmpireRules.new()
+	var empire_difficulty: String = {"cadet": "easy", "expert": "hard"}.get(difficulty, "standard")
+	empire.setup(match_seed, preset, empire_difficulty)
+	empire_squad = squad_id
+	empire_home = empire.squads[squad_id]["alliance"]
+	empire_enemy = "planet_b" if empire_home == "planet_a" else "planet_a"
+	empire.squads[squad_id]["ai_enabled"] = false
+	empire_action = dispatch
+	limit = empire.duration
+	length = empire.match_preset
+	var fourth: Dictionary = teams[3].duplicate(true)
+	fourth["id"] = 4
+	teams.append(fourth)
+	for index in teams.size():
+		var squad: String = empire_squad if index == 0 else EmpireRules.ALLIANCE_SQUADS[empire_enemy][index - 1]
+		teams[index]["name"] = squad.to_upper()
+		teams[index]["color"] = EMPIRE_COLORS[squad]
+	for index in EmpireRules.STANDARD_FLAGS_PER_PLANET + 2:
+		var is_gold := index >= EmpireRules.STANDARD_FLAGS_PER_PLANET
+		var flag_id := "%s_%s_%02d" % [empire_enemy, "gold" if is_gold else "flag",
+			index - EmpireRules.STANDARD_FLAGS_PER_PLANET + 1 if is_gold else index + 1]
+		if index >= flags.size():
+			var flag: Dictionary = flags[0].duplicate()
+			flag["id"] = index
+			flag["site"] = index
+			flag["state"] = "inactive" if is_gold else "site"
+			flags.append(flag)
+		flags[index]["empire_id"] = flag_id
+		flags[index]["golden"] = is_gold
+
+
+func set_empire_vault_sites(vault: Vector3) -> void:
+	for index in range(FLAG_SITES.size(), flags.size()):
+		var offset: Vector2
+		if flags[index]["golden"]:
+			offset = GOLD_FLAG_SITES[index - EmpireRules.STANDARD_FLAGS_PER_PLANET]
+		else:
+			offset = Vector2(vault.x, vault.z) + VAULT_FLAG_OFFSETS[index - FLAG_SITES.size()]
+		if flags[index]["state"] in ["site", "inactive"]:
+			flags[index]["position"] = Vector3(offset.x, 0, offset.y)
+		flags[index]["site_position"] = Vector3(offset.x, 0, offset.y)
+
+
+func field_color(team: int) -> Color:
+	return Color.html(teams[team]["color"])
+
+
+func landing_bay(team: int) -> Vector2:
+	if team == 4:
+		return EMPIRE_FOURTH_BAY
+	return Vector2(LANDING_BAYS[team][0], LANDING_BAYS[team][1])
+
+
+func empire_flag_available(flag: Dictionary) -> bool:
+	if empire == null:
+		return true
+	var record: Dictionary = empire.flags.get(flag["empire_id"], {})
+	return not record.is_empty() and record["location"] == empire_enemy and (
+		record["state"] == "dropped" or (record["state"] == "available" and
+		(not record["vault_protected"] or not empire.is_shield_active(empire_enemy))))
+
+
+func _flag_action(action_type: String, flag: Dictionary) -> bool:
+	if empire_action.is_valid():
+		var result: Dictionary = empire_action.call(action_type, {"flag_id": flag["empire_id"]})
+		if result.get("pending", false):
+			empire_pending_flags[flag["empire_id"]] = action_type
+		return result.get("ok", false)
+	match action_type:
+		"capture_flag":
+			return empire.record_flag_captured(empire_squad, flag["empire_id"])
+		"deliver_flag":
+			return empire.record_flag_delivered(empire_squad, flag["empire_id"]) > 0
+		"drop_flag":
+			return drop_empire_flag(empire_squad, flag["empire_id"])
+	return false
+
+
+func drop_empire_flag(squad_id: String, id: String) -> bool:
+	return empire.record_flag_dropped(squad_id, id)
+
+
+func sync_empire_flags() -> void:
+	for flag: Dictionary in flags:
+		var id: String = flag["empire_id"]
+		if empire_pending_flags.has(id):
+			continue
+		var record: Dictionary = empire.flags.get(id, {})
+		var ours: bool = record.get("carrier", "") == empire_squad
+		var space_wreck: bool = flag["state"] == "wreck" and record.get("state") == "dropped" and record.get("location") in EmpireRules.SPACE_LOCATIONS
+		if ours or space_wreck or (flag["state"] == "delivered" and record.get("state") == "delivered"):
+			continue
+		if record.is_empty() or record["location"] != empire_enemy or record["state"] in ["carried", "delivered"]:
+			if flag["owner"] == 0 and teams[0]["carrying"] == flag["id"]:
+				teams[0]["carrying"] = null
+			flag["state"] = "inactive"
+			flag["owner"] = null
+			flag["carrier"] = null
+			flag["scanner"] = null
+			flag["progress"] = 0.0
+			flag["stage"] = 0
+			continue
+		if flag["state"] == ("ground" if record["state"] == "dropped" else "site"):
+			continue
+		flag["state"] = "ground" if record["state"] == "dropped" else "site"
+		flag["planet"] = "B"
+		flag["position"] = flag.get("site_position", flag["position"])
+	teams[0]["onboard"] = flag_counts(0)["onboard"]
+
+
+func move_empire_squad(squad_id: String, destination: String) -> bool:
+	var squad: Dictionary = empire.squads[squad_id]
+	var home: String = squad["alliance"]
+	var enemy := "planet_b" if home == "planet_a" else "planet_a"
+	match destination:
+		"space":
+			var returning: bool = squad["location"] == enemy and squad["phase"] == "raid"
+			empire._set_phase(squad, "return" if returning else "flight", "space_to_" + (home if returning else enemy).right(1), 100.0)
+		"planet_c":
+			empire._set_phase(squad, "raid", enemy, 90.0)
+		"planet_a", "planet_b":
+			if destination == home:
+				empire._set_phase(squad, "defend", home, 60.0)
+			else:
+				empire._set_phase(squad, "flight", "space_to_" + enemy.right(1), 100.0)
+		_:
+			return false
+	return true
+
+
+func finish_empire_if_needed() -> void:
+	time = empire.elapsed
+	if empire.winner != "" and not over:
+		over = true
+		reason = "Alliance flag target reached." if empire.win_reason == "knockout" else "Empire match clock expired."
+		winner = 0 if empire.winner == empire_home else (null if empire.winner == "draw" else 1)
+
+
+func service_empire_ship() -> void:
+	hull = 100.0
+	teams[0]["hull"] = hull
+	teams[0]["finished"] = false
+	propellant = float(_catalog_stats["fuel"])
+	for upgrade: Dictionary in UPGRADES:
+		if upgrade["id"] in upgrades:
+			propellant += float(upgrade["fuel"])
+	power = minf(3.6, power_capacity)
+	reactor = 62.0
+	temperature = 41.0
+	pressure = 101.3
+	co2 = 480.0
+	crew_nutrition = 100.0
+	spares = 6
+	fault = null
+	fault_clock = 17.0
+	for panel: Dictionary in panels:
+		panel["health"] = 100.0
+		panel["removed"] = false
+		panel["progress"] = 0.0
+	shield = 0.0
+	boost = 0.0
+	decoy = 0.0
+	scan_boost = 0.0
+	overdrive = 0.0
+
+
 func refresh_loadout() -> void:
 	var stats := ShipCatalog.loadout_stats(loadout)
 	wet_mass += float(stats["wet_mass"]) - float(_catalog_stats["wet_mass"])
@@ -314,6 +511,8 @@ func refresh_loadout() -> void:
 
 
 func part_price(slot_id: String) -> int:
+	if arena_clash != null:
+		return ArenaClashRules.PART_PRICES.get(slot_id, 0)
 	var family = loadout.get(slot_id, "kestrel")
 	if family == null or not ShipCatalog.FAMILIES.has(family): family = "kestrel"
 	return int(ShipCatalog.variant(slot_id, str(family)).get("price", 0))
@@ -323,7 +522,17 @@ func part_price(slot_id: String) -> int:
 func set_variant(slot_id: String, family_id: String) -> bool:
 	var p = part_by_id(slot_id)
 	var v := ShipCatalog.variant(slot_id, family_id)
-	if p == null or v.is_empty() or phase != "assembly" or auto_build["enabled"] or parts.any(func(q): return q["stage"] != "shelf"):
+	if arena_clash != null:
+		if p == null or v.is_empty() or not arena_clash.buy_part(arena_clash.player_squad, slot_id)["ok"]:
+			return false
+		arena_clash.build_part(arena_clash.player_squad, slot_id)
+		credits = arena_clash.squads[arena_clash.player_squad]["credits"]
+		loadout[slot_id] = family_id
+		p["purchased"] = true
+		refresh_loadout()
+		shop_changed.emit()
+		return true
+	if p == null or v.is_empty() or auto_build["enabled"] or parts.any(func(q): return q["stage"] != "shelf"):
 		return false
 	var charge: int = variant_charge(slot_id, family_id)
 	if credits < charge: return false
@@ -337,16 +546,22 @@ func set_variant(slot_id: String, family_id: String) -> bool:
 
 ## The same quote is used by individual purchases and the whole-ship draft.
 func variant_charge(slot_id: String, family_id: String) -> int:
+	if arena_clash != null:
+		return 0 if slot_confirmed(slot_id) else part_price(slot_id)
 	return int(ShipCatalog.variant(slot_id, family_id).get("price", 0)) - (part_price(slot_id) if slot_confirmed(slot_id) else 0)
 
 
 func loadout_purchase_error(draft: Dictionary) -> String:
-	if phase != "assembly" or auto_build["enabled"] or parts.any(func(p): return p["stage"] != "shelf"):
+	if arena_clash != null:
+		return _arena_loadout_error(draft)
+	if auto_build["enabled"] or parts.any(func(p): return p["stage"] != "shelf"):
 		return "Assembly has started; the loadout is locked."
+	if not ArenaClashRules.FLIGHT_PARTS.all(func(slot: String) -> bool: return draft.has(slot)):
+		return "Choose a reactor, an engine and a bridge."
 	var total := 0
-	for slot in ShipCatalog.VARIANTS:
-		if part_by_id(slot) == null or ShipCatalog.variant(slot, str(draft.get(slot, ""))).is_empty():
-			return "Choose a valid variant for every slot."
+	for slot in draft:
+		if ShipCatalog.variant(slot, str(draft[slot])).is_empty():
+			return "Choose a valid module variant."
 		total += variant_charge(slot, str(draft[slot]))
 	if total > credits: return "Not enough credits: need %d CR more." % (total - credits)
 	return ""
@@ -355,12 +570,27 @@ func loadout_purchase_error(draft: Dictionary) -> String:
 ## Validate everything before mutation; refunds fund subsequent purchases.
 func purchase_loadout(draft: Dictionary) -> bool:
 	if not loadout_purchase_error(draft).is_empty(): return false
-	var slots := ShipCatalog.VARIANTS.keys()
+	var slots := draft.keys()
 	slots.sort_custom(func(a, b): return variant_charge(a, str(draft[a])) < variant_charge(b, str(draft[b])))
 	for slot in slots:
 		if slot_confirmed(slot) and loadout.get(slot) == draft[slot]: continue
 		if not set_variant(slot, str(draft[slot])): return false
 	return true
+
+
+func _arena_loadout_error(draft: Dictionary) -> String:
+	if arena_clash.is_finished() or arena_clash.squads[arena_clash.player_squad]["location"] != arena_clash.squads[arena_clash.player_squad]["alliance"]:
+		return "The parts shop is unavailable."
+	var total := 0
+	for slot in draft:
+		if ShipCatalog.variant(slot, str(draft[slot])).is_empty():
+			return "Choose a valid module variant."
+		if slot_confirmed(slot) and loadout[slot] != draft[slot]:
+			return "Purchased modules are locked."
+		total += variant_charge(slot, str(draft[slot]))
+	if total > credits:
+		return "Not enough credits: need %d CR more." % (total - credits)
+	return ""
 
 
 func _confirm_default(slot_id: String) -> void:
@@ -461,6 +691,8 @@ func scan_fraction(f) -> float:
 
 func scan_flag(id: int, team: int, role: int, dt: float, distance: float, aligned := true, powered := false) -> bool:
 	var f = flags[id]
+	if empire != null and (team != 0 or not empire_flag_available(f)):
+		return false
 	if not _alive(team) or role != 3 or f["state"] != "site" or distance > 3.8 or not aligned or teams[team]["planet"] != "B":
 		return false
 	if carried_flag(team, role) != null:
@@ -476,19 +708,25 @@ func scan_flag(id: int, team: int, role: int, dt: float, distance: float, aligne
 		f["progress"] = 0.0
 		f["stage"] += 1
 		if f["stage"] >= 3:
+			if empire != null and not _flag_action("capture_flag", f):
+				f["stage"] = 0
+				f["scanner"] = null
+				return false
 			f["state"] = "carried"
 			f["owner"] = team
 			f["carrier"] = role
 			f["scanner"] = null
 			teams[team]["carrying"] = id
 			if team == 0: metrics["captures"] += 1
-			events.append({"time": time, "text": "%s extracted Science Flag %d" % [FACTIONS[team]["name"], id + 1]})
+			events.append({"time": time, "text": "%s extracted Science Flag %d" % [teams[team]["name"], id + 1]})
 	return true
 
 
 func drop_flag(team: int, role: int, position: Vector3, planet := "B") -> bool:
 	var f = carried_flag(team, role)
 	if f == null:
+		return false
+	if empire != null and not _flag_action("drop_flag", f):
 		return false
 	f["state"] = "ground"
 	f["planet"] = planet
@@ -504,6 +742,8 @@ func recover_flag(id: int, team: int, role: int, distance: float, planet := "B")
 	if not _alive(team) or not (f["state"] in ["ground", "wreck"]) or f["planet"] != planet or distance > 3.8:
 		return false
 	if carried_flag(team, role) != null:
+		return false
+	if empire != null and (team != 0 or not _flag_action("capture_flag", f)):
 		return false
 	if team == 0: metrics["recoveries"] += 1
 	f["state"] = "carried"
@@ -529,10 +769,12 @@ func load_flag(team: int, role: int, distance: float) -> bool:
 
 func deliver_flag(team: int, distance: float) -> bool:
 	var t = teams[team]
-	if not _alive(team) or t["planet"] != "A" or not (t["phase"] in ["docked", "delivering"]) or distance > 5.0:
+	if not _alive(team) or t["planet"] != "A" or distance > 5.0:
 		return false
 	for f in flags:
 		if f["state"] == "onboard" and f["owner"] == team:
+			if empire != null and (team != 0 or not _flag_action("deliver_flag", f)):
+				continue
 			f["state"] = "delivered"
 			f["planet"] = "A"
 			f["carrier"] = null
@@ -549,6 +791,8 @@ func recover_wreck_flag(id: int, team: int) -> bool:
 	var t = teams[team]
 	if not _alive(team) or f["state"] != "wreck" or f["planet"] != "space" or t["planet"] != "space" or flag_counts(team)["onboard"] >= t["capacity"]:
 		return false
+	if empire != null and (team != 0 or not _flag_action("capture_flag", f)):
+		return false
 	f["state"] = "onboard"
 	f["planet"] = "ship"
 	f["owner"] = team
@@ -557,43 +801,16 @@ func recover_wreck_flag(id: int, team: int) -> bool:
 	return true
 
 
-func eliminate_crew(team: int, position: Vector3, planet := "space") -> bool:
-	var t = teams[team]
-	if t["eliminated"]:
-		return false
-	t["eliminated"] = true
-	t["hull"] = 0.0
-	t["phase"] = "eliminated"
-	t["finished"] = true
-	var ids := []
-	for f in flags:
-		if f["owner"] == team and (f["state"] == "onboard" or f["state"] == "carried"):
-			var was_carried: bool = f["state"] == "carried"
-			f["state"] = "ground" if planet == "B" else "wreck"
-			f["planet"] = planet
-			f["position"] = t["bot_position"] if was_carried else position
-			f["owner"] = null
-			f["carrier"] = null
-			ids.append(f["id"])
-	t["carrying"] = null
-	t["onboard"] = 0
-	if ids.size() > 0:
-		wrecks.append({"team": team, "position": position, "planet": planet, "flags": ids})
-	events.append({"time": time, "text": "%s crew eliminated; %d flags exposed for recovery." % [t["name"], ids.size()]})
-	return true
-
-
 func depart_frontier(team: int) -> bool:
 	var t = teams[team]
-	if not _alive(team) or t["planet"] != "B" or t["phase"] != "surface" or flags.any(func(f): return f["state"] == "carried" and f["owner"] == team):
+	if not _alive(team) or t["planet"] != "B"  or flags.any(func(f): return f["state"] == "carried" and f["owner"] == team):
 		return false
-	t["phase"] = "return"
-	t["phase_time"] = 0.0
-	t["planet"] = "space"
-	# Rival departures share this method, while the flight controls belong to the player.
 	if team == 0:
-		manual_flight = false
-		destination_reached = false
+		set_location("space")
+	else:
+		t["phase"] = "return"
+		t["phase_time"] = 0.0
+		t["planet"] = "space"
 	return true
 
 
@@ -601,9 +818,12 @@ func arrive_home(team: int) -> bool:
 	var t = teams[team]
 	if not _alive(team):
 		return false
-	t["phase"] = "docked"
-	t["phase_time"] = 0.0
-	t["planet"] = "A"
+	if team == 0:
+		set_location(empire_home)
+	else:
+		t["phase"] = "docked"
+		t["phase_time"] = 0.0
+		t["planet"] = "A"
 	return true
 
 
@@ -653,15 +873,6 @@ func tick_match(dt: float) -> void:
 			"building":
 				t["progress"] = minf(0.3, t["phase_time"] / t["build_duration"] * 0.3)
 				if t["phase_time"] >= t["build_duration"]:
-					t["phase"] = "systems test"
-					t["phase_time"] = 0.0
-			"systems test":
-				t["progress"] = 0.3 + t["phase_time"] / 18.0 * 0.1
-				if t["phase_time"] >= 18.0:
-					t["phase"] = "launching"
-					t["phase_time"] = 0.0
-			"launching":
-				if t["phase_time"] >= 6.0:
 					t["phase"] = "outbound"
 					t["phase_time"] = 0.0
 					t["planet"] = "space"
@@ -726,12 +937,9 @@ func tick_match(dt: float) -> void:
 						t["progress"] = 1.0
 						t["finished"] = true
 	var delivered := 0
-	var outstanding := false
 	for f in flags:
 		if f["state"] == "delivered":
 			delivered += 1
-		elif f["state"] == "onboard" or f["state"] == "carried":
-			outstanding = true
 	var active := teams.filter(func(t): return not t["eliminated"])
 	if delivered == 12:
 		finish_match("All twelve Science Flags delivered.")
@@ -739,8 +947,6 @@ func tick_match(dt: float) -> void:
 		finish_match("All crews eliminated.")
 	elif time >= limit:
 		finish_match("Mission window closed. Delivered flags determine the result.")
-	elif active.all(func(t): return t["phase"] in ["delivered", "docked", "delivering"]) and not outstanding:
-		finish_match("All surviving crews have returned. Undelivered flags do not score.")
 
 
 func debrief(team := 0) -> Dictionary:
@@ -751,14 +957,14 @@ func debrief(team := 0) -> Dictionary:
 		if o["delivered"] > c["delivered"]:
 			rank += 1
 	var d: int = c["delivered"]
-	return {"delivered": d, "total": 12, "rank": rank, "victory": winner == team, "eliminated": t["eliminated"],
+	return {"delivered": d, "total": 12 if empire == null else EmpireRules.STANDARD_FLAGS_PER_PLANET + (2 if empire.overdrive else 0), "rank": rank, "victory": winner == team, "eliminated": t["eliminated"],
 		"metrics": metrics.duplicate(), "seed": match_seed,
 		"xp": d * 25 + (0 if t["eliminated"] else 25), "credits": d * 20 + (0 if t["eliminated"] else 10),
 		"patch": "Frontier Vanguard" if d >= 7 else ("Orbital Pathfinder" if d >= 3 else "Flight Cadet"),
 		"log": [
 			{"title": "FUEL RESERVE", "value": "%.1f kg" % propellant, "detail": "Departure mass and Δv determined the propellant cost. Return reserve had to remain available."},
 			{"title": "POWER RECOVERED", "value": "%.1f kWh" % power, "detail": "A maintained power bus kept propulsion, scanning and life support available."},
-			{"title": "SAFE RETURN", "value": "Crew eliminated" if t["eliminated"] else "%d flags delivered" % d, "detail": "Loading cargo did not score. Only flags transferred to Earth earned points."},
+			{"title": "SAFE RETURN", "value": "Crew eliminated" if t["eliminated"] else "%d flags delivered" % d, "detail": "Loading cargo did not score. Only flags transferred to your home planet earned points."},
 		]}
 
 
@@ -782,6 +988,8 @@ func reserved_credits() -> int:
 
 ## Parts shop (offline competitive): the crew buys each module before assembly starts.
 func buy_part(id: String) -> bool:
+	if arena_clash != null:
+		return set_variant(id, str(loadout.get(id) if slot_confirmed(id) else "kestrel"))
 	_confirm_default(id)
 	var p = part_by_id(id)
 	if p == null or p["purchased"] or p["stage"] != "shelf" or credits < p["price"]:
@@ -826,7 +1034,7 @@ func pick_part(id: String, role: int) -> bool:
 	if auto_build["enabled"] or shop_open:
 		return false
 	var p = part_by_id(id)
-	if phase != "assembly" or p == null or p["owner"] != role or p["stage"] != "shelf" or carry[role] != null:
+	if p == null or p["owner"] != role or p["stage"] != "shelf" or carry[role] != null:
 		return false
 	if not slot_confirmed(p["id"]):
 		if credits < p["price"]:
@@ -836,6 +1044,27 @@ func pick_part(id: String, role: int) -> bool:
 	p["stage"] = "carried"
 	carry[role] = id
 	rotation[role] = 0
+	return true
+
+
+## Crane pickup: like pick_part but the part's own required rotation is applied automatically.
+func pickup_part_with_crane(role: int, part_id: String) -> bool:
+	if not pick_part(part_id, role):
+		return false
+	var p = part_by_id(part_id)
+	rotation[role] = p["angle"]
+	return true
+
+
+## Crane placement: succeeds only when the claw tip is within snap_radius of the part's slot.
+func place_part_with_crane(role: int, part_id: String, tip_world_pos: Vector3, snap_radius: float = 2.6) -> bool:
+	if auto_build["enabled"] or carry[role] != part_id:
+		return false
+	var p = part_by_id(part_id)
+	if p == null or p["stage"] != "carried" or tip_world_pos.distance_to(p["slot"]) > snap_radius:
+		return false
+	p["stage"] = "positioned"
+	carry[role] = null
 	return true
 
 
@@ -869,8 +1098,6 @@ func fasten_bolt(id: String, bolt: int, role: int, dt: float, distance: float, a
 		score += 75
 		if human and role == selected:
 			human_modules += 1
-		if parts.all(func(q): return q["stage"] == "secured"):
-			phase = "outfit"
 	return true
 
 
@@ -883,7 +1110,7 @@ func pick_cargo(id: String, role: int) -> bool:
 	for x in cargo:
 		if x["id"] == id:
 			c = x
-	if phase != "outfit" or c == null or c["stowed"] or carry[role] != null or carry.has("cargo:" + id):
+	if c == null or c["stowed"] or carry[role] != null or carry.has("cargo:" + id):
 		return false
 	carry[role] = "cargo:" + id
 	return true
@@ -907,7 +1134,7 @@ func all_cargo_stowed() -> bool:
 
 
 func run_check(type: String, role: int, dt: float, reading: float) -> bool:
-	if phase != "outfit" or not checks.has(type) or not all_cargo_stowed():
+	if not checks.has(type) or not all_cargo_stowed():
 		return false
 	if role != CHECK_ROLE[type]:
 		return false
@@ -917,15 +1144,12 @@ func run_check(type: String, role: int, dt: float, reading: float) -> bool:
 		return false
 	checks[type] = clampf(checks[type] + dt / 2.2, 0.0, 1.0)
 	if checks.values().all(func(v): return v >= 1.0):
-		phase = "route"
-		score += 150
+			score += 150
 	return true
 
 
 ## Machines stow the cargo and run every systems check (no manual outfit work).
 func auto_outfit() -> void:
-	if phase != "outfit":
-		return
 	for c in cargo:
 		if not c["stowed"]:
 			c["stowed"] = true
@@ -937,7 +1161,6 @@ func auto_outfit() -> void:
 	for r2 in 4:
 		if carry[r2] != null and String(carry[r2]).begins_with("cargo:"):
 			carry[r2] = null
-	phase = "route"
 	score += 150
 
 
@@ -961,47 +1184,8 @@ static func slow_climb_kg(twr: float) -> float:
 	return 0.0 if twr >= TWR_GO else (1.0 - twr / TWR_GO) * 120.0
 
 
-func route_budget(r: Dictionary) -> Dictionary:
-	var outbound := wet_mass * (1.0 - exp(-r["dv"] / exhaust_velocity))
-	var return_reserve := (wet_mass - outbound) * (1.0 - exp(-95.0 / exhaust_velocity))
-	var contingency := 5.0
-	var slow_climb := slow_climb_kg(design_sheet()["twr"])
-	var required := outbound + return_reserve + contingency + slow_climb
-	var b := r.duplicate()
-	b.merge({"outbound": outbound, "return_reserve": return_reserve, "contingency": contingency, "slow_climb": slow_climb,
-		"required": required, "margin": propellant - required, "valid": propellant >= required})
-	return b
-
-
-func route_risk(b: Dictionary) -> String:
-	if not b["valid"]:
-		return "NO-GO"
-	if b["hazard"] >= 1.4:
-		return "HIGH DEBRIS"
-	if b["margin"] < 8.0:
-		return "THIN MARGIN"
-	return "NOMINAL"
-
-
-func launch_flight(id: String) -> bool:
-	var r = null
-	for x in ROUTES:
-		if x["id"] == id:
-			r = route_budget(x)
-	if phase != "route" or r == null or not r["valid"]:
-		return false
-	route = r
-	propellant -= r["outbound"] + r["slow_climb"]
-	phase = "flight"
-	flight_leg = "outbound"
-	flight_time = 0.0
-	manual_flight = false
-	destination_reached = false
-	return true
-
-
 func tick_systems(dt: float) -> void:
-	if phase != "flight" or over:
+	if not in_space() or over:
 		return
 	var t := clampf(dt, 0.0, 0.1)
 	var demand := load_kw + extra_load + (2.0 if boost > 0.0 else 0.0) + (1.8 if fault == "power" else 0.0)
@@ -1013,7 +1197,7 @@ func tick_systems(dt: float) -> void:
 	co2 = clampf(co2 + (22.0 if fault == "scrubber" else 1.5) * t / life_mult, 300.0, 8000.0)
 	crew_nutrition = clampf(crew_nutrition - t * 0.16 / life_mult, 0.0, 100.0)
 	if power <= 0.02 or temperature > 90.0 or pressure < 55.0 or co2 > 5000.0:
-		hull = maxf(0.0, hull - t * 1.3 * armor_mult)
+		apply_hull_damage(t * 1.3 * armor_mult)
 	for i in 4:
 		ability_cd[i] = maxf(0.0, ability_cd[i] - t)
 		ultimate[i] = minf(100.0, ultimate[i] + t * 0.8)
@@ -1022,8 +1206,7 @@ func tick_systems(dt: float) -> void:
 	decoy = maxf(0.0, decoy - t)
 	scan_boost = maxf(0.0, scan_boost - t)
 	overdrive = maxf(0.0, overdrive - t)
-	if not manual_flight:
-		flight_time += t * (1.6 if boost > 0.0 else 1.0)
+	flight_time += t
 	fault_clock -= t
 	if fault_clock <= 0.0:
 		fault = ["reactor", "power", "cooling", "scrubber"][int(rand() * 4.0) % 4]
@@ -1035,14 +1218,22 @@ func tick_systems(dt: float) -> void:
 		fault_log.append({"time": flight_time, "event": fault})
 
 
+func damage_hull(amount: float) -> void:
+	damage_ship(amount)
+
+
 func damage_ship(amount: float) -> void:
 	if shield > 0.0:
 		return
-	hull = maxf(0.0, hull - amount * armor_mult * DIFFICULTY[difficulty]["damage"])
+	apply_hull_damage(amount * armor_mult * DIFFICULTY[difficulty]["damage"])
+
+
+func apply_hull_damage(amount: float) -> void:
+	hull = maxf(1.0, hull - maxf(0.0, amount))
 
 
 func maintain_system(role: int, dt: float, system: String) -> bool:
-	if phase != "flight" or role != 1:
+	if not in_space() or role != 1:
 		return false
 	match system:
 		"reactor":
@@ -1128,7 +1319,12 @@ func build_order() -> Array:
 
 
 func auto_assemble(dt: float) -> bool:
-	if not auto_build["enabled"] or phase != "assembly" or shop_open:
+	if not auto_build["enabled"] or shop_open:
+		return false
+	# Manual crane mode: the timed flow only runs for one-shot full-duration calls (quick deploy / tests).
+	if manual_crane_build and dt < AUTO_BUILD_SECONDS:
+		auto_build["enabled"] = false
+		auto_build["t"] = 0.0
 		return false
 	auto_build["t"] = minf(AUTO_BUILD_SECONDS, auto_build["t"] + maxf(0.0, dt))
 	var n := parts.size()
@@ -1161,14 +1357,13 @@ func auto_assemble(dt: float) -> bool:
 		if carry[r] != null and not String(carry[r]).begins_with("cargo:"):
 			carry[r] = null
 	if parts.all(func(q): return q["stage"] == "secured"):
-		phase = "outfit"
 		auto_build["enabled"] = false
 	return true
 
 
 ## After a bot teammate stalls for 10 s, a remote service arm walks it through the same paid transitions.
 func rescue_stalled_crew(role: int, dt: float) -> bool:
-	if phase != "assembly" or auto_build["enabled"] or shop_open or not ai_assist or role == selected:
+	if auto_build["enabled"] or shop_open or not ai_assist or role == selected:
 		return false
 	var p = null
 	for q in parts:
@@ -1204,62 +1399,12 @@ func rescue_stalled_crew(role: int, dt: float) -> bool:
 
 
 func tick_rivals(dt: float) -> void:
-	auto_assemble(dt)
-	var t = teams[0]
-	if not t["eliminated"]:
-		match phase:
-			"assembly":
-				t["phase"] = "building"
-				t["planet"] = "A"
-				t["progress"] = secured_count() / 12.0 * 0.25
-			"outfit":
-				t["phase"] = "systems test"
-				var stowed := cargo.filter(func(c): return c["stowed"]).size()
-				var ck := 0.0
-				for v in checks.values():
-					ck += v
-				t["progress"] = 0.25 + stowed / 4.0 * 0.1 + ck / 3.0 * 0.05
-			"route":
-				t["phase"] = "ready"
-				t["progress"] = 0.4
-			"flight":
-				t["phase"] = "return" if flight_leg == "return" else "outbound"
-				t["planet"] = "space"
-				var dur: float = 60.0 if flight_leg == "return" else (route["duration"] if route != null else 90.0)
-				t["progress"] = (0.75 if flight_leg == "return" else 0.4) + minf(1.0, flight_time / dur) * 0.15
-			"surface":
-				t["phase"] = "surface"
-				t["planet"] = "B"
-				t["progress"] = 0.6
-	tick_match(dt)
-
-
-func flight_duration() -> float:
-	if flight_leg == "return":
-		return 60.0
-	return route["duration"] if route != null else 90.0
-
-
-## Returns "landing", "docking", "lost" or "" while the leg is still under way.
-func complete_flight() -> String:
-	if phase != "flight" or over:
-		return ""
-	if flight_time < flight_duration() and not (manual_flight and destination_reached):
-		return ""
-	if flight_leg == "outbound":
-		phase = "landing"
-		teams[0]["phase"] = "surface"
-		teams[0]["planet"] = "B"
-		return "landing"
-	if propellant < route["return_reserve"]:
-		hull = 0.0
-		eliminate_crew(0, Vector3.ZERO, "space")
-		phase = "spectator"
-		return "lost"
-	propellant -= route["return_reserve"]
-	arrive_home(0)
-	phase = "docking"
-	return "docking"
+	if on_surface(empire_home):
+		auto_assemble(dt)
+		if teams[0]["phase"] == "building":
+			teams[0]["progress"] = secured_count() / 12.0 * 0.4
+	if empire == null:
+		tick_match(dt)
 
 
 func set_upgrade(id: String, enabled: bool) -> bool:
@@ -1287,15 +1432,3 @@ func set_upgrade(id: String, enabled: bool) -> bool:
 	cargo_capacity += int(u["cargo"] * direction)
 	teams[0]["capacity"] = cargo_capacity
 	return true
-
-
-## Step ordering used by the HUD phase strip.
-func strip_index() -> int:
-	match phase:
-		"assembly": return 0
-		"outfit": return 1
-		"route": return 2
-		"flight", "landing": return 3 if flight_leg == "outbound" else 5
-		"surface": return 4
-		"docking", "delivery", "delivered": return 5
-	return 5

@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/vehicles/RoverController.gd" id="1"]
+
+[node name="HelionRover" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("1")
+vehicle_id = "helion_rover"
+vehicle_type = "rover"
+faction = "helion"
+display_name = "Helion Recon Rover"
+dimensions = Vector3(3.8, 2.8, 6.8)
+max_health = 150.0
+max_shield = 65.0

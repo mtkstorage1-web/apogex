@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BiomeConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/BiomeConfig.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"fractured_highlands"
+display_name = "Fractured Highlands"
+primary_color = Color(0.33, 0.32, 0.34, 1)
+secondary_color = Color(0.52, 0.49, 0.48, 1)
+roughness_base = 0.93
+metallic_base = 0.19
+elevation_bias = 95.0
+slope_steepness = 0.82
+volcanic_activity = 0.2
+dust_intensity = 0.34

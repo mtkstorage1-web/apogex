@@ -13,7 +13,7 @@ const LEVEL_NAMES := ["LOW", "MEDIUM", "HIGH"]
 const SHADOW_SIZES := [0, 1024, 2048, 4096, 8192]
 # Index 0 (shadows OFF) keeps a valid positive range: a 0.0 max distance builds a
 # degenerate directional shadow frustum if anything re-enables the light's shadow.
-const SHADOW_DISTANCES := [100.0, 100.0, 200.0, 400.0, 650.0]
+const SHADOW_DISTANCES := [100.0, 110.0, 220.0, 420.0, 700.0]
 const DISPLAY_KEYS := ["window_mode", "resolution", "vsync"]
 const ANISOTROPY := [Viewport.ANISOTROPY_DISABLED, Viewport.ANISOTROPY_4X, Viewport.ANISOTROPY_16X]
 const SHADOW_FILTERS := [RenderingServer.SHADOW_QUALITY_HARD, RenderingServer.SHADOW_QUALITY_HARD,
@@ -93,6 +93,11 @@ func save_config(config: ConfigFile) -> void:
 		config.set_value("graphics", key, values[key])
 
 
+## True on iOS/iPadOS or any mobile feature build (Apple A-series / M-series Metal tiled GPUs).
+static func is_mobile_gpu() -> bool:
+	return OS.has_feature("ios") or OS.has_feature("mobile")
+
+
 func renderer() -> StringName:
 	return RenderingServer.get_current_rendering_method()
 
@@ -122,7 +127,7 @@ func available(key: String) -> Array:
 				choices.append(5)
 			return choices
 		"ssao":
-			return [false] if method == &"mobile" else TOGGLE
+			return [false] if method == &"mobile" or is_mobile_gpu() else TOGGLE
 		"vsync":
 			# Metal and MoltenVK on macOS expose only the display sync toggle.
 			if method == &"gl_compatibility" or OS.get_name() == "macOS":
@@ -250,6 +255,9 @@ func apply_viewport_buffers(viewport: Viewport) -> void:
 	var aa: int = effective("aa") if upscaler != Viewport.SCALING_3D_MODE_FSR2 else 0
 	var lod: int = values["lod"]
 	var msaa: int = [0, 0, 1, 2, 3, 0][aa]
+	# Tiled mobile GPUs resolve MSAA cheaply on-chip at 2x; 4x/8x burn bandwidth and heat.
+	if is_mobile_gpu():
+		msaa = mini(msaa, Viewport.MSAA_2X)
 	var screen_aa: int = Viewport.SCREEN_SPACE_AA_FXAA if aa == 1 else Viewport.SCREEN_SPACE_AA_DISABLED
 	var scale: float = values["render_scale"] / 100.0
 	# Remove old AA before switching to FSR2 and leave FSR2 before enabling new AA.
@@ -282,15 +290,19 @@ func apply_shadow_atlases(viewport: Viewport) -> void:
 		viewport.positional_shadow_atlas_size = positional_size
 	# Keep a valid directional atlas when shadows are disabled on the lights.
 	var atlas_size := maxi(1024, SHADOW_SIZES[shadows])
+	var filter: int = SHADOW_FILTERS[shadows]
+	if is_mobile_gpu():
+		atlas_size = mini(atlas_size, 2048)
+		filter = mini(filter, RenderingServer.SHADOW_QUALITY_SOFT_LOW)
 	var device := RenderingServer.get_rendering_device()
 	if device != null:
 		atlas_size = mini(atlas_size, device.limit_get(RenderingDevice.LIMIT_MAX_TEXTURE_SIZE_2D))
 	if atlas_size != _directional_atlas_size:
 		_directional_atlas_size = atlas_size
 		RenderingServer.directional_shadow_atlas_set_size(atlas_size, true)
-	if SHADOW_FILTERS[shadows] != _soft_shadow_filter:
-		_soft_shadow_filter = SHADOW_FILTERS[shadows]
-		RenderingServer.directional_soft_shadow_filter_set_quality(SHADOW_FILTERS[shadows])
+	if filter != _soft_shadow_filter:
+		_soft_shadow_filter = filter
+		RenderingServer.directional_soft_shadow_filter_set_quality(filter)
 
 
 func apply_scene(root) -> void:
@@ -306,15 +318,18 @@ func apply_scene(root) -> void:
 		_set_if_changed(env, &"ssr_enabled", effective("ssr"))
 		_set_if_changed(env, &"glow_enabled", values["glow"])
 		_set_if_changed(env, &"volumetric_fog_enabled", effective("volumetric_fog"))
-		_set_if_changed(env, &"volumetric_fog_density", env.fog_density * 0.5 if env.fog_enabled else 0.0)
 		var tier := clampi(values["atmosphere"], 0, 3)
-		_set_if_changed(env, &"fog_sun_scatter", [0.0, 0.25, 0.50, 0.82][tier])
-		_set_if_changed(env, &"fog_aerial_perspective", [0.0, 0.35, 0.65, 0.85][tier])
-		_set_if_changed(env, &"glow_intensity", [0.0, 0.18, 0.28, 0.42][tier])
-		_set_if_changed(env, &"glow_bloom", [0.0, 0.04, 0.08, 0.14][tier])
-		_set_if_changed(env, &"ssao_intensity", [0.0, 0.55, 0.85, 1.15][tier])
-		_set_if_changed(env, &"adjustment_contrast", [1.0, 1.03, 1.06, 1.10][tier])
-		_set_if_changed(env, &"adjustment_saturation", [1.0, 1.08, 1.14, 1.20][tier])
+		_set_if_changed(env, &"volumetric_fog_density", env.fog_density * [0.0, 0.3, 0.5, 0.9][tier] if env.fog_enabled else 0.0)
+		_set_if_changed(env, &"volumetric_fog_emission_energy", [0.0, 0.0, 0.0, 0.25][tier])
+		_set_if_changed(env, &"ssil_intensity", [0.0, 0.6, 1.0, 1.6][tier])
+		_set_if_changed(env, &"ssr_max_steps", [8, 32, 64, 128][tier])
+		_set_if_changed(env, &"fog_sun_scatter", [0.0, 0.35, 0.65, 0.95][tier])
+		_set_if_changed(env, &"fog_aerial_perspective", [0.0, 0.40, 0.72, 0.95][tier])
+		_set_if_changed(env, &"glow_intensity", [0.0, 0.22, 0.38, 0.62][tier])
+		_set_if_changed(env, &"glow_bloom", [0.0, 0.05, 0.10, 0.18][tier])
+		_set_if_changed(env, &"ssao_intensity", [0.0, 0.7, 1.1, 1.6][tier])
+		_set_if_changed(env, &"adjustment_contrast", [1.0, 1.05, 1.09, 1.14][tier])
+		_set_if_changed(env, &"adjustment_saturation", [1.0, 1.06, 1.12, 1.18][tier])
 		_set_if_changed(env, &"adjustment_brightness", values["brightness"] / 100.0)
 		_set_if_changed(env, &"adjustment_enabled", true)
 	for node in root.find_children("*", "CPUParticles3D", true, false):
@@ -340,6 +355,7 @@ func apply_shadows(root) -> void:
 			_set_if_changed(node, &"shadow_enabled", false)
 		if node is DirectionalLight3D:
 			_set_if_changed(node, &"directional_shadow_max_distance", SHADOW_DISTANCES[shadows])
+			_set_if_changed(node, &"shadow_blur", [1.0, 1.4, 1.2, 1.0, 0.8][shadows])
 		if cast:
 			_set_if_changed(node, &"shadow_enabled", true)
 

@@ -23,6 +23,7 @@ func _run() -> void:
 	game.set_process(false)
 	game.graphics.set_preset(1)
 	game._apply_graphics(false)
+	LobbyPages.play_mode = "practice"
 	game.start_match()
 	game.capture_mouse(false)
 	game.clear_menu()
@@ -45,22 +46,22 @@ func _run() -> void:
 		var camera_y := sqrt(pow(radius + height, 2.0) - camera_z * camera_z) + universe.body_a.position.y
 		var camera := Vector3(0.0, camera_y, camera_z)
 		craft.position = camera + Vector3(-14, -7.0 if altitude < 10000.0 else -35.0, -57)
-		craft.rotation.x = 1.0
+		craft.rotation.x = 0.4
 		exhaust.show()
 		var view_y := -16.0 if altitude < 10000.0 else -79.0
 		await _shot("earth-ascent-%d-km" % int(altitude / 1000), camera, camera + Vector3(0, view_y, -110), 63)
 	craft.hide()
+	game.sim.set_location("space")
+	universe.tick(0.0)
 	var center := universe.body_a.position
 	await _shot("earth-orbit", center + Vector3(12900, 3900, 11200), center, 60)
-	center = Universe.B_ORIGIN + universe.body_b.position
+	center = Universe.C_ORIGIN + universe.body_c.position
 	await _shot("moon-orbit", center + Vector3(-1900, 2600, 15600), center, 59)
-	var moon := PlanetB.new()
-	moon.setup(game)
-	moon.position = Universe.B_ORIGIN
-	universe.add_child(moon)
-	game.graphics.apply_scene(moon)
-	await _shot("moon-surface", Universe.B_ORIGIN + Vector3(-23, 12.5, 27),
-		Universe.B_ORIGIN + Vector3(36, 23, 150), 53)
+	game._ensure_world_b()
+	game.sim.set_location("planet_c")
+	game.graphics.apply_scene(game.world_b)
+	await _shot("moon-surface", Universe.C_ORIGIN + Vector3(-23, 12.5, 27),
+		Universe.C_ORIGIN + Vector3(36, 23, 150), 53)
 	game.queue_free()
 	await process_frame
 	await process_frame

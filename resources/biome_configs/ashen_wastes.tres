@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BiomeConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/BiomeConfig.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"ashen_wastes"
+display_name = "Ashen Wastes"
+primary_color = Color(0.3, 0.27, 0.25, 1)
+secondary_color = Color(0.49, 0.43, 0.38, 1)
+roughness_base = 0.94
+metallic_base = 0.08
+elevation_bias = -12.0
+slope_steepness = 0.22
+volcanic_activity = 0.1
+dust_intensity = 0.86

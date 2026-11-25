@@ -1,0 +1,191 @@
+[gd_scene load_steps=14 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_rock"]
+albedo_color = Color(0.13, 0.11, 0.1, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="mat_bedrock"]
+albedo_color = Color(0.3, 0.25, 0.21, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="mat_metal"]
+albedo_color = Color(0.3, 0.32, 0.34, 1)
+metallic = 0.8
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="mat_beacon"]
+albedo_color = Color(1, 0.35, 0.1, 1)
+emission_enabled = true
+emission = Color(1, 0.3, 0.08, 1)
+emission_energy_multiplier = 4.0
+
+[sub_resource type="CylinderMesh" id="mesh_foundation"]
+top_radius = 16.0
+bottom_radius = 13.0
+height = 8.0
+
+[sub_resource type="BoxMesh" id="mesh_boulder"]
+size = Vector3(4, 3, 3.5)
+
+[sub_resource type="BoxMesh" id="mesh_slab"]
+size = Vector3(7, 0.8, 4.5)
+
+[sub_resource type="CylinderMesh" id="mesh_pylon"]
+top_radius = 0.35
+bottom_radius = 0.6
+height = 9.0
+
+[sub_resource type="SphereMesh" id="mesh_beacon"]
+radius = 0.7
+height = 1.4
+
+[sub_resource type="CylinderShape3D" id="shape_foundation"]
+radius = 15.0
+height = 8.0
+
+[sub_resource type="BoxShape3D" id="shape_boulder"]
+size = Vector3(4, 3, 3.5)
+
+[sub_resource type="BoxShape3D" id="shape_slab"]
+size = Vector3(7, 0.8, 4.5)
+
+[sub_resource type="CylinderShape3D" id="shape_pylon"]
+radius = 0.6
+height = 9.0
+
+[node name="Crater" type="Node3D"]
+
+[node name="Foundation" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 0)
+mesh = SubResource("mesh_foundation")
+surface_material_override/0 = SubResource("mat_rock")
+
+[node name="RimBoulder1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1, 0)
+rotation = Vector3(0.1, 0.4, 0.15)
+mesh = SubResource("mesh_boulder")
+surface_material_override/0 = SubResource("mat_rock")
+
+[node name="RimBoulder2" type="MeshInstance3D" parent="."]
+position = Vector3(6, 1.2, 10.4)
+rotation = Vector3(-0.1, 1.2, 0.2)
+scale = Vector3(1.2, 0.9, 1)
+mesh = SubResource("mesh_boulder")
+surface_material_override/0 = SubResource("mat_rock")
+
+[node name="RimBoulder3" type="MeshInstance3D" parent="."]
+position = Vector3(-6, 0.8, 10.4)
+rotation = Vector3(0.2, 2.1, -0.1)
+mesh = SubResource("mesh_boulder")
+surface_material_override/0 = SubResource("mat_rock")
+
+[node name="RimBoulder4" type="MeshInstance3D" parent="."]
+position = Vector3(-12, 1.4, 0)
+rotation = Vector3(0.0, 0.7, 0.25)
+scale = Vector3(0.9, 1.1, 1.1)
+mesh = SubResource("mesh_boulder")
+surface_material_override/0 = SubResource("mat_rock")
+
+[node name="RimBoulder5" type="MeshInstance3D" parent="."]
+position = Vector3(-6, 1, -10.4)
+rotation = Vector3(-0.15, 2.6, 0.1)
+mesh = SubResource("mesh_boulder")
+surface_material_override/0 = SubResource("mat_rock")
+
+[node name="RimBoulder6" type="MeshInstance3D" parent="."]
+position = Vector3(6, 1.1, -10.4)
+rotation = Vector3(0.1, 0.2, -0.2)
+scale = Vector3(1.1, 1, 0.9)
+mesh = SubResource("mesh_boulder")
+surface_material_override/0 = SubResource("mat_rock")
+
+[node name="BedrockSlab1" type="MeshInstance3D" parent="."]
+position = Vector3(-3, 0.35, 4)
+rotation = Vector3(0.05, 0.3, 0.08)
+mesh = SubResource("mesh_slab")
+surface_material_override/0 = SubResource("mat_bedrock")
+
+[node name="BedrockSlab2" type="MeshInstance3D" parent="."]
+position = Vector3(4, 0.5, -3)
+rotation = Vector3(-0.06, 1.0, 0.1)
+mesh = SubResource("mesh_slab")
+surface_material_override/0 = SubResource("mat_bedrock")
+
+[node name="BedrockSlab3" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.3, -8)
+rotation = Vector3(0.04, 0.0, -0.05)
+mesh = SubResource("mesh_slab")
+surface_material_override/0 = SubResource("mat_bedrock")
+
+[node name="BeaconPylon" type="MeshInstance3D" parent="."]
+position = Vector3(0, 4.5, 0)
+mesh = SubResource("mesh_pylon")
+surface_material_override/0 = SubResource("mat_metal")
+
+[node name="BeaconLamp" type="MeshInstance3D" parent="."]
+position = Vector3(0, 9.4, 0)
+mesh = SubResource("mesh_beacon")
+surface_material_override/0 = SubResource("mat_beacon")
+
+[node name="BeaconLight" type="OmniLight3D" parent="."]
+position = Vector3(0, 10, 0)
+light_color = Color(1, 0.4, 0.15, 1)
+light_energy = 2.0
+omni_range = 30.0
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="FoundationShape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, -4, 0)
+shape = SubResource("shape_foundation")
+
+[node name="Boulder1Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(12, 1, 0)
+rotation = Vector3(0.1, 0.4, 0.15)
+shape = SubResource("shape_boulder")
+
+[node name="Boulder2Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(6, 1.2, 10.4)
+rotation = Vector3(-0.1, 1.2, 0.2)
+shape = SubResource("shape_boulder")
+
+[node name="Boulder3Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-6, 0.8, 10.4)
+rotation = Vector3(0.2, 2.1, -0.1)
+shape = SubResource("shape_boulder")
+
+[node name="Boulder4Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-12, 1.4, 0)
+rotation = Vector3(0, 0.7, 0.25)
+shape = SubResource("shape_boulder")
+
+[node name="Boulder5Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-6, 1, -10.4)
+rotation = Vector3(-0.15, 2.6, 0.1)
+shape = SubResource("shape_boulder")
+
+[node name="Boulder6Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(6, 1.1, -10.4)
+rotation = Vector3(0.1, 0.2, -0.2)
+shape = SubResource("shape_boulder")
+
+[node name="Slab1Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-3, 0.35, 4)
+rotation = Vector3(0.05, 0.3, 0.08)
+shape = SubResource("shape_slab")
+
+[node name="Slab2Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(4, 0.5, -3)
+rotation = Vector3(-0.06, 1, 0.1)
+shape = SubResource("shape_slab")
+
+[node name="Slab3Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 0.3, -8)
+rotation = Vector3(0.04, 0, -0.05)
+shape = SubResource("shape_slab")
+
+[node name="PylonShape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 4.5, 0)
+shape = SubResource("shape_pylon")

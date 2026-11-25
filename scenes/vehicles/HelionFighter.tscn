@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/vehicles/SpacecraftController.gd" id="1"]
+
+[node name="HelionFighter" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("1")
+vehicle_id = "helion_fighter"
+vehicle_type = "fighter"
+faction = "helion"
+display_name = "Helion Fighter"
+dimensions = Vector3(14, 4.2, 16)
+max_health = 180.0
+max_shield = 100.0

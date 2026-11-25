@@ -1,0 +1,412 @@
+{
+  "blender_version": "5.3.0",
+  "preservation_method": "Rebuilt arm meshes in live Blender 5.3. Removed ArmClearance.L/R and ShoulderOffset.L/R and their translation channels. Restored original Shoulder → UpperArm parenting. Verified all retained joints, inverse bind matrices and animation samples against the prior GLBs, and all 62 original joints and core animation samples against the original rig exports.",
+  "preview_camera": "Front three-quarter camera. All previews are posed using the first frame of the imported Idle action.",
+  "previews": {
+    "pilot": {
+      "file": "artifacts/crew_ref_previews/pilot.png",
+      "width": 1040,
+      "height": 1040,
+      "sha256": "30f99d8726bf72abf12ec5ed5135bd36400909002652564fa35873b76090c17f"
+    },
+    "engineer": {
+      "file": "artifacts/crew_ref_previews/engineer.png",
+      "width": 1040,
+      "height": 1040,
+      "sha256": "0474f8ba8458d0ab4ff740fddd9d5a76bb6eb619320fed5af9255c9d4828aee3"
+    },
+    "gunner": {
+      "file": "artifacts/crew_ref_previews/gunner.png",
+      "width": 1040,
+      "height": 1040,
+      "sha256": "c86b16eeb71468a06493dc6426ba894bc141d9dadc85d7ba2ab924320e0af3e3"
+    },
+    "raider": {
+      "file": "artifacts/crew_ref_previews/raider.png",
+      "width": 1040,
+      "height": 1040,
+      "sha256": "ff93c05ed4c4809c5999a2be4520f4a93b7ef6f357651e27ad3b8cb08371b53d"
+    },
+    "lineup": {
+      "file": "artifacts/crew_ref_previews/lineup.png",
+      "width": 1920,
+      "height": 820,
+      "sha256": "6e493f631ebdaa41ec3994cdf2d5f7124c0ddbd421c3166fd5642a29b09d7393"
+    }
+  },
+  "characters": [
+    {
+      "character": "Finn the Frog",
+      "role": "Pilot",
+      "file": "pilot.glb",
+      "sha256": "ab796726c33bdc7ff71b6cdd5584abc251e2df723b4a175523edec3ae651f104",
+      "preview": "artifacts/crew_ref_previews/pilot.png",
+      "blender_qa": {
+        "review_poses": {
+          "Idle": 0,
+          "Walk": 0.3,
+          "Run": 0.26,
+          "Wave": 0.51,
+          "Gun_Shoot": 0.3
+        },
+        "sampling": "Fraction of imported Blender action duration",
+        "preview_idle_frame": 0,
+        "idle_upper_arm_angle_from_vertical_degrees": {
+          "L": 29.2,
+          "R": 27.8
+        },
+        "visual_review": "Final GLBs reimported into live Blender 5.3 and reviewed in posed three-quarter views."
+      },
+      "bones": 67,
+      "original_bones": 62,
+      "secondary_bones": [
+        "EyeLid.L",
+        "EyeLid.R",
+        "FrogJaw",
+        "SuitPackThruster.L",
+        "SuitPackThruster.R"
+      ],
+      "multi_weight_vertices": 10215,
+      "animation_count": 28,
+      "animations": [
+        "Wave",
+        "Walk",
+        "Sword_Slash",
+        "Run_Shoot",
+        "Run_Right",
+        "Run_Left",
+        "Run_Back",
+        "Run",
+        "Roll",
+        "Punch_Right",
+        "Punch_Left",
+        "Kick_Right",
+        "Kick_Left",
+        "Interact",
+        "Idle_Sword",
+        "Idle_Neutral",
+        "Idle_Gun_Shoot",
+        "Idle_Gun_Pointing",
+        "Idle_Gun",
+        "Idle",
+        "HitRecieve_2",
+        "HitRecieve",
+        "Gun_Shoot",
+        "Death",
+        "Jump",
+        "Jump_Start",
+        "Jump_Airborne",
+        "Jump_Land"
+      ],
+      "preserved_animation_channels": 5348,
+      "original_joint_transforms_preserved": true,
+      "original_inverse_bind_matrices_byte_identical": true,
+      "original_keyframes_byte_identical": true,
+      "triangles": 21726,
+      "exported_vertices": 19839,
+      "degenerate_triangles": 0,
+      "unweighted_vertices": 0,
+      "max_weight_sum_error": 0.0,
+      "max_normal_length_error": 1.1920928955078125e-07,
+      "front": "+Z",
+      "up": "+Y",
+      "bounds_m": {
+        "min": [
+          -1.1747050285339355,
+          0.0,
+          -0.6615000367164612
+        ],
+        "max": [
+          1.2187061309814453,
+          2.615000009536743,
+          0.5040953755378723
+        ]
+      },
+      "height_m": 2.615,
+      "sole_y_m": 0.0,
+      "node_rest_sole_y_m": -0.0,
+      "node_rest_height_m": 2.615,
+      "retained_feature_keyframes_byte_identical": true
+    },
+    {
+      "character": "Chip the Maintenance Robot",
+      "role": "Engineer",
+      "file": "engineer.glb",
+      "sha256": "de2143358945c0c92a8b7f82120d4b1991ca99ae40cdb3c459ab864b23ab798d",
+      "preview": "artifacts/crew_ref_previews/engineer.png",
+      "blender_qa": {
+        "review_poses": {
+          "Idle": 0,
+          "Walk": 0.3,
+          "Run": 0.26,
+          "Wave": 0.51,
+          "Gun_Shoot": 0.3
+        },
+        "sampling": "Fraction of imported Blender action duration",
+        "preview_idle_frame": 0,
+        "idle_upper_arm_angle_from_vertical_degrees": {
+          "L": 29.2,
+          "R": 27.8
+        },
+        "visual_review": "Final GLBs reimported into live Blender 5.3 and reviewed in posed three-quarter views."
+      },
+      "bones": 67,
+      "original_bones": 62,
+      "secondary_bones": [
+        "EyeLens.L",
+        "EyeLens.R",
+        "PackAntenna",
+        "Pincer.L",
+        "Pincer.R"
+      ],
+      "multi_weight_vertices": 8828,
+      "animation_count": 28,
+      "animations": [
+        "Wave",
+        "Walk",
+        "Sword_Slash",
+        "Run_Shoot",
+        "Run_Right",
+        "Run_Left",
+        "Run_Back",
+        "Run",
+        "Roll",
+        "Punch_Right",
+        "Punch_Left",
+        "Kick_Right",
+        "Kick_Left",
+        "Interact",
+        "Idle_Sword",
+        "Idle_Neutral",
+        "Idle_Gun_Shoot",
+        "Idle_Gun_Pointing",
+        "Idle_Gun",
+        "Idle",
+        "HitRecieve_2",
+        "HitRecieve",
+        "Gun_Shoot",
+        "Death",
+        "Jump",
+        "Jump_Start",
+        "Jump_Airborne",
+        "Jump_Land"
+      ],
+      "preserved_animation_channels": 5404,
+      "original_joint_transforms_preserved": true,
+      "original_inverse_bind_matrices_byte_identical": true,
+      "original_keyframes_byte_identical": true,
+      "triangles": 24452,
+      "exported_vertices": 22347,
+      "degenerate_triangles": 0,
+      "unweighted_vertices": 0,
+      "max_weight_sum_error": 0.0,
+      "max_normal_length_error": 1.1920928955078125e-07,
+      "front": "+Z",
+      "up": "+Y",
+      "bounds_m": {
+        "min": [
+          -1.3191922903060913,
+          0.0,
+          -0.6430000066757202
+        ],
+        "max": [
+          1.3449785709381104,
+          2.450000047683716,
+          0.6166085004806519
+        ]
+      },
+      "height_m": 2.45,
+      "sole_y_m": 0.0,
+      "node_rest_sole_y_m": -0.0,
+      "node_rest_height_m": 2.45,
+      "retained_feature_keyframes_byte_identical": true
+    },
+    {
+      "character": "Barbara the Bee",
+      "role": "Gunner",
+      "file": "gunner.glb",
+      "sha256": "c6eba97e84e32a68a5ad3d765970b49d10deb2167e797b61e3ab5dc699b23e62",
+      "preview": "artifacts/crew_ref_previews/gunner.png",
+      "blender_qa": {
+        "review_poses": {
+          "Idle": 0,
+          "Walk": 0.3,
+          "Run": 0.26,
+          "Wave": 0.51,
+          "Gun_Shoot": 0.3
+        },
+        "sampling": "Fraction of imported Blender action duration",
+        "preview_idle_frame": 0,
+        "idle_upper_arm_angle_from_vertical_degrees": {
+          "L": 29.0,
+          "R": 27.9
+        },
+        "visual_review": "Final GLBs reimported into live Blender 5.3 and reviewed in posed three-quarter views."
+      },
+      "bones": 69,
+      "original_bones": 62,
+      "secondary_bones": [
+        "AntennaBase.L",
+        "AntennaTip.L",
+        "AntennaBase.R",
+        "AntennaTip.R",
+        "BeeJaw",
+        "GauntletVent.L",
+        "GauntletVent.R"
+      ],
+      "multi_weight_vertices": 11483,
+      "animation_count": 28,
+      "animations": [
+        "Wave",
+        "Walk",
+        "Sword_Slash",
+        "Run_Shoot",
+        "Run_Right",
+        "Run_Left",
+        "Run_Back",
+        "Run",
+        "Roll",
+        "Punch_Right",
+        "Punch_Left",
+        "Kick_Right",
+        "Kick_Left",
+        "Interact",
+        "Idle_Sword",
+        "Idle_Neutral",
+        "Idle_Gun_Shoot",
+        "Idle_Gun_Pointing",
+        "Idle_Gun",
+        "Idle",
+        "HitRecieve_2",
+        "HitRecieve",
+        "Gun_Shoot",
+        "Death",
+        "Jump",
+        "Jump_Start",
+        "Jump_Airborne",
+        "Jump_Land"
+      ],
+      "preserved_animation_channels": 5460,
+      "original_joint_transforms_preserved": true,
+      "original_inverse_bind_matrices_byte_identical": true,
+      "original_keyframes_byte_identical": true,
+      "triangles": 23268,
+      "exported_vertices": 21984,
+      "degenerate_triangles": 0,
+      "unweighted_vertices": 0,
+      "max_weight_sum_error": 0.0,
+      "max_normal_length_error": 1.1920928955078125e-07,
+      "front": "+Z",
+      "up": "+Y",
+      "bounds_m": {
+        "min": [
+          -1.2151318788528442,
+          0.0,
+          -0.6615000367164612
+        ],
+        "max": [
+          1.2410322427749634,
+          2.6928818225860596,
+          0.5095397233963013
+        ]
+      },
+      "height_m": 2.692882,
+      "sole_y_m": 0.0,
+      "node_rest_sole_y_m": -0.0,
+      "node_rest_height_m": 2.692882,
+      "retained_feature_keyframes_byte_identical": true
+    },
+    {
+      "character": "Fernando the Flamingo",
+      "role": "Raider",
+      "file": "raider.glb",
+      "sha256": "5484755abc807f58ac1593c1f3cb3546fc9a0098e4224bacd5fb95b6329bb6df",
+      "preview": "artifacts/crew_ref_previews/raider.png",
+      "blender_qa": {
+        "review_poses": {
+          "Idle": 0,
+          "Walk": 0.3,
+          "Run": 0.26,
+          "Wave": 0.51,
+          "Gun_Shoot": 0.3
+        },
+        "sampling": "Fraction of imported Blender action duration",
+        "preview_idle_frame": 0,
+        "idle_upper_arm_angle_from_vertical_degrees": {
+          "L": 29.2,
+          "R": 27.8
+        },
+        "visual_review": "Final GLBs reimported into live Blender 5.3 and reviewed in posed three-quarter views."
+      },
+      "bones": 66,
+      "original_bones": 62,
+      "secondary_bones": [
+        "FlamingoNeckMid",
+        "FlamingoNeckUpper",
+        "BeakLower",
+        "PackScannerArm"
+      ],
+      "multi_weight_vertices": 10377,
+      "animation_count": 28,
+      "animations": [
+        "Wave",
+        "Walk",
+        "Sword_Slash",
+        "Run_Shoot",
+        "Run_Right",
+        "Run_Left",
+        "Run_Back",
+        "Run",
+        "Roll",
+        "Punch_Right",
+        "Punch_Left",
+        "Kick_Right",
+        "Kick_Left",
+        "Interact",
+        "Idle_Sword",
+        "Idle_Neutral",
+        "Idle_Gun_Shoot",
+        "Idle_Gun_Pointing",
+        "Idle_Gun",
+        "Idle",
+        "HitRecieve_2",
+        "HitRecieve",
+        "Gun_Shoot",
+        "Death",
+        "Jump",
+        "Jump_Start",
+        "Jump_Airborne",
+        "Jump_Land"
+      ],
+      "preserved_animation_channels": 5320,
+      "original_joint_transforms_preserved": true,
+      "original_inverse_bind_matrices_byte_identical": true,
+      "original_keyframes_byte_identical": true,
+      "triangles": 20068,
+      "exported_vertices": 18622,
+      "degenerate_triangles": 0,
+      "unweighted_vertices": 0,
+      "max_weight_sum_error": 0.0,
+      "max_normal_length_error": 1.1920928955078125e-07,
+      "front": "+Z",
+      "up": "+Y",
+      "bounds_m": {
+        "min": [
+          -1.1329008340835571,
+          0.0,
+          -0.6615000367164612
+        ],
+        "max": [
+          1.1750805377960205,
+          2.679835081100464,
+          0.5246363878250122
+        ]
+      },
+      "height_m": 2.679835,
+      "sole_y_m": 0.0,
+      "node_rest_sole_y_m": -0.0,
+      "node_rest_height_m": 2.679836,
+      "retained_feature_keyframes_byte_identical": true
+    }
+  ]
+}

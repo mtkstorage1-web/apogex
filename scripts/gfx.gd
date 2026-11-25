@@ -348,9 +348,10 @@ static func label(text: String, color := Color.WHITE, size := 48, outline := 8) 
 	var l := Label3D.new()
 	l.text = text
 	l.modulate = color
+	l.font = UI.font()
 	l.font_size = size
 	l.outline_size = outline
-	l.outline_modulate = Color(0.08, 0.06, 0.14, 0.85)
+	l.outline_modulate = UI.BG_DEEP
 	l.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	l.no_depth_test = false
 	l.pixel_size = 0.01
@@ -389,7 +390,7 @@ static func environment(sky_top: Color, horizon: Color, ground: Color, energy :=
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	env.ambient_light_energy = energy
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
-	env.ssao_enabled = true
+	env.ssao_enabled = not _mobile_gpu()
 	env.ssao_intensity = 1.6
 	env.ssao_radius = 1.0
 	env.ssao_detail = 0.1
@@ -399,7 +400,15 @@ static func environment(sky_top: Color, horizon: Color, ground: Color, energy :=
 		env.fog_density = fog_density
 		env.fog_sky_affect = 0.15
 	env.glow_enabled = true
-	env.glow_intensity = 0.5
+	env.glow_intensity = 0.55
+	env.glow_bloom = 0.06
+	env.glow_hdr_threshold = 1.05
+	env.glow_hdr_scale = 2.0
+	env.glow_blend_mode = Environment.GLOW_BLEND_MODE_SOFTLIGHT
+	_multi_level_glow(env)
+	env.adjustment_enabled = true
+	env.adjustment_contrast = 1.10
+	env.adjustment_saturation = 1.18
 	we.environment = env
 	return we
 
@@ -413,10 +422,29 @@ static func sun(rot_deg: Vector3, color := Color(1, 0.96, 0.9), energy := 1.2) -
 	return d
 
 
+## iOS / mobile Metal: avoid desktop-only SSAO and keep cascades light.
+static func _mobile_gpu() -> bool:
+	return OS.has_feature("ios") or OS.has_feature("mobile")
+
+
+## Rich multi-level HDR bloom: wide soft halos plus tight highlights.
+static func _multi_level_glow(env: Environment) -> void:
+	var levels := [0.0, 0.6, 1.0, 0.8, 0.5, 0.2, 0.0] if not _mobile_gpu() else [0.0, 0.8, 1.0, 0.5, 0.0, 0.0, 0.0]
+	for i in levels.size():
+		env.set_glow_level(i, levels[i])
+
+
 static func _configure_sun_shadows(light: DirectionalLight3D, max_distance: float) -> void:
 	light.shadow_enabled = true
+	light.shadow_bias = 0.03
+	light.shadow_normal_bias = 1.2
+	light.shadow_blur = 1.1
+	light.directional_shadow_split_1 = 0.06
+	light.directional_shadow_split_2 = 0.16
+	light.directional_shadow_split_3 = 0.42
+	light.directional_shadow_fade_start = 0.85
 	light.directional_shadow_max_distance = max_distance
-	light.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
+	light.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS if _mobile_gpu() else DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
 	light.directional_shadow_blend_splits = true
 
 
@@ -436,9 +464,11 @@ static func apply_cinematic_atmosphere(root_node: Node) -> void:
 			light = lights[0] as DirectionalLight3D
 
 	if light != null:
-		light.light_color = Color("#ffe2b4")
-		light.light_energy = 1.42
-		light.rotation_degrees = Vector3(-28, -42, 0)
+		# Golden hour: low warm sun (~26 deg) with high energy for long, carving shadows.
+		light.light_color = Color("#ffe3ba")
+		light.light_energy = 2.05
+		light.rotation_degrees = Vector3(-26, -42, 0)
+		light.light_angular_distance = 0.6
 		_configure_sun_shadows(light, 180.0)
 
 	if world != null:
@@ -448,41 +478,55 @@ static func apply_cinematic_atmosphere(root_node: Node) -> void:
 			env = world.environment.duplicate() as Environment
 		var sky := Sky.new()
 		var sm := ProceduralSkyMaterial.new()
-		sm.sky_top_color = Color("#1b6ed6")
-		sm.sky_horizon_color = Color("#9ad4f8")
-		sm.ground_horizon_color = Color("#9ad4f8")
-		sm.ground_bottom_color = Color("#2d6b42")
+		sm.sky_top_color = Color("#0f63e0")
+		sm.sky_horizon_color = Color("#8fe0ff")
+		sm.ground_horizon_color = Color("#8fe0ff")
+		sm.ground_bottom_color = Color("#24803f")
 		sky.sky_material = sm
 		textured_sky(sky, false)
 		env.sky = sky
 		env.background_mode = Environment.BG_SKY
 		env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 		env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
-		env.ambient_light_color = Color("#9ecbf5")
-		env.ambient_light_energy = 0.54
+		# Cool blue sky bounce at LOWER flat ambient so shadows keep real depth.
+		env.ambient_light_color = Color("#8fb8ec")
+		env.ambient_light_energy = 0.34
+		env.ambient_light_sky_contribution = 0.75
 		env.tonemap_mode = Environment.TONE_MAPPER_ACES
+		env.tonemap_exposure = 1.0
+		env.tonemap_white = 6.0
 		# Keep heavy/grainy screen-space GI/SSR/volumetrics off for crisp high-FPS rendering.
 		env.sdfgi_enabled = false
 		env.ssr_enabled = false
 		env.ssil_enabled = false
 		env.volumetric_fog_enabled = false
-		env.ssao_enabled = true
-		env.ssao_intensity = 0.80
-		env.ssao_radius = 0.5
+		env.ssao_enabled = not _mobile_gpu()
+		env.ssao_intensity = 1.1
+		env.ssao_radius = 0.8
 		env.ssao_detail = 0.1
 		env.glow_enabled = true
-		env.glow_intensity = 0.22
-		env.glow_bloom = 0.05
-		env.glow_hdr_threshold = 1.20
+		env.glow_intensity = 0.42
+		env.glow_bloom = 0.10
+		env.glow_hdr_threshold = 1.05
+		env.glow_hdr_scale = 2.0
+		env.glow_blend_mode = Environment.GLOW_BLEND_MODE_SOFTLIGHT
+		_multi_level_glow(env)
+		# Aerial perspective: distant ranges recede into sunlit golden-blue mist.
 		env.fog_enabled = true
 		env.fog_mode = Environment.FOG_MODE_EXPONENTIAL
-		env.fog_light_color = Color("#a8d6f5")
-		env.fog_sun_scatter = 0.50
-		env.fog_density = 0.00055
-		env.fog_aerial_perspective = 0.65
+		env.fog_light_color = Color("#9cc6ee")
+		env.fog_sun_scatter = 0.65
+		env.fog_density = 0.0011
+		env.fog_aerial_perspective = 0.75
+		env.fog_sky_affect = 0.35
+		env.volumetric_fog_albedo = Color("#d8e6f5")
+		env.volumetric_fog_emission = Color("#ffcf99")
+		env.volumetric_fog_emission_energy = 0.0
+		env.volumetric_fog_anisotropy = 0.7
+		env.volumetric_fog_length = 120.0
 		env.adjustment_enabled = true
-		env.adjustment_contrast = 1.04
-		env.adjustment_saturation = 1.12
+		env.adjustment_contrast = 1.10
+		env.adjustment_saturation = 1.16
 		world.environment = env
 
 

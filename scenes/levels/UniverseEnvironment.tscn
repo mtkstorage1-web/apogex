@@ -1,10 +1,6 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/textured_environment.gd" id="texture_setup"]
-
-[ext_resource type="PackedScene" path="res://scenes/levels/PlanetAEnvironment.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/levels/PlanetBEnvironment.tscn" id="2"]
-
 [ext_resource type="Shader" path="res://assets/shaders/earth_moon.gdshader" id="orbital"]
 [ext_resource type="Texture2D" path="res://assets/textures/planets/earth_coasts.png" id="earth"]
 [ext_resource type="Texture2D" path="res://assets/textures/planets/moon_relief.png" id="moon"]
@@ -92,19 +88,23 @@ directional_shadow_mode = 1
 
 [node name="PlanetA" type="Node3D" parent="."]
 
-[node name="PlanetAEnvironment" parent="PlanetA" instance=ExtResource("1")]
-
 [node name="BodyA" type="MeshInstance3D" parent="PlanetA"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6000.6, 0)
 mesh = SubResource("body_a_mesh")
 material_override = SubResource("body_a_mat")
 
 [node name="PlanetB" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -30000)
-
-[node name="PlanetBEnvironment" parent="PlanetB" instance=ExtResource("2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30000, 0, -15000)
 
 [node name="BodyB" type="MeshInstance3D" parent="PlanetB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6000.6, 0)
+mesh = SubResource("body_a_mesh")
+material_override = SubResource("body_a_mat")
+
+[node name="PlanetC" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -30000)
+
+[node name="BodyC" type="MeshInstance3D" parent="PlanetC"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6000.6, 0)
 mesh = SubResource("body_b_mesh")
 material_override = SubResource("body_b_mat")

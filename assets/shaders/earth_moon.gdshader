@@ -67,14 +67,17 @@ vec3 moon_color(vec3 p, vec3 n, mat3 orientation) {
 	float a = texture(surface_map, geographic_uv(normalize(p + vec3(0.0011, 0.0, 0.0)))).g;
 	float b = texture(surface_map, geographic_uv(normalize(p + vec3(0.0, 0.0011, 0.0)))).g;
 	float c = texture(surface_map, geographic_uv(normalize(p + vec3(0.0, 0.0, 0.0011)))).g;
-	vec3 slope = (vec3(a, b, c) - terrain.g) * 1.85;
+	vec3 slope = (vec3(a, b, c) - terrain.g) * 2.8;
+	slope -= p * dot(p, slope);
 	vec3 shaded_normal = normalize(orientation * (p - slope));
 	float light = max(dot(shaded_normal, sun_direction), 0.0);
 	float maria = smoothstep(0.12, 0.8, terrain.r + (coarse - 0.48) * 1.18 + (gravel - 0.5) * 0.37);
 	float stone = mix(0.40, 0.13, maria) * mix(0.67, 1.27, coarse);
 	stone += (terrain.g - 0.53) * 0.29 + (gravel - 0.48) * 0.14 + terrain.b * 0.40;
-	return vec3(0.97, 0.95, 0.92) * stone *
-		(0.014 + pow(light, 0.83) * 1.25 * step(0.0, dot(n, sun_direction)));
+	float daylight = dot(n, sun_direction);
+	vec3 direct = vec3(1.0, 0.97, 0.92) * pow(light, 0.78) * 1.30 * smoothstep(-0.016, 0.025, daylight);
+	vec3 earthshine = vec3(0.006, 0.009, 0.015) * (1.0 - smoothstep(-0.2, 0.1, daylight));
+	return max(stone, 0.0) * (direct + earthshine);
 }
 
 void fragment() {

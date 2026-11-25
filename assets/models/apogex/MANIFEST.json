@@ -1,0 +1,188 @@
+{
+  "project": "APOGEX",
+  "world": "VESPER-9",
+  "units": "meters",
+  "coordinate_system": "glTF Y-up. Bounding-box axes are X, Y, Z. Nominal ground is Y=0.",
+  "assets": [
+    {
+      "path": "assets/models/apogex/rocks/basalt_boulder_a.glb",
+      "bounding_box": {
+        "min": [
+          -1.1,
+          -0.33,
+          -0.84
+        ],
+        "max": [
+          1.1,
+          1.5,
+          0.84
+        ]
+      },
+      "triangle_count": 292,
+      "file_size_bytes": 24180,
+      "purpose": "Fractured ash-dark basalt scatter for volcanic plains and slopes."
+    },
+    {
+      "path": "assets/models/apogex/rocks/basalt_column_cluster.glb",
+      "bounding_box": {
+        "min": [
+          -1.5,
+          -0.33,
+          -1.4
+        ],
+        "max": [
+          1.5,
+          3.8,
+          1.4
+        ]
+      },
+      "triangle_count": 560,
+      "file_size_bytes": 45148,
+      "purpose": "Seven stepped basalt organ pipes for lava-cooled escarpments."
+    },
+    {
+      "path": "assets/models/apogex/rocks/obsidian_crystal_cluster.glb",
+      "bounding_box": {
+        "min": [
+          -1.3,
+          -0.33,
+          -1.07
+        ],
+        "max": [
+          1.3,
+          4.2,
+          1.07
+        ]
+      },
+      "triangle_count": 628,
+      "file_size_bytes": 47332,
+      "purpose": "Six vitreous obsidian shards and active magma fissures for the Obsidian Fields."
+    },
+    {
+      "path": "assets/models/apogex/rocks/crimson_strata_pillar.glb",
+      "bounding_box": {
+        "min": [
+          -1.75,
+          -0.33,
+          -1.32
+        ],
+        "max": [
+          1.75,
+          5.5,
+          1.32
+        ]
+      },
+      "triangle_count": 656,
+      "file_size_bytes": 43644,
+      "purpose": "Weathered ochre and red-shale pillar for layered canyon formations."
+    },
+    {
+      "path": "assets/models/apogex/rocks/iron_ore_outcrop.glb",
+      "bounding_box": {
+        "min": [
+          -1.4,
+          -0.33,
+          -1.015
+        ],
+        "max": [
+          1.4,
+          2.2,
+          1.015
+        ]
+      },
+      "triangle_count": 492,
+      "file_size_bytes": 40384,
+      "purpose": "Ruststone outcrop with exposed metallic hematite veins."
+    },
+    {
+      "path": "assets/models/apogex/rocks/highland_granite_slab.glb",
+      "bounding_box": {
+        "min": [
+          -1.6,
+          -0.33,
+          -1.11
+        ],
+        "max": [
+          1.6,
+          2.6,
+          1.11
+        ]
+      },
+      "triangle_count": 460,
+      "file_size_bytes": 37840,
+      "purpose": "Fractured pale granite slab cluster for high mountain ridges."
+    },
+    {
+      "path": "assets/models/apogex/landmarks/extraction_beacon_spire.glb",
+      "bounding_box": {
+        "min": [
+          -7.0,
+          -0.33,
+          -7.0
+        ],
+        "max": [
+          7.0,
+          26.0,
+          7.0
+        ]
+      },
+      "triangle_count": 7580,
+      "file_size_bytes": 366548,
+      "purpose": "Terminus Basin survey and extraction landmark with an armored platform, drill reactor, and antenna crown."
+    },
+    {
+      "path": "assets/models/apogex/landmarks/relay_tower.glb",
+      "bounding_box": {
+        "min": [
+          -3.5,
+          -0.33,
+          -3.5
+        ],
+        "max": [
+          3.5,
+          18.0,
+          3.5
+        ]
+      },
+      "triangle_count": 7096,
+      "file_size_bytes": 401220,
+      "purpose": "Fractured Highlands deep-space relay with an open lattice tower, twin dishes, and equipment shelter."
+    },
+    {
+      "path": "assets/models/apogex/landmarks/thermal_vent_chimney.glb",
+      "bounding_box": {
+        "min": [
+          -2.5,
+          -0.33,
+          -2.325
+        ],
+        "max": [
+          2.5,
+          6.0,
+          2.325
+        ]
+      },
+      "triangle_count": 2198,
+      "file_size_bytes": 172980,
+      "purpose": "Obsidian Fields geothermal vent with terraced crust, incandescent fissures, and a molten throat."
+    },
+    {
+      "path": "assets/models/apogex/landmarks/industrial_pylon.glb",
+      "bounding_box": {
+        "min": [
+          -1.0,
+          -0.33,
+          -0.95
+        ],
+        "max": [
+          1.0,
+          7.5,
+          0.95
+        ]
+      },
+      "triangle_count": 2608,
+      "file_size_bytes": 156720,
+      "purpose": "Industrial survey and perimeter marker with an angled amber floodlight and hazard collar."
+    }
+  ]
+}

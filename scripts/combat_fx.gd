@@ -4,6 +4,51 @@ extends RefCounted
 ## A short billboard spark burst, with a fading flash instead of an expanding solid sphere.
 const MAX_IDLE_BURSTS := 12
 
+## Soft additive glow for thin rings / beams / halos. Alpha feathers toward the silhouette (surface normal
+## perpendicular to the view), so thin geometry resolves as a smooth glow instead of a stair-stepped hard
+## edge when MSAA is off (LOW / MEDIUM tiers). Additive blend keeps it luminous against dark space.
+const SOFT_GLOW_CODE := """
+shader_type spatial;
+render_mode unshaded, blend_add, depth_draw_never, cull_disabled, shadows_disabled, fog_disabled;
+uniform vec4 glow_color : source_color = vec4(1.0);
+uniform float alpha = 1.0;
+uniform float edge_softness = 0.85;
+void fragment() {
+	float facing = abs(dot(normalize(NORMAL), normalize(VIEW)));
+	float feather = edge_softness > 0.001 ? smoothstep(0.0, edge_softness, facing) : 1.0;
+	ALBEDO = glow_color.rgb;
+	ALPHA = clamp(glow_color.a * alpha * feather, 0.0, 1.0);
+}
+"""
+static var _soft_glow_shader: Shader
+
+
+## New (unshared) soft-glow material; callers may tween "shader_parameter/alpha".
+static func soft_glow(color: Color, alpha := 1.0, softness := 0.85) -> ShaderMaterial:
+	if _soft_glow_shader == null:
+		_soft_glow_shader = Shader.new()
+		_soft_glow_shader.code = SOFT_GLOW_CODE
+	var m := ShaderMaterial.new()
+	m.shader = _soft_glow_shader
+	m.set_shader_parameter("glow_color", color)
+	m.set_shader_parameter("alpha", alpha)
+	m.set_shader_parameter("edge_softness", softness)
+	return m
+
+
+## True when the 3D viewport renders without MSAA (LOW / MEDIUM presets, or FSR2): thin geometry should be
+## widened slightly so it never drops below a pixel and shimmers.
+static func hardware_aa_off() -> bool:
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree == null or tree.root == null:
+		return true
+	return tree.root.msaa_3d == Viewport.MSAA_DISABLED
+
+
+## Thickness multiplier for thin lines / halos on tiers without hardware AA.
+static func thin_line_scale() -> float:
+	return 1.6 if hardware_aa_off() else 1.0
+
 # The parent owns the pool, so changing worlds frees every retained node normally.
 static func _acquire(parent: Node3D) -> CPUParticles3D:
 	var pool: Node3D = parent.get_node_or_null("ImpactPool")
@@ -58,7 +103,8 @@ static func impact(parent: Node3D, at: Vector3, color: Color, size := 1.0, count
 	var hot := Color(minf(color.r * 1.6 + 0.2, 1.0), minf(color.g * 1.6 + 0.2, 1.0), minf(color.b * 1.6 + 0.2, 1.0))
 	var fade := Gradient.new()
 	fade.set_color(0, Color(1, 1, 1, 1))
-	fade.add_point(0.12, Color(1, 0.96, 0.82, 0.95))
+	fade.add_point(0.12, Color(1, 0.97, 0.78, 0.95))
+	fade.add_point(0.26, Color(1.0, 0.45, 0.7, 0.9))
 	fade.add_point(0.4, Color(hot, 0.8))
 	fade.set_color(1, Color(color, 0))
 	particles.color_ramp = fade
@@ -147,9 +193,11 @@ static func dust_puff(world: Node3D, pos: Vector3, color := Color("#c9c5ba"), sc
 static func ring_pulse(parent: Node3D, at: Vector3, color: Color, radius := 6.0, duration := 0.45) -> void:
 	if not is_instance_valid(parent) or UI.reduced_motion or not preload("res://scripts/graphics_settings.gd").motion_effects:
 		return
-	var ring := Gfx.ring(1.0, 0.14, color, 0.85)
-	var mat := Gfx.unshaded(color, 0.85).duplicate() as StandardMaterial3D
+	var ring := Gfx.ring(1.0, 0.14 * thin_line_scale(), color, 0.85)
+	# Low softness: the flattened ring is often seen at a grazing angle, so only feather true silhouettes.
+	var mat := soft_glow(color, 0.85, 0.3)
 	ring.material_override = mat
+	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	ring.position = at
 	ring.scale = Vector3(0.4, 0.05, 0.4)
 	parent.add_child(ring)
@@ -158,7 +206,7 @@ static func ring_pulse(parent: Node3D, at: Vector3, color: Color, radius := 6.0,
 		return
 	var tween := ring.create_tween().set_parallel().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(ring, "scale", Vector3(radius, 0.05, radius), duration)
-	tween.tween_property(mat, "albedo_color:a", 0.0, duration)
+	tween.tween_property(mat, "shader_parameter/alpha", 0.0, duration)
 	tween.chain().tween_callback(ring.queue_free)
 
 
@@ -183,16 +231,18 @@ static func _acquire_tracer(world: Node3D) -> MeshInstance3D:
 		pool.move_child(oldest, -1)
 		return oldest
 	var beam := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3.ONE
-	beam.mesh = box
+	# Unit cylinder along +Y (diameter 1): round cross-section + soft-glow rim feather = no hard box edges.
+	var tube := CylinderMesh.new()
+	tube.top_radius = 0.5
+	tube.bottom_radius = 0.5
+	tube.height = 1.0
+	tube.radial_segments = 8
+	tube.rings = 1
+	tube.cap_top = false
+	tube.cap_bottom = false
+	beam.mesh = tube
 	beam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	beam.material_override = mat
+	beam.material_override = soft_glow(Color.WHITE, 1.0, 0.7)
 	var light := OmniLight3D.new()
 	light.shadow_enabled = false
 	light.omni_attenuation = 1.6
@@ -215,9 +265,12 @@ static func tracer(world: Node3D, from: Vector3, to: Vector3, color: Color, widt
 	var delta := to - from
 	var length := delta.length()
 	var light := beam.get_child(0) as OmniLight3D
-	var mat := beam.material_override as StandardMaterial3D
-	var hot := color.lerp(Color.WHITE, 0.35)
-	mat.albedo_color = Color(hot, 1.0)
+	var mat := beam.material_override as ShaderMaterial
+	var hot := color.lerp(Color.WHITE, 0.55)
+	mat.set_shader_parameter("glow_color", Color(hot, 1.0))
+	mat.set_shader_parameter("alpha", 1.0)
+	# The feathered tube reads ~35% thinner than a hard box; compensate, and widen further without MSAA.
+	width *= 1.35 * thin_line_scale()
 	if length < 0.01:
 		# Degenerate shot: no beam, just the flash.
 		beam.global_transform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.001), from)
@@ -225,9 +278,9 @@ static func tracer(world: Node3D, from: Vector3, to: Vector3, color: Color, widt
 		var fwd := delta / length
 		var ref := Vector3.UP if absf(fwd.dot(Vector3.UP)) < 0.95 else Vector3.RIGHT
 		var x := ref.cross(fwd).normalized()
-		var y := fwd.cross(x).normalized()
-		beam.global_transform = Transform3D(Basis(x, y, fwd), from + delta * 0.5)
-		beam.scale = Vector3(width, width, length)
+		var z := x.cross(fwd).normalized()
+		beam.global_transform = Transform3D(Basis(x, fwd, z), from + delta * 0.5)
+		beam.scale = Vector3(width, length, width)
 	# Flash light sits at the muzzle regardless of beam orientation/scale.
 	light.top_level = true
 	light.global_position = from
@@ -236,9 +289,9 @@ static func tracer(world: Node3D, from: Vector3, to: Vector3, color: Color, widt
 	light.omni_range = 4.0
 	light.visible = true
 	var full := beam.scale
-	var thin := Vector3(full.x * 0.1, full.y * 0.1, full.z)
+	var thin := Vector3(full.x * 0.1, full.y, full.z * 0.1)
 	var tw := beam.create_tween().set_parallel()
-	tw.tween_property(mat, "albedo_color:a", 0.0, duration)
+	tw.tween_property(mat, "shader_parameter/alpha", 0.0, duration)
 	tw.tween_property(beam, "scale", thin, duration)
 	tw.tween_property(light, "light_energy", 0.0, 0.06).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	tw.chain().tween_callback(_release_tracer.bind(beam))

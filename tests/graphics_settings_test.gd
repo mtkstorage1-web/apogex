@@ -101,17 +101,23 @@ func _run() -> void:
 	var graphics: RefCounted = main.graphics
 	print("Graphics test renderer=%s display=%s driver=%s" % [graphics.renderer(), DisplayServer.get_name(), RenderingServer.get_current_rendering_driver_name()])
 	check(Engine.max_fps == 144 and graphics.values["render_scale"] == 100, "Migrated legacy FPS and preset")
-	main.show_settings()
+	_press("SETTINGS")
+	_press("GAME")
+	check(main.settings_open and main.settings_tab == "game" and not main.graphics_open, "Home Settings switches to Game")
 	_press("GRAPHICS")
-	check(main.graphics_open, "Graphics opens from home Settings")
+	check(main.graphics_open and main.settings_tab == "graphics", "Home Settings switches to Graphics")
 	_press("BACK")
-	check(not main.graphics_open and main.mode == "menu", "Back returns to home Settings")
+	check(not main.settings_open and not main.graphics_open and main.mode == "menu", "Back closes Settings and returns home")
 	main.mode = "play"
 	main.pause()
+	_press("ALL SETTINGS")
+	_press("AUDIO")
+	check(main.settings_open and main.settings_tab == "audio" and not main.graphics_open, "Pause Settings switches to Audio")
 	_press("GRAPHICS")
-	check(main.graphics_open and main.paused_from == "play", "Graphics opens from Pause")
+	check(main.graphics_open and main.paused_from == "play", "Pause Settings switches to Graphics")
 	_press("BACK")
-	check(main.mode == "paused" and main.paused_from == "play", "Back returns to Pause")
+	check(not main.settings_open and main.mode == "paused" and main.paused_from == "play", "Back returns to Pause")
+	_press("ALL SETTINGS")
 	_press("GRAPHICS")
 	_press("RESET GRAPHICS TO DEFAULT")
 	await _settle_graphics()
@@ -178,12 +184,15 @@ func _run() -> void:
 
 	main.ensure_universe()
 	var universe: Universe = main.universe
+	universe.ensure_earth_environment()
+	universe.ensure_moon_environment()
 	check(universe.env.glow_enabled == main.graphics.values["glow"], "Graphics settings apply when the universe is created")
 	check(universe.earth_landscape.meshes.has(0) and universe.moon_landscape.meshes.has(0),
 		"All terrain LOD tiers are pre-built for Earth and Moon")
 	check(int(universe.moon_dust.get_meta("base_particle_count", 0)) == Universe.DUST_PARTICLES,
 		"Moon dust preserves base particle count metadata")
-	main.show_graphics()
+	_press("SETTINGS")
+	_press("GRAPHICS")
 	main.graphics_buttons["atmosphere"].pressed.emit()
 	await _settle_graphics()
 	var sphere := universe.shell_a.mesh as SphereMesh

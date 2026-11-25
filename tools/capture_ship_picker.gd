@@ -5,8 +5,8 @@ func run() -> void:
 	var g = load("res://main.tscn").instantiate()
 	root.add_child(g)
 	g.set_process(false)
+	LobbyPages.play_mode = "practice"
 	g.start_match()
-	g._end_cine("intro")
 	var families := ["lancer", "hauler", "halo", "bulwark", "kestrel"]
 	var i := 0
 	for p in g.sim.parts:

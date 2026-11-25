@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/vehicles/SpacecraftController.gd" id="1"]
+
+[node name="CinderDropship" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("1")
+vehicle_id = "cinder_dropship"
+vehicle_type = "dropship"
+faction = "cinder"
+display_name = "Cinder Dropship"
+dimensions = Vector3(18, 7, 24)
+max_health = 410.0
+max_shield = 148.0
+cruise_speed = 110.0
+boost_speed = 220.0
+thrust_acceleration = 44.0
+turn_rate = 1.04

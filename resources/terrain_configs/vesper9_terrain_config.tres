@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TerrainConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/TerrainConfig.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+planet_radius = 12000.0
+max_elevation = 650.0
+max_depth = 320.0
+patch_resolution = 17
+max_lod = 5
+min_lod = 0
+skirt_depth_ratio = 0.04
+split_distance_factor = 2.6
+merge_distance_factor = 3.2
+max_patch_builds_per_frame = 6
+collision_lod_threshold = 3

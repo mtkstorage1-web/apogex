@@ -1,18 +1,30 @@
 ## Sequential parts shop. Main pauses play while this picker is open.
 extends Control
 
-const BUILD_ORDER := ["reactor", "engine", "bridge", "keel", "port", "thruster", "battery", "coolant", "scrubber", "stores", "cargo", "antenna"]
+const BUILD_ORDER := ShipCatalog.BUILD_ORDER
 const FAMILIES := ["kestrel", "lancer", "hauler", "halo", "bulwark"]
-const CYAN := Color("#00a8b5")
-const BLUE := Color("#0284c7")
-const ORANGE := Color("#ff8c00")
-const COST_INK := Color("#914600")
-const INK := Color("#0f172a")
-const MUTED := Color("#334155")
-const SURFACE := Color("#f8fafc")
-const INSET := Color("#e2e8f0")
-const EDGE := Color("#cbd5e1")
+const CYAN := UI.CYAN
+const BLUE := UI.INFO_PWR
+const ORANGE := UI.GOLD
+const COST_INK := UI.GOLD
+const INK := UI.TEXT
+const MUTED := UI.MUTED
+const SURFACE := UI.PANEL_SOLID
+const INSET := UI.BG
+const EDGE := Color(UI.CYAN, 0.4)
 const ShopPreview := preload("res://scripts/shop_preview.gd")
+const HOLOGRAM_SHADER := """
+shader_type spatial;
+render_mode unshaded;
+uniform vec4 body : source_color;
+uniform vec4 edge : source_color;
+void fragment() {
+	float facing = clamp(dot(normalize(NORMAL), normalize(VIEW)), 0.0, 1.0);
+	float rim = pow(1.0 - facing, 2.0);
+	ALBEDO = mix(body.rgb * mix(1.25, 0.75, facing), edge.rgb, rim);
+	ALPHA = mix(body.a, 1.0, rim);
+}
+"""
 
 
 class ComparisonGraph extends Control:
@@ -129,6 +141,8 @@ var ship_container: Node3D
 var preview_view: SubViewportContainer
 var preview_camera: Camera3D
 var _ghost: Node3D
+var _preview_hologram: ShaderMaterial
+var _selected_hologram: ShaderMaterial
 var _hidden_module: Node3D
 var _active_card: PanelContainer
 var _step_host: Control
@@ -185,11 +199,7 @@ func setup(main) -> void:
 
 
 func _setup_theme() -> void:
-	var font := SystemFont.new()
-	font.font_names = PackedStringArray(["Inter", "SF Pro Display", "Segoe UI"])
-	font.fallbacks = [UI.font()]
-	theme = Theme.new()
-	theme.default_font = font
+	theme = UI.theme()
 	_card_normal = _box(SURFACE, EDGE, 10, 8)
 	_card_hover = _box(SURFACE, CYAN, 10, 8)
 	_card_hover.set_border_width_all(2)
@@ -199,7 +209,7 @@ func _setup_theme() -> void:
 
 func _build_backdrop() -> void:
 	var backdrop := ColorRect.new()
-	backdrop.color = Color.WHITE
+	backdrop.color = UI.BG_DEEP
 	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(backdrop)
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -255,7 +265,7 @@ func _build_right_column(parent: HBoxContainer) -> void:
 	status.add_child(_quick_build_button)
 	var actions := UI.hbox(8)
 	status.add_child(actions)
-	_purchase_button = _button("PURCHASE ALL", true, _purchase_all)
+	_purchase_button = _button("PURCHASE & INSTALL" if g.arena_clash != null else "PURCHASE MODULES", true, _purchase_all)
 	_purchase_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	actions.add_child(_purchase_button)
 	actions.add_child(_button("CLOSE", false, close))
@@ -269,7 +279,7 @@ func _build_stage(parent: HBoxContainer) -> void:
 	parent.add_child(stage_frame)
 	var stage := UI.vbox(0)
 	stage_frame.add_child(stage)
-	var render := ShopPreview.create(stage, true)
+	var render := ShopPreview.create(stage, true, true)
 	var root: Node3D = render["root"]
 	preview_view = render["view"]
 	preview_view.custom_minimum_size = Vector2(260, 220)
@@ -284,7 +294,7 @@ func _build_stage(parent: HBoxContainer) -> void:
 	root.add_child(ship_container)
 
 	# Measure a full baseline hull once. Module transforms remain in prefab space.
-	var reference := ShipModel.full(UI.ACCENT)
+	var reference := ShipModel.full(UI.ACCENT, {}, true)
 	var bounds := _bounds(reference)
 	reference.free()
 	var factor := 4.0 / maxf(0.01, maxf(bounds.size.x, maxf(bounds.size.y, bounds.size.z)))
@@ -373,13 +383,14 @@ func _add_card(parent: HBoxContainer, slot: String, family: String) -> void:
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title)
 	var cost := PanelContainer.new()
-	cost.add_theme_stylebox_override("panel", _box(Color("#fff0dc"), Color(ORANGE, 0.55), 6, 3))
+	cost.add_theme_stylebox_override("panel", _box(UI.PANEL_SOLID, Color(ORANGE, 0.55), 6, 3))
 	cost.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	heading.add_child(cost)
 	cost.add_child(_label("%d CR" % g.sim.variant_charge(slot, family), 12, COST_INK))
 	details.add_child(_label(str(variant["advantage"]), 12, MUTED, true))
 	details.add_child(_label("Δ MASS %+.0f kg" % float(variant.get("mass_kg", 0)), 11, MUTED))
 	var select := _button("SELECT", true, _select_variant.bind(slot, family))
+	select.disabled = g.arena_clash != null and g.sim.slot_confirmed(slot)
 	details.add_child(select)
 	card.tooltip_text = "%s\n%s" % [variant["name"], variant["drawback"]]
 	if draft.get(slot) == family and not selected_slots.has(slot):
@@ -434,7 +445,7 @@ func _add_thumbnail(parent: VBoxContainer, slot: String, family: String) -> void
 	var pivot := Node3D.new()
 	pivot.rotation.y = 0.85
 	viewport.add_child(pivot)
-	var part := ShipModel.module(slot, family, UI.ACCENT)
+	var part := ShipModel.module(slot, family, UI.ACCENT, true)
 	var bounds := _bounds(part)
 	var factor := 3.1 / maxf(bounds.size.length(), 0.01)
 	pivot.scale = Vector3.ONE * factor
@@ -464,18 +475,16 @@ func _set_candidate(card: PanelContainer, slot: String, family: String, active: 
 		_remove_ghost()
 		if selected_slots.get(slot) == family:
 			return
-		if _modules.has(slot):
+		if is_instance_valid(_modules.get(slot)):
 			_hidden_module = _modules[slot]
 			_hidden_module.hide()
-		_ghost = ShipModel.module(slot, family, UI.ACCENT)
-		var hologram := StandardMaterial3D.new()
-		hologram.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		hologram.albedo_color = Color(CYAN, 0.38)
-		hologram.emission_enabled = true
-		hologram.emission = CYAN
-		hologram.emission_energy_multiplier = 0.25
-		_apply_hologram(_ghost, hologram)
-		ship_container.add_child(_ghost)
+		_ghost = ShipModel.module(slot, family, UI.ACCENT, true)
+		_apply_hologram(_ghost, _hologram_material(false))
+		if is_instance_valid(ship_container):
+			ship_container.add_child(_ghost)
+		else:
+			_ghost.free()
+			_ghost = null
 	elif _active_card == card:
 		_style_card(card, false)
 		_active_card = null
@@ -497,6 +506,21 @@ func _style_card(card: PanelContainer, active: bool) -> void:
 	tween.tween_property(card, "scale", Vector2.ONE * (1.05 if active else 1.0), 0.13)
 
 
+func _hologram_material(selected: bool) -> ShaderMaterial:
+	if _preview_hologram == null:
+		var hologram_shader := Shader.new()
+		hologram_shader.code = HOLOGRAM_SHADER
+		_preview_hologram = ShaderMaterial.new()
+		_preview_hologram.shader = hologram_shader
+		_preview_hologram.set_shader_parameter("body", Color("#239bc0b8"))
+		_preview_hologram.set_shader_parameter("edge", Color("#a8f6ff"))
+		_selected_hologram = ShaderMaterial.new()
+		_selected_hologram.shader = hologram_shader
+		_selected_hologram.set_shader_parameter("body", Color("#31ccf4e0"))
+		_selected_hologram.set_shader_parameter("edge", Color("#dbfbff"))
+	return _selected_hologram if selected else _preview_hologram
+
+
 func _apply_hologram(node: Node, hologram: Material) -> void:
 	if node is GeometryInstance3D:
 		node.material_override = hologram
@@ -505,27 +529,36 @@ func _apply_hologram(node: Node, hologram: Material) -> void:
 		_apply_hologram(child, hologram)
 
 
+func _draft_module(slot: String, family: String) -> Node3D:
+	var part := ShipModel.module(slot, family, UI.ACCENT, true)
+	if not g.sim.slot_confirmed(slot) or g.sim.loadout.get(slot) != family:
+		_apply_hologram(part, _hologram_material(true))
+	return part
+
+
 func _remove_ghost() -> void:
 	if is_instance_valid(_hidden_module):
 		_hidden_module.show()
 		_hidden_module = null
 	if is_instance_valid(_ghost):
-		ship_container.remove_child(_ghost)
+		if _ghost.get_parent():
+			_ghost.get_parent().remove_child(_ghost)
 		_ghost.queue_free()
-		_ghost = null
+	_ghost = null
 
 
 func _select_variant(slot: String, family: String) -> void:
-	if _closing or slot != BUILD_ORDER[current_step_index]:
+	if _closing or slot != BUILD_ORDER[current_step_index] or (g.arena_clash != null and g.sim.slot_confirmed(slot)):
 		return
 	_remove_ghost()
 	draft[slot] = family
 	selected_slots[slot] = family
-	if _modules.has(slot):
-		var previous: Node3D = _modules[slot]
-		ship_container.remove_child(previous)
+	var previous := _modules.get(slot) as Node3D
+	if is_instance_valid(previous):
+		if previous.get_parent():
+			previous.get_parent().remove_child(previous)
 		previous.queue_free()
-	var part := ShipModel.module(slot, family, UI.ACCENT)
+	var part := _draft_module(slot, family)
 	_modules[slot] = part
 	ship_container.add_child(part)
 	_install_effects(_bounds(part).get_center())
@@ -533,7 +566,8 @@ func _select_variant(slot: String, family: String) -> void:
 	var next_step := current_step_index
 	for offset in range(1, BUILD_ORDER.size()):
 		var index := (current_step_index + offset) % BUILD_ORDER.size()
-		if not selected_slots.has(BUILD_ORDER[index]):
+		var choices := draft if g.arena_clash != null else selected_slots
+		if not choices.has(BUILD_ORDER[index]):
 			next_step = index
 			break
 	_go_to_step(next_step)
@@ -550,8 +584,10 @@ func _go_to_step(index: int) -> void:
 	_remove_ghost()
 	_active_card = null
 	current_step_index = index
-	_step_host.remove_child(_step_content)
-	_step_content.queue_free()
+	if is_instance_valid(_step_content):
+		if _step_content.get_parent() == _step_host:
+			_step_host.remove_child(_step_content)
+		_step_content.queue_free()
 	_show_step()
 
 
@@ -577,9 +613,10 @@ func _purchase_all() -> void:
 		g.hud.toast(message)
 		return
 	g.sfx("ui_buy", -6)
-	g.world.refresh_ship_loadout()
+	if g.world and g.world.has_method("refresh_ship_loadout"):
+		g.world.refresh_ship_loadout()
 	g._refresh_hud()
-	g.hud.toast("Assembly complete")
+	g.hud.toast("Modules installing" if g.arena_clash != null else "Modules ordered")
 	close()
 
 
@@ -610,19 +647,20 @@ func _rebuild_modules() -> void:
 	for slot in BUILD_ORDER:
 		if not draft.has(slot):
 			continue
-		var existing: Node3D = _modules.get(slot)
+		var existing := _modules.get(slot) as Node3D
 		if is_instance_valid(existing):
 			if str(existing.get_meta("ship_family", "")) == str(draft[slot]):
 				continue
-			ship_container.remove_child(existing)
+			if existing.get_parent():
+				existing.get_parent().remove_child(existing)
 			existing.queue_free()
-		var part := ShipModel.module(slot, draft[slot], UI.ACCENT)
+		var part := _draft_module(slot, draft[slot])
 		_modules[slot] = part
 		ship_container.add_child(part)
 
 
 func _install_effects(part_center: Vector3) -> void:
-	if not _can_render or UI.reduced_motion:
+	if not _can_render or UI.reduced_motion or not is_instance_valid(ship_container) or not is_instance_valid(preview_camera):
 		return
 	# Sparkle uses ship-container coordinates; focus uses preview-root coordinates.
 	var helpers: Object = ShopPreview
@@ -632,6 +670,8 @@ func _install_effects(part_center: Vector3) -> void:
 		_install_flash(part_center)
 	if _accepts_call(helpers, &"focus_camera", 4):
 		var root := ship_container.get_parent() as Node3D
+		if root == null:
+			return
 		# The helper measures the visible subtree. Supply the full envelope for stable framing.
 		var envelope := MeshInstance3D.new()
 		var box := BoxMesh.new()
@@ -690,16 +730,19 @@ func _install_flash(center: Vector3) -> void:
 
 
 func _update_progress() -> void:
-	var count := selected_slots.size()
+	var count := draft.size()
 	var total := _draft_charge()
 	var shortfall: int = total - g.sim.credits
 	_progress.value = count
 	_progress_caption.text = "%d / %d selected" % [count, BUILD_ORDER.size()]
 	_credits.text = "Draft %d CR / %d CR" % [total, g.sim.credits]
 	_stage_caption.text = _stage_status()
-	_purchase_button.disabled = count < BUILD_ORDER.size() or shortfall > 0
+	_purchase_button.disabled = not ArenaClashSim.FLIGHT_PARTS.all(func(slot: String) -> bool: return draft.has(slot)) or shortfall > 0
 	var remaining := BUILD_ORDER.size() - count
-	_quick_build_button.visible = remaining > 0
+	_quick_build_button.visible = remaining > 0 and g.arena_clash == null
+	if g.arena_clash != null:
+		_purchase_button.disabled = draft.size() == g.sim.confirmed_count() or shortfall > 0
+		update_arena_clock()
 	_quick_build_button.text = (
 		"CONFIRM ALL 12 SLOTS (QUICK BUILD)" if remaining == BUILD_ORDER.size()
 		else "CONFIRM REMAINING %d SLOTS (QUICK BUILD)" % remaining
@@ -715,6 +758,13 @@ func _update_progress() -> void:
 	) % [stats["wet_mass"], stats["thrust_kn"], stats["dv"], stats["twr"], stats["exhaust"], stats["power_margin"]]
 	if draft.size() < BUILD_ORDER.size():
 		_telemetry.text += "\nEmpty slots use Kestrel baseline stats."
+
+
+func update_arena_clock() -> void:
+	if g.arena_clash == null:
+		return
+	var squad: Dictionary = g.arena_clash.squads[g.arena_clash.player_squad]
+	_progress_caption.text = "%s · %d/%d BUILT" % [g.arena_clock(), squad["built"].size(), BUILD_ORDER.size()]
 
 
 func _show_purchase_status(message: String, warning: bool) -> void:
@@ -752,10 +802,7 @@ func _box(background: Color, border: Color, radius: int, padding: int) -> StyleB
 
 
 func _label(caption: String, font_size: int, color := INK, wrapped := false) -> Label:
-	var label := Label.new()
-	label.text = caption
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
+	var label := UI.label(caption, font_size, color)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if wrapped:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -774,10 +821,11 @@ func _button(caption: String, primary: bool, action: Callable) -> Button:
 	button.add_theme_stylebox_override("pressed", _box(normal.darkened(0.15), CYAN, 6, 7))
 	button.add_theme_stylebox_override("focus", _box(Color.TRANSPARENT, BLUE, 6, 7))
 	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-		button.add_theme_color_override(state, INK)
+		button.add_theme_color_override(state, UI.BG_DEEP if primary else INK)
 	button.add_theme_stylebox_override("disabled", _box(INSET, EDGE, 6, 7))
 	button.add_theme_color_override("font_disabled_color", MUTED)
 	button.pressed.connect(action)
+	UI.add_juice(button, ORANGE if primary else CYAN)
 	return button
 
 
@@ -785,9 +833,11 @@ func close() -> void:
 	if _closing:
 		return
 	_closing = true
-	g.picker = null
-	g.pressed_now.clear()
-	g.capture_mouse(true)
+	if is_instance_valid(g):
+		if g.picker == self:
+			g.picker = null
+		g.pressed_now.clear()
+		g.capture_mouse(true)
 	hide()
 	queue_free()
 

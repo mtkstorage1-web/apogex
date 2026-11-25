@@ -1,0 +1,48 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Shader" path="res://shaders/star.gdshader" id="1"]
+
+[sub_resource type="ShaderMaterial" id="mat_star"]
+shader = ExtResource("1")
+
+[sub_resource type="SphereMesh" id="mesh_star"]
+radius = 1.0
+height = 2.0
+radial_segments = 64
+rings = 32
+
+[sub_resource type="Gradient" id="grad_corona"]
+offsets = PackedFloat32Array(0, 0.28, 0.6, 1)
+colors = PackedColorArray(1, 0.62, 0.2, 0.9, 1, 0.42, 0.1, 0.35, 0.9, 0.22, 0.05, 0.1, 0.6, 0.1, 0.02, 0)
+
+[sub_resource type="GradientTexture2D" id="tex_corona"]
+gradient = SubResource("grad_corona")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="mat_corona"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_texture = SubResource("tex_corona")
+billboard_mode = 1
+billboard_keep_scale = true
+disable_fog = true
+
+[sub_resource type="QuadMesh" id="mesh_corona"]
+size = Vector2(7, 7)
+
+[node name="Star" type="Node3D"]
+
+[node name="StarSphere" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("mesh_star")
+surface_material_override/0 = SubResource("mat_star")
+
+[node name="Corona" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("mesh_corona")
+surface_material_override/0 = SubResource("mat_corona")

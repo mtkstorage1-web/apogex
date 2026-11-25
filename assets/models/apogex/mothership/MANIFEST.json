@@ -1,0 +1,544 @@
+{
+  "project": "APOGEX",
+  "wave": 4,
+  "milestone": 5,
+  "kit": "Helion & Cinder Motherships Exterior + Interior Hero 3D Kit",
+  "authoring_tool": "Blender 5.3.0",
+  "units": "meters",
+  "coordinate_system": "glTF Y-up. Bounds and dimensions are ordered X (width), Y (height), Z (depth or length). Both motherships and the shuttle face +Z.",
+  "bounds_validation_tolerance_meters": 2e-05,
+  "assets": [
+    {
+      "path": "assets/models/apogex/mothership/helion_mothership_hull.glb",
+      "purpose": "Helion capital ship with twin prows, two main drives and a starboard hangar.",
+      "origin": "centered",
+      "dimensions_xyz": [
+        320,
+        190,
+        850
+      ],
+      "bounding_box": {
+        "min": [
+          -160.0,
+          -95.0,
+          -425.0
+        ],
+        "max": [
+          160.0,
+          95.0,
+          425.0
+        ]
+      },
+      "measured_bounding_box": {
+        "min": [
+          -160.0,
+          -94.99999809,
+          -425.0
+        ],
+        "max": [
+          160.0,
+          95.0,
+          425.0
+        ]
+      },
+      "triangle_count": 25508,
+      "triangle_budget": [
+        12000,
+        26000
+      ],
+      "degenerate_triangle_count": 0,
+      "finite_unit_normals": true,
+      "mesh_nodes": 22,
+      "pbr_materials": [
+        "W4 | Helion navy",
+        "W4 | Brushed titanium",
+        "W4 | Helion ceramic",
+        "W4 | Helion cyan",
+        "W4 | Pale ceramic panels",
+        "W4 | Helion deep recess",
+        "W4 | Work light",
+        "W4 | Red status lamp",
+        "W4 | Helion optical glass"
+      ],
+      "emissive_materials": [
+        "W4 | Helion cyan",
+        "W4 | Work light",
+        "W4 | Red status lamp"
+      ],
+      "animations": [],
+      "file_size_bytes": 1215848,
+      "sha256": "1f1b526517572e7880d72b5b6985c693f8d459accd36edab01fbb23c0dec935e",
+      "blender_visual_inspection": [
+        "bow three-quarter",
+        "starboard ventral",
+        "stern three-quarter"
+      ]
+    },
+    {
+      "path": "assets/models/apogex/mothership/cinder_mothership_hull.glb",
+      "purpose": "Cinder dreadnought with a forward rail battery, four main drives and an armored starboard hangar.",
+      "origin": "centered",
+      "dimensions_xyz": [
+        320,
+        190,
+        850
+      ],
+      "bounding_box": {
+        "min": [
+          -160.0,
+          -95.0,
+          -425.0
+        ],
+        "max": [
+          160.0,
+          95.0,
+          425.0
+        ]
+      },
+      "measured_bounding_box": {
+        "min": [
+          -160.0,
+          -95.00000191,
+          -425.0
+        ],
+        "max": [
+          160.0,
+          95.0,
+          425.0
+        ]
+      },
+      "triangle_count": 24796,
+      "triangle_budget": [
+        12000,
+        26000
+      ],
+      "degenerate_triangle_count": 0,
+      "finite_unit_normals": true,
+      "mesh_nodes": 25,
+      "pbr_materials": [
+        "W4 | Cinder burnt orange",
+        "W4 | Weathered heavy steel",
+        "W4 | Cinder war red",
+        "W4 | Cinder plasma",
+        "W4 | Cinder graphite",
+        "W4 | Cinder deep recess",
+        "W4 | Amber warning lamp",
+        "W4 | Work light",
+        "W4 | Heat-tinted steel"
+      ],
+      "emissive_materials": [
+        "W4 | Cinder plasma",
+        "W4 | Amber warning lamp",
+        "W4 | Work light"
+      ],
+      "animations": [],
+      "file_size_bytes": 1140032,
+      "sha256": "014fd58f629e1b49cead6854644ecb7751bdf8bbc71c6e9eee376c2a7713c2ba",
+      "blender_visual_inspection": [
+        "bow three-quarter",
+        "starboard ventral",
+        "stern three-quarter"
+      ]
+    },
+    {
+      "path": "assets/models/apogex/mothership/reactor_core_assembly.glb",
+      "purpose": "Room 3 reactor centerpiece with four coolant risers and three animated containment rings.",
+      "origin": "ground-centered",
+      "dimensions_xyz": [
+        16,
+        22,
+        16
+      ],
+      "bounding_box": {
+        "min": [
+          -8.0,
+          0,
+          -8.0
+        ],
+        "max": [
+          8.0,
+          22,
+          8.0
+        ]
+      },
+      "measured_bounding_box": {
+        "min": [
+          -8.0,
+          0.0,
+          -8.0
+        ],
+        "max": [
+          8.0,
+          22.0,
+          8.0
+        ]
+      },
+      "triangle_count": 8792,
+      "triangle_budget": [
+        2000,
+        9000
+      ],
+      "degenerate_triangle_count": 0,
+      "finite_unit_normals": true,
+      "mesh_nodes": 10,
+      "pbr_materials": [
+        "W4 | Machined steel",
+        "W4 | Gunmetal enamel",
+        "W4 | Instrument cyan",
+        "W4 | Industrial safety yellow",
+        "W4 | Recessed dark steel",
+        "W4 | Amber warning lamp",
+        "W4 | Ceramic machinery trim",
+        "W4 | Energetic plasma"
+      ],
+      "emissive_materials": [
+        "W4 | Instrument cyan",
+        "W4 | Amber warning lamp",
+        "W4 | Energetic plasma"
+      ],
+      "animations": [
+        {
+          "name": "Magnetic containment rotation",
+          "duration_seconds": 4.0,
+          "rotation_nodes": [
+            "Inner magnetic containment ring",
+            "Middle magnetic containment ring",
+            "Outer magnetic containment ring"
+          ]
+        }
+      ],
+      "file_size_bytes": 398836,
+      "sha256": "e0c1ab7883d44b4cc0b3c9dd4f446085297a0ccf267f6a582b7819df968bfc15",
+      "blender_visual_inspection": [
+        "side three-quarter",
+        "elevated rear three-quarter"
+      ]
+    },
+    {
+      "path": "assets/models/apogex/mothership/command_holotable.glb",
+      "purpose": "Room 2 command desk with a recessed emitter and four control surfaces.",
+      "origin": "ground-centered",
+      "dimensions_xyz": [
+        8,
+        1.6,
+        5
+      ],
+      "bounding_box": {
+        "min": [
+          -4.0,
+          0,
+          -2.5
+        ],
+        "max": [
+          4.0,
+          1.6,
+          2.5
+        ]
+      },
+      "measured_bounding_box": {
+        "min": [
+          -4.0,
+          0.0,
+          -2.5
+        ],
+        "max": [
+          4.0,
+          1.60000002,
+          2.5
+        ]
+      },
+      "triangle_count": 3484,
+      "triangle_budget": [
+        2000,
+        9000
+      ],
+      "degenerate_triangle_count": 0,
+      "finite_unit_normals": true,
+      "mesh_nodes": 3,
+      "pbr_materials": [
+        "W4 | Gunmetal enamel",
+        "W4 | Ceramic machinery trim",
+        "W4 | Recessed dark steel",
+        "W4 | Machined steel",
+        "W4 | Instrument cyan",
+        "W4 | Polarized canopy",
+        "W4 | Amber warning lamp",
+        "W4 | Industrial safety yellow"
+      ],
+      "emissive_materials": [
+        "W4 | Instrument cyan",
+        "W4 | Amber warning lamp"
+      ],
+      "animations": [],
+      "file_size_bytes": 179524,
+      "sha256": "9768170cd6d2e511e452a25aae3b151004a27d85361a19457c8c5fda2c89ad8a",
+      "blender_visual_inspection": [
+        "elevated front three-quarter",
+        "rear three-quarter"
+      ]
+    },
+    {
+      "path": "assets/models/apogex/mothership/hangar_gantry_crane.glb",
+      "purpose": "Room 1 bridge crane with a traverse trolley and twin articulated hoist manipulators.",
+      "origin": "ground-centered",
+      "dimensions_xyz": [
+        26,
+        14,
+        8
+      ],
+      "bounding_box": {
+        "min": [
+          -13.0,
+          0,
+          -4.0
+        ],
+        "max": [
+          13.0,
+          14,
+          4.0
+        ]
+      },
+      "measured_bounding_box": {
+        "min": [
+          -13.0,
+          0.0,
+          -4.0
+        ],
+        "max": [
+          13.0,
+          14.0,
+          4.0
+        ]
+      },
+      "triangle_count": 5852,
+      "triangle_budget": [
+        2000,
+        9000
+      ],
+      "degenerate_triangle_count": 0,
+      "finite_unit_normals": true,
+      "mesh_nodes": 6,
+      "pbr_materials": [
+        "W4 | Industrial safety yellow",
+        "W4 | Recessed dark steel",
+        "W4 | Machined steel",
+        "W4 | Gunmetal enamel",
+        "W4 | Amber warning lamp",
+        "W4 | Instrument cyan",
+        "W4 | Work light"
+      ],
+      "emissive_materials": [
+        "W4 | Amber warning lamp",
+        "W4 | Instrument cyan",
+        "W4 | Work light"
+      ],
+      "animations": [],
+      "file_size_bytes": 292504,
+      "sha256": "a3e381597358c6c421e3ad5cbc252b0eeb5108fe7f6bc267861c6d6af139e0a7",
+      "blender_visual_inspection": [
+        "front three-quarter",
+        "rear three-quarter"
+      ]
+    },
+    {
+      "path": "assets/models/apogex/mothership/spacecraft_docked_shuttle.glb",
+      "purpose": "Room 1 parked shuttle with deployed skids, wing thrusters and a boarding ramp.",
+      "origin": "ground-centered",
+      "dimensions_xyz": [
+        12,
+        5.2,
+        18
+      ],
+      "bounding_box": {
+        "min": [
+          -6.0,
+          0,
+          -9.0
+        ],
+        "max": [
+          6.0,
+          5.2,
+          9.0
+        ]
+      },
+      "measured_bounding_box": {
+        "min": [
+          -6.0,
+          0.0,
+          -9.0
+        ],
+        "max": [
+          6.0,
+          5.19999981,
+          8.9999997
+        ]
+      },
+      "triangle_count": 4628,
+      "triangle_budget": [
+        2000,
+        9000
+      ],
+      "degenerate_triangle_count": 0,
+      "finite_unit_normals": true,
+      "mesh_nodes": 10,
+      "pbr_materials": [
+        "W4 | Machined steel",
+        "W4 | Recessed dark steel",
+        "W4 | Gunmetal enamel",
+        "W4 | Instrument cyan",
+        "W4 | Industrial safety yellow",
+        "W4 | Amber warning lamp",
+        "W4 | Ceramic machinery trim",
+        "W4 | Work light",
+        "W4 | Polarized canopy"
+      ],
+      "emissive_materials": [
+        "W4 | Instrument cyan",
+        "W4 | Amber warning lamp",
+        "W4 | Work light"
+      ],
+      "animations": [],
+      "file_size_bytes": 246444,
+      "sha256": "51a63137f3e5b84732639a52ddc70dd8a5bc1bd1c22f6af39cd2b58679826a91",
+      "blender_visual_inspection": [
+        "bow three-quarter",
+        "stern three-quarter",
+        "low starboard"
+      ],
+      "both_skids_at_ground": true
+    },
+    {
+      "path": "assets/models/apogex/mothership/fabrication_rig.glb",
+      "purpose": "Room 4 fabrication bench with dual welding arms, tool wall and operator console.",
+      "origin": "ground-centered",
+      "dimensions_xyz": [
+        6,
+        4.2,
+        4
+      ],
+      "bounding_box": {
+        "min": [
+          -3.0,
+          0,
+          -2.0
+        ],
+        "max": [
+          3.0,
+          4.2,
+          2.0
+        ]
+      },
+      "measured_bounding_box": {
+        "min": [
+          -3.0,
+          0.0,
+          -1.99999994
+        ],
+        "max": [
+          3.0,
+          4.19999981,
+          2.00000005
+        ]
+      },
+      "triangle_count": 5196,
+      "triangle_budget": [
+        2000,
+        9000
+      ],
+      "degenerate_triangle_count": 0,
+      "finite_unit_normals": true,
+      "mesh_nodes": 7,
+      "pbr_materials": [
+        "W4 | Gunmetal enamel",
+        "W4 | Machined steel",
+        "W4 | Recessed dark steel",
+        "W4 | Industrial safety yellow",
+        "W4 | Amber warning lamp",
+        "W4 | Instrument cyan",
+        "W4 | Polarized canopy",
+        "W4 | Ceramic machinery trim",
+        "W4 | Red status lamp",
+        "W4 | Work light"
+      ],
+      "emissive_materials": [
+        "W4 | Amber warning lamp",
+        "W4 | Instrument cyan",
+        "W4 | Red status lamp",
+        "W4 | Work light"
+      ],
+      "animations": [],
+      "file_size_bytes": 272356,
+      "sha256": "3ea2db42d2abee0a4f464c3005aa9aa0055d46831a5c1c02a1ecf0437fc73b50",
+      "blender_visual_inspection": [
+        "elevated front three-quarter",
+        "opposite front three-quarter"
+      ]
+    },
+    {
+      "path": "assets/models/apogex/mothership/cargo_container_rack.glb",
+      "purpose": "Room 5 two-tier pallet rack carrying four ribbed containers with tie-down locks.",
+      "origin": "ground-centered",
+      "dimensions_xyz": [
+        10,
+        5.8,
+        4.5
+      ],
+      "bounding_box": {
+        "min": [
+          -5.0,
+          0,
+          -2.25
+        ],
+        "max": [
+          5.0,
+          5.8,
+          2.25
+        ]
+      },
+      "measured_bounding_box": {
+        "min": [
+          -5.0,
+          0.0,
+          -2.25
+        ],
+        "max": [
+          5.0,
+          5.80000019,
+          2.25
+        ]
+      },
+      "triangle_count": 8332,
+      "triangle_budget": [
+        2000,
+        9000
+      ],
+      "degenerate_triangle_count": 0,
+      "finite_unit_normals": true,
+      "mesh_nodes": 5,
+      "pbr_materials": [
+        "W4 | Faded slate steel",
+        "W4 | Recessed dark steel",
+        "W4 | Machined steel",
+        "W4 | Gunmetal enamel",
+        "W4 | Industrial safety yellow",
+        "W4 | Instrument cyan",
+        "W4 | Amber warning lamp",
+        "W4 | Ceramic machinery trim",
+        "W4 | Faded oxide steel",
+        "W4 | Faded desaturated olive",
+        "W4 | Faded gunmetal gray"
+      ],
+      "emissive_materials": [
+        "W4 | Instrument cyan",
+        "W4 | Amber warning lamp"
+      ],
+      "animations": [],
+      "file_size_bytes": 424040,
+      "sha256": "4c6f3293394f72421080deb10b983e1fca4e18f1a27b72a9a2252124876d9a5d",
+      "blender_visual_inspection": [
+        "front three-quarter",
+        "rear three-quarter"
+      ]
+    }
+  ]
+}

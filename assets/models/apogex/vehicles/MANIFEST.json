@@ -1,0 +1,350 @@
+{
+  "kit": "APOGEX Gameplay Phase 1 Vehicle 3D Kit",
+  "format": "GLB / glTF 2.0",
+  "units": "meters",
+  "axes": {
+    "right": "+X",
+    "up": "+Y",
+    "forward": "-Z"
+  },
+  "ground_plane_y_m": 0,
+  "validation_tolerance_m": 0.0001,
+  "visual_review": {
+    "application": "Blender 5.3.0",
+    "source": "reimported GLBs",
+    "views": [
+      "front three-quarter",
+      "rear three-quarter",
+      "low side",
+      "top"
+    ]
+  },
+  "vehicles": [
+    {
+      "name": "Helion Interceptor Fighter",
+      "file": "helion_fighter.glb",
+      "dimensions_m": {
+        "x": 14,
+        "y": 4.2,
+        "z": 16
+      },
+      "bounds_min_m": [
+        -7.0,
+        0.0,
+        -8.0
+      ],
+      "bounds_max_m": [
+        7.0,
+        4.2,
+        8.0
+      ],
+      "triangle_count": 5668,
+      "triangle_budget": [
+        5000,
+        10000
+      ],
+      "degenerate_triangles": 0,
+      "normals_checked": 11194,
+      "max_normal_length_error": 1.23e-07,
+      "ground_contacts_m": {
+        "Skid_L": 0,
+        "Skid_R": 0
+      },
+      "pbr_materials": 8,
+      "emissive_materials": [
+        "Helion | Ion cyan"
+      ],
+      "mesh_primitives": 31,
+      "forward_axis": "-Z",
+      "orientation_landmarks": [
+        "forward canopy and cannons",
+        "aft afterburners"
+      ],
+      "pivot_nodes": [
+        "Cannon_L",
+        "Cannon_R",
+        "Engine_L",
+        "Engine_R",
+        "Skid_L",
+        "Skid_R"
+      ],
+      "sha256": "41e5e3b11540ea056a8186df2896cd116f1f9cd0841c24e1734b26ea860d20dd"
+    },
+    {
+      "name": "Cinder Strike Fighter",
+      "file": "cinder_fighter.glb",
+      "dimensions_m": {
+        "x": 14,
+        "y": 4.4,
+        "z": 16
+      },
+      "bounds_min_m": [
+        -7.0,
+        0.0,
+        -8.0
+      ],
+      "bounds_max_m": [
+        7.0,
+        4.4,
+        8.0
+      ],
+      "triangle_count": 7388,
+      "triangle_budget": [
+        5000,
+        10000
+      ],
+      "degenerate_triangles": 0,
+      "normals_checked": 14374,
+      "max_normal_length_error": 1.29e-07,
+      "ground_contacts_m": {
+        "Skid_L": 0,
+        "Skid_R": 0
+      },
+      "pbr_materials": 8,
+      "emissive_materials": [
+        "Cinder | Molten orange"
+      ],
+      "mesh_primitives": 34,
+      "forward_axis": "-Z",
+      "orientation_landmarks": [
+        "forward canopy and cannons",
+        "aft afterburners"
+      ],
+      "pivot_nodes": [
+        "Cannon_L",
+        "Cannon_R",
+        "Engine_L",
+        "Engine_R",
+        "Skid_L",
+        "Skid_R"
+      ],
+      "sha256": "aaac497d54f8ab3247f6dd6afa2e687b1684155160690420a0132b4764f7b3e4"
+    },
+    {
+      "name": "Helion Assault Dropship",
+      "file": "helion_dropship.glb",
+      "dimensions_m": {
+        "x": 18,
+        "y": 6.8,
+        "z": 24
+      },
+      "bounds_min_m": [
+        -9.0,
+        0.0,
+        -12.0
+      ],
+      "bounds_max_m": [
+        9.0,
+        6.8,
+        12.0
+      ],
+      "triangle_count": 6796,
+      "triangle_budget": [
+        6000,
+        12000
+      ],
+      "degenerate_triangles": 0,
+      "normals_checked": 13504,
+      "max_normal_length_error": 1.11e-07,
+      "ground_contacts_m": {
+        "Landing_Gear_01": 0,
+        "Landing_Gear_02": 0,
+        "Landing_Gear_03": 0
+      },
+      "pbr_materials": 10,
+      "emissive_materials": [
+        "Helion | Ion cyan",
+        "Helion | Redlight",
+        "Helion | White"
+      ],
+      "mesh_primitives": 37,
+      "forward_axis": "-Z",
+      "orientation_landmarks": [
+        "forward bridge and chin turret",
+        "aft cargo ramp"
+      ],
+      "pivot_nodes": [
+        "Cargo_Ramp",
+        "Chin_Turret",
+        "Landing_Gear_01",
+        "Landing_Gear_02",
+        "Landing_Gear_03",
+        "Vector_Engine_L_1",
+        "Vector_Engine_R_1"
+      ],
+      "sha256": "93b89247f2326b7b7f98537d951beeb8140165f56033a4b85e4ecfaf65768683"
+    },
+    {
+      "name": "Cinder Heavy Gunship-Dropship",
+      "file": "cinder_dropship.glb",
+      "dimensions_m": {
+        "x": 18,
+        "y": 7,
+        "z": 24
+      },
+      "bounds_min_m": [
+        -9.0,
+        0.0,
+        -12.0
+      ],
+      "bounds_max_m": [
+        9.0,
+        7.0,
+        12.0
+      ],
+      "triangle_count": 10164,
+      "triangle_budget": [
+        6000,
+        12000
+      ],
+      "degenerate_triangles": 0,
+      "normals_checked": 19840,
+      "max_normal_length_error": 1.19e-07,
+      "ground_contacts_m": {
+        "Landing_Gear_01": 0,
+        "Landing_Gear_02": 0,
+        "Landing_Gear_03": 0,
+        "Landing_Gear_04": 0
+      },
+      "pbr_materials": 10,
+      "emissive_materials": [
+        "Cinder | Molten orange",
+        "Cinder | Redlight",
+        "Cinder | White"
+      ],
+      "mesh_primitives": 57,
+      "forward_axis": "-Z",
+      "orientation_landmarks": [
+        "forward bridge and chin turret",
+        "aft cargo ramp"
+      ],
+      "pivot_nodes": [
+        "Cargo_Ramp",
+        "Chin_Turret",
+        "Landing_Gear_01",
+        "Landing_Gear_02",
+        "Landing_Gear_03",
+        "Landing_Gear_04",
+        "Vector_Engine_L_1",
+        "Vector_Engine_L_2",
+        "Vector_Engine_R_1",
+        "Vector_Engine_R_2"
+      ],
+      "sha256": "fa6aa954b8fc896f3307c9c14fdf4f018599c7676650a0f142db4794fe2676cb"
+    },
+    {
+      "name": "Helion 6x6 Recon Rover",
+      "file": "helion_rover.glb",
+      "dimensions_m": {
+        "x": 3.8,
+        "y": 2.8,
+        "z": 6.8
+      },
+      "bounds_min_m": [
+        -1.9,
+        0.0,
+        -3.4
+      ],
+      "bounds_max_m": [
+        1.9,
+        2.8,
+        3.4
+      ],
+      "triangle_count": 8544,
+      "triangle_budget": [
+        4000,
+        9000
+      ],
+      "degenerate_triangles": 0,
+      "normals_checked": 16234,
+      "max_normal_length_error": 1.04e-07,
+      "ground_contacts_m": {
+        "Wheel_L_01": 0,
+        "Wheel_L_02": 0,
+        "Wheel_L_03": 0,
+        "Wheel_R_01": 0,
+        "Wheel_R_02": 0,
+        "Wheel_R_03": 0
+      },
+      "pbr_materials": 11,
+      "emissive_materials": [
+        "Helion | Redlight",
+        "Helion | White",
+        "Helion | Ion cyan"
+      ],
+      "mesh_primitives": 44,
+      "forward_axis": "-Z",
+      "orientation_landmarks": [
+        "forward visor and headlights",
+        "aft red position lamps"
+      ],
+      "pivot_nodes": [
+        "Roof_Turret",
+        "Wheel_L_01",
+        "Wheel_L_02",
+        "Wheel_L_03",
+        "Wheel_R_01",
+        "Wheel_R_02",
+        "Wheel_R_03"
+      ],
+      "sha256": "c0f4dd856ce0ed60a100a9326f8c732fc40399f8741e7722508d9194e975f4df"
+    },
+    {
+      "name": "Cinder 6x6 Siege Rover",
+      "file": "cinder_rover.glb",
+      "dimensions_m": {
+        "x": 4,
+        "y": 3,
+        "z": 7
+      },
+      "bounds_min_m": [
+        -2.0,
+        0.0,
+        -3.5
+      ],
+      "bounds_max_m": [
+        2.0,
+        3.0,
+        3.5
+      ],
+      "triangle_count": 8984,
+      "triangle_budget": [
+        4000,
+        9000
+      ],
+      "degenerate_triangles": 0,
+      "normals_checked": 16968,
+      "max_normal_length_error": 1.07e-07,
+      "ground_contacts_m": {
+        "Wheel_L_01": 0,
+        "Wheel_L_02": 0,
+        "Wheel_L_03": 0,
+        "Wheel_R_01": 0,
+        "Wheel_R_02": 0,
+        "Wheel_R_03": 0
+      },
+      "pbr_materials": 12,
+      "emissive_materials": [
+        "Cinder | White",
+        "Cinder | Redlight",
+        "Cinder | Molten orange"
+      ],
+      "mesh_primitives": 49,
+      "forward_axis": "-Z",
+      "orientation_landmarks": [
+        "forward visor and headlights",
+        "aft red position lamps"
+      ],
+      "pivot_nodes": [
+        "Roof_Turret",
+        "Wheel_L_01",
+        "Wheel_L_02",
+        "Wheel_L_03",
+        "Wheel_R_01",
+        "Wheel_R_02",
+        "Wheel_R_03"
+      ],
+      "sha256": "fc6f09ae45ef1d22c48ec91328443bfa1c06fc53c1b58318b751c3b465746852"
+    }
+  ]
+}

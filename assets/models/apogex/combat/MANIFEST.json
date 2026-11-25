@@ -1,0 +1,476 @@
+{
+  "kit": "APOGEX Gameplay Phase 2 Combat, Infantry, Weapons & Objective 3D Kit",
+  "authoring_tool": "Blender 5.3.0",
+  "format": "glTF 2.0 binary",
+  "coordinate_system": {
+    "units": "meters",
+    "up": "+Y",
+    "forward": "-Z",
+    "dimensions_order": [
+      "X",
+      "Y",
+      "Z"
+    ]
+  },
+  "validation": {
+    "bounds_tolerance_m": 2e-06,
+    "normal_unit_tolerance": 2e-06,
+    "degenerate_area_threshold_m2": 1e-12,
+    "visual_review": "Multiple angles per asset using Blender MCP"
+  },
+  "assets": [
+    {
+      "file": "helion_trooper.glb",
+      "description": "orbital combat engineer",
+      "dimensions_xyz_m": [
+        0.8,
+        1.8,
+        0.5
+      ],
+      "bounds_xyz_m": {
+        "min": [
+          -0.4,
+          0.0,
+          -0.25
+        ],
+        "max": [
+          0.4,
+          1.8,
+          0.25
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 5036,
+      "triangle_budget": [
+        2500,
+        5500
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "normals": {
+        "finite": true,
+        "max_unit_length_error": 1.198e-07
+      },
+      "pbr_materials": {
+        "Helion | Satin titanium": {
+          "metallic": 0.82,
+          "roughness": 0.29
+        },
+        "Helion | Seal elastomer": {
+          "metallic": 0.08,
+          "roughness": 0.68
+        },
+        "Helion | Arctic ceramic": {
+          "metallic": 0.26,
+          "roughness": 0.25
+        },
+        "Helion | Midnight navy": {
+          "metallic": 0.34,
+          "roughness": 0.4
+        },
+        "Helion | Ion cyan.004": {
+          "metallic": 0.24,
+          "roughness": 0.24
+        },
+        "Helion | Optical ice": {
+          "metallic": 0.13,
+          "roughness": 0.28
+        },
+        "Helion | Slate blue": {
+          "metallic": 0.51,
+          "roughness": 0.37
+        }
+      },
+      "emissive_materials": {
+        "Helion | Ion cyan.004": 3.104,
+        "Helion | Optical ice": 4.4
+      },
+      "mesh_nodes": 15,
+      "size_bytes": 298968,
+      "sha256": "f221a3100eb95a7e98ee1c14efbc768fa82a841011a09c3d69e627617d0ada37",
+      "origin": "ground between boots",
+      "front_feature": "helmet visor",
+      "both_boots_grounded": true
+    },
+    {
+      "file": "cinder_trooper.glb",
+      "description": "heavy shock trooper",
+      "dimensions_xyz_m": [
+        0.85,
+        1.8,
+        0.55
+      ],
+      "bounds_xyz_m": {
+        "min": [
+          -0.425,
+          0.0,
+          -0.275
+        ],
+        "max": [
+          0.425,
+          1.8,
+          0.275
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 5036,
+      "triangle_budget": [
+        2500,
+        5500
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "normals": {
+        "finite": true,
+        "max_unit_length_error": 1.155e-07
+      },
+      "pbr_materials": {
+        "Cinder | Oxide red": {
+          "metallic": 0.39,
+          "roughness": 0.43
+        },
+        "Cinder | Burnt orange enamel": {
+          "metallic": 0.37,
+          "roughness": 0.39
+        },
+        "Cinder | Hot filament": {
+          "metallic": 0.19,
+          "roughness": 0.28
+        },
+        "Cinder | Worn manganese steel": {
+          "metallic": 0.79,
+          "roughness": 0.41
+        },
+        "Cinder | Carbon graphite": {
+          "metallic": 0.53,
+          "roughness": 0.44
+        },
+        "Cinder | Furnace amber": {
+          "metallic": 0.18,
+          "roughness": 0.28
+        },
+        "Cinder | Heat black": {
+          "metallic": 0.09,
+          "roughness": 0.7
+        }
+      },
+      "emissive_materials": {
+        "Cinder | Hot filament": 3.96,
+        "Cinder | Furnace amber": 3.366
+      },
+      "mesh_nodes": 15,
+      "size_bytes": 298524,
+      "sha256": "7e803d4704e7633f18c7d60788e3814568be3ca81de1c16ab7e436fbcad7a1d0",
+      "origin": "ground between boots",
+      "front_feature": "helmet visor",
+      "both_boots_grounded": true
+    },
+    {
+      "file": "helion_pulse_rifle.glb",
+      "description": "precision pulse rifle",
+      "dimensions_xyz_m": [
+        0.12,
+        0.28,
+        0.88
+      ],
+      "bounds_xyz_m": {
+        "min": [
+          -0.06,
+          -0.093029,
+          -0.551165
+        ],
+        "max": [
+          0.06,
+          0.186971,
+          0.328835
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 2888,
+      "triangle_budget": [
+        1500,
+        3500
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "normals": {
+        "finite": true,
+        "max_unit_length_error": 1.422e-07
+      },
+      "pbr_materials": {
+        "Helion | Ion cyan.004": {
+          "metallic": 0.24,
+          "roughness": 0.24
+        },
+        "Helion | Satin titanium": {
+          "metallic": 0.82,
+          "roughness": 0.29
+        },
+        "Helion | Seal elastomer": {
+          "metallic": 0.08,
+          "roughness": 0.68
+        },
+        "Helion | Midnight navy": {
+          "metallic": 0.34,
+          "roughness": 0.4
+        },
+        "Helion | Arctic ceramic": {
+          "metallic": 0.26,
+          "roughness": 0.25
+        },
+        "Helion | Slate blue": {
+          "metallic": 0.51,
+          "roughness": 0.37
+        },
+        "Helion | Optical ice": {
+          "metallic": 0.13,
+          "roughness": 0.28
+        }
+      },
+      "emissive_materials": {
+        "Helion | Ion cyan.004": 3.104,
+        "Helion | Optical ice": 4.4
+      },
+      "mesh_nodes": 7,
+      "size_bytes": 174712,
+      "sha256": "93213d9548226a559622b17effdc870b307938e4e7d5b8b9292d506e707000e7",
+      "origin": "near the main grip",
+      "front_feature": "muzzle"
+    },
+    {
+      "file": "cinder_carbine.glb",
+      "description": "heavy assault carbine",
+      "dimensions_xyz_m": [
+        0.14,
+        0.3,
+        0.86
+      ],
+      "bounds_xyz_m": {
+        "min": [
+          -0.07,
+          -0.100971,
+          -0.542845
+        ],
+        "max": [
+          0.07,
+          0.199029,
+          0.317155
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 3236,
+      "triangle_budget": [
+        1500,
+        3500
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "normals": {
+        "finite": true,
+        "max_unit_length_error": 9.92e-08
+      },
+      "pbr_materials": {
+        "Cinder | Oxide red": {
+          "metallic": 0.39,
+          "roughness": 0.43
+        },
+        "Cinder | Furnace amber": {
+          "metallic": 0.18,
+          "roughness": 0.28
+        },
+        "Cinder | Carbon graphite": {
+          "metallic": 0.53,
+          "roughness": 0.44
+        },
+        "Cinder | Burnt orange enamel": {
+          "metallic": 0.37,
+          "roughness": 0.39
+        },
+        "Cinder | Heat black": {
+          "metallic": 0.09,
+          "roughness": 0.7
+        },
+        "Cinder | Worn manganese steel": {
+          "metallic": 0.79,
+          "roughness": 0.41
+        },
+        "Cinder | Hot filament": {
+          "metallic": 0.19,
+          "roughness": 0.28
+        }
+      },
+      "emissive_materials": {
+        "Cinder | Furnace amber": 3.366,
+        "Cinder | Hot filament": 3.96
+      },
+      "mesh_nodes": 7,
+      "size_bytes": 186760,
+      "sha256": "c8e1360e14d5600fa04384be6c4d559ce5e240aca24feaf001eaf013f69c87bd",
+      "origin": "near the main grip",
+      "front_feature": "muzzle"
+    },
+    {
+      "file": "engineering_tool.glb",
+      "description": "repair and extraction beam tool",
+      "dimensions_xyz_m": [
+        0.16,
+        0.26,
+        0.62
+      ],
+      "bounds_xyz_m": {
+        "min": [
+          -0.08,
+          -0.10935,
+          -0.427965
+        ],
+        "max": [
+          0.08,
+          0.15065,
+          0.192035
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 2184,
+      "triangle_budget": [
+        1200,
+        3000
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "normals": {
+        "finite": true,
+        "max_unit_length_error": 9.59e-08
+      },
+      "pbr_materials": {
+        "Systems | Gunmetal": {
+          "metallic": 0.69,
+          "roughness": 0.42
+        },
+        "Systems | Plasma cyan": {
+          "metallic": 0.22,
+          "roughness": 0.25
+        },
+        "Systems | Brushed alloy": {
+          "metallic": 0.79,
+          "roughness": 0.32
+        },
+        "Systems | Carbon seals": {
+          "metallic": 0.12,
+          "roughness": 0.66
+        },
+        "Systems | Hazard ochre": {
+          "metallic": 0.28,
+          "roughness": 0.36
+        },
+        "Systems | White-hot plasma": {
+          "metallic": 0.13,
+          "roughness": 0.22
+        }
+      },
+      "emissive_materials": {
+        "Systems | Plasma cyan": 3.496,
+        "Systems | White-hot plasma": 5.2
+      },
+      "mesh_nodes": 5,
+      "size_bytes": 134428,
+      "sha256": "f4fc556c885c053c24fb00810c8e515f9f0ea44ee2aede62b07fffc30870347a",
+      "origin": "near the main grip",
+      "front_feature": "twin emitter prongs"
+    },
+    {
+      "file": "capture_beacon_node.glb",
+      "description": "capture and extraction beacon",
+      "dimensions_xyz_m": [
+        4.5,
+        5.55,
+        4.5
+      ],
+      "bounds_xyz_m": {
+        "min": [
+          -2.25,
+          -0.35,
+          -2.25
+        ],
+        "max": [
+          2.25,
+          5.2,
+          2.25
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 5944,
+      "triangle_budget": [
+        2500,
+        6000
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "normals": {
+        "finite": true,
+        "max_unit_length_error": 9.67e-08
+      },
+      "pbr_materials": {
+        "Systems | Brushed alloy": {
+          "metallic": 0.79,
+          "roughness": 0.32
+        },
+        "Systems | Carbon seals": {
+          "metallic": 0.12,
+          "roughness": 0.66
+        },
+        "Systems | Gunmetal": {
+          "metallic": 0.69,
+          "roughness": 0.42
+        },
+        "Systems | Hazard ochre": {
+          "metallic": 0.28,
+          "roughness": 0.36
+        },
+        "Beacon | Amber wayfinding": {
+          "metallic": 0.23,
+          "roughness": 0.36
+        },
+        "Systems | Plasma cyan": {
+          "metallic": 0.22,
+          "roughness": 0.25
+        },
+        "Systems | White-hot plasma": {
+          "metallic": 0.13,
+          "roughness": 0.22
+        },
+        "Systems | Basalt concrete": {
+          "metallic": 0.04,
+          "roughness": 0.82
+        },
+        "Beacon | Eroded concrete aggregate": {
+          "metallic": 0.05,
+          "roughness": 0.92
+        },
+        "Beacon | Porcelain sector markings": {
+          "metallic": 0.19,
+          "roughness": 0.44
+        }
+      },
+      "emissive_materials": {
+        "Beacon | Amber wayfinding": 2.66,
+        "Systems | Plasma cyan": 3.496,
+        "Systems | White-hot plasma": 5.2
+      },
+      "mesh_nodes": 10,
+      "size_bytes": 339784,
+      "sha256": "97332e53a4f8018938614d1e5b0d0f2448e68706bff9f46f357c44bc12a2057a",
+      "origin": "ground under the central spire",
+      "front_feature": "docking and service interface",
+      "foundation_min_y_m": -0.35,
+      "above_ground_height_m": 5.2,
+      "animation": {
+        "name": "Telemetry_Crown_Spin.003",
+        "target": "Rotating telemetry crown",
+        "axis": "Y",
+        "duration_s": 4,
+        "degrees_per_cycle": 360,
+        "loop": "continuous when repeated by the player"
+      }
+    }
+  ]
+}

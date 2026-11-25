@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BiomeConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/BiomeConfig.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"iron_desert"
+display_name = "Iron Desert"
+primary_color = Color(0.47, 0.25, 0.15, 1)
+secondary_color = Color(0.66, 0.42, 0.24, 1)
+roughness_base = 0.84
+metallic_base = 0.27
+elevation_bias = 12.0
+slope_steepness = 0.26
+volcanic_activity = 0.08
+dust_intensity = 0.93

@@ -23,9 +23,12 @@ void fragment() {
 	float daylight = dot(tangent, sun_direction);
 	float day = smoothstep(-0.14, 0.25, daylight);
 	float sunset = exp(-abs(daylight - 0.015) * 9.0);
-	vec3 blue = vec3(0.09, 0.37, 1.0);
-	vec3 amber = vec3(1.0, 0.27, 0.06);
+	vec3 blue = vec3(0.10, 0.42, 1.0) * (1.0 + 0.35 * pow(1.0 - depth, 2.0));
+	vec3 amber = vec3(1.0, 0.34, 0.08);
 	vec3 color = mix(blue, amber, sunset * 0.75);
-	ALPHA = (0.025 + 0.68 * day + 0.36 * sunset) * depth * depth * observer_fade;
+	// Mie forward glow where the limb faces the sun.
+	float forward = pow(max(dot(normalize(CAMERA_POSITION_WORLD - world_position), -sun_direction), 0.0), 5.0);
+	color += vec3(1.0, 0.72, 0.42) * forward * day * 0.35;
+	ALPHA = (0.025 + 0.74 * day + 0.42 * sunset) * depth * depth * observer_fade;
 	ALBEDO = OUTPUT_IS_SRGB ? pow(max(color, vec3(0.0)), vec3(1.0 / 2.2)) : color;
 }

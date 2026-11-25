@@ -23,8 +23,8 @@ func run() -> void:
 	var g = load("res://main.tscn").instantiate()
 	root.add_child(g)
 	g.set_process(false)
+	LobbyPages.play_mode = "practice"
 	g.start_match()
-	g._end_cine("intro")
 	g.open_ship_builder()
 	await _capture("res://shots/ship_builder_default.png")
 	g.picker.select_variant("port", "lancer")

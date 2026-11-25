@@ -18,8 +18,8 @@ func _new_match():
 	var g = load("res://main.tscn").instantiate()
 	root.add_child(g)
 	g.set_process(false)
+	LobbyPages.play_mode = "practice"
 	g.start_match()
-	g._end_cine("intro")
 	return g
 
 func _finish(g) -> void:

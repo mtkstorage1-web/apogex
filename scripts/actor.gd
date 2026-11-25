@@ -4,6 +4,70 @@ extends Node3D
 
 const HEIGHT := 2.5
 const TK_HAND_CLEARANCE := 0.2
+const RIFLE_PATH := "res://assets/weapons/fpv_rifle/blaster-e.glb"
+const RIFLE_GRIP := Vector3(-0.045, -0.02, 1.0)   # grip pivot in model space (model runs z 0..1.39, muzzle at z=0)
+const RIFLE_MUZZLE := Vector3(-0.045, 0.03, 0.0)
+const RIFLE_LEN := 1.39
+const FPV_SCALE := 0.5
+const FPV_REST := Vector3(0.20, -0.27, -0.45)
+const FPV_FORE := Vector3(0.0, -0.062, -0.30)     # left-hand foregrip spot in rifle space
+const FPV_MAG := Vector3(-0.045, -0.14, 0.745)    # magazine centre in model space
+const FPV_FLASH_TIME := 0.075
+const RIFLE_FINISH := """
+shader_type spatial;
+render_mode cull_disabled, diffuse_burley;
+uniform bool scope = false;
+uniform bool magazine = false;
+varying vec3 part_position;
+varying vec3 part_normal;
+
+void vertex() {
+	part_position = VERTEX;
+	part_normal = NORMAL;
+}
+
+float band(float value, float start, float end, float pixel) {
+	return smoothstep(start - pixel, start + pixel, value) * (1.0 - smoothstep(end - pixel, end + pixel, value));
+}
+
+void fragment() {
+	vec3 point = part_position;
+	vec3 axis = abs(normalize(part_normal));
+	float polymer_swatch = 1.0 - step(0.28, UV.x);
+	float steel_swatch = step(0.53, UV.x);
+	float fore = (1.0 - smoothstep(0.16, 0.44, point.z)) * float(!scope && !magazine);
+	float furniture = max(polymer_swatch * (1.0 - fore), float(magazine) * 0.82);
+	float steel = max(steel_swatch * (1.0 - furniture), fore * 0.78);
+	float brush_coord = (point.y + point.x * 0.52) * 630.0;
+	float brush = (sin(brush_coord) * 0.65 + sin(brush_coord * 2.73 + point.z * 11.0) * 0.35)
+		* (1.0 - smoothstep(0.4, 2.9, fwidth(brush_coord)));
+	vec2 weave_uv = vec2(point.z + point.x * 0.63, point.y + point.x * 0.8) * 510.0;
+	float weave = sin(weave_uv.x + weave_uv.y) * sin(weave_uv.x - weave_uv.y);
+	weave *= 1.0 - smoothstep(0.45, 3.0, length(fwidth(weave_uv)));
+	vec3 titanium = vec3(0.107, 0.133, 0.157) * (1.0 + brush * 0.19);
+	vec3 polished = vec3(0.24, 0.28, 0.32) * (1.0 + brush * 0.10);
+	vec3 carbon = vec3(0.029, 0.034, 0.041) * (1.0 + weave * 0.30);
+	vec3 finish_color = mix(mix(titanium, polished, steel), carbon, furniture);
+	float alloy = mix(mix(0.82, 0.94, steel), 0.06, furniture);
+	float rough = mix(mix(0.28 + brush * 0.055, 0.21, steel), 0.77 + weave * 0.09, furniture);
+	float side = smoothstep(0.55, 0.88, axis.x);
+	float pixel_y = clamp(fwidth(point.y) * 0.55, 0.0004, 0.006);
+	float pixel_z = max(fwidth(point.z) * 0.55, 0.0005);
+	float rail = band(point.y, 0.029, 0.045, pixel_y) * side * float(!scope && !magazine);
+	float cyan = rail * band(point.z, 0.18, 0.64, pixel_z);
+	float amber = rail * band(point.z, 0.89, 1.06, pixel_z);
+	float radius = length(point.xy - vec2(0.0, 0.07));
+	float lens = (1.0 - smoothstep(0.022, 0.025, radius)) * smoothstep(0.22, 0.241, abs(point.z)) * axis.z * float(scope);
+	float optic = lens * (0.16 + 0.84 * band(radius, 0.017, 0.022, max(fwidth(radius) * 0.5, 0.0003)));
+	finish_color = mix(finish_color, vec3(0.012, 0.087, 0.116), lens);
+	ALBEDO = OUTPUT_IS_SRGB ? pow(finish_color, vec3(1.0 / 2.2)) : finish_color;
+	METALLIC = mix(alloy, 0.48, lens);
+	ROUGHNESS = mix(rough, 0.10, lens);
+	EMISSION = vec3(0.04, 0.86, 1.0) * (cyan * 2.4 + optic * 2.2) + vec3(1.0, 0.37, 0.038) * amber * 2.2;
+}
+"""
+
+static var _rifle_materials: Array[ShaderMaterial] = []
 
 enum CarryStyle { NONE, ONE_HAND, TWO_HAND, DRAG, TELEKINESIS }
 
@@ -18,12 +82,13 @@ const ANIMS := {
 	"idle": ["Idle", "Robot_Idle"],
 	"walk": ["Walk", "Robot_Walking"],
 	"run": ["Run", "UAL_Jog_Fwd_Loop", "Robot_Running"],
-	"work": ["EVA_Repair_Panel", "Crane_Console_Operate", "Robot_Punch"],
-	"scan": ["Inspect", "EVA_Spacewalk_Reach", "Robot_Standing"],
-	"celebrate": ["Celebrate", "Robot_Dance"],
-	"hit": ["HitReact", "Robot_No"],
-	"jump": ["Jump_Idle", "Jump", "Robot_Jump"],
+	"work": ["Interact", "EVA_Repair_Panel", "Crane_Console_Operate", "Robot_Punch"],
+	"scan": ["Interact", "Idle_Neutral", "Inspect", "EVA_Spacewalk_Reach", "Robot_Standing"],
+	"celebrate": ["Wave", "Celebrate", "Robot_Dance"],
+	"hit": ["HitRecieve", "HitRecieve_2", "HitReact", "Robot_No"],
+	"jump": ["Jump", "Jump_Airborne", "Jump_Idle", "Robot_Jump"],
 	"wave": ["Wave", "Robot_Wave"],
+	"death": ["Death"],
 }
 
 static var _cache := {}
@@ -37,16 +102,21 @@ class TKModifier extends SkeletonModifier3D:
 		if actor != null:
 			actor._apply_tk_bones()
 			actor._apply_weapon_pose()
+			actor._update_team_gear()
 
 var visual_height := HEIGHT
 var role := 0
 var color := Color.WHITE
 var model: Node3D
 var anim: AnimationPlayer
+var animation_detail := true
+var _pose_modifier: TKModifier
 var anim_names := {}
 var current := ""
 var carry_socket: Node3D
+const WorldLabels := preload("res://scripts/ui/world_labels.gd")
 var name_tag: Label3D
+var _nameplate_ink := Color.WHITE
 var ring: MeshInstance3D
 var vel := Vector3.ZERO
 var vy := 0.0
@@ -72,6 +142,7 @@ var hand_attachment: BoneAttachment3D
 var held_weapon: Node3D
 var holstered_weapon: Node3D
 var weapon_muzzle: Node3D
+var bone_head := -1
 var weapon_pitch := 0.0
 var grounding_offset := 0.0
 var health_bar: Sprite3D
@@ -80,8 +151,10 @@ var down_blend := 0.0
 var stand_y := 0.0
 var is_downed := false
 var ground_feet: Array = []
+var _fix_root_offset := false  # legacy .fbx robot only; the CC0 crew GLBs already stand at y=0
 var step_clock := 0.0
 var step_index := 0
+var player_step_pending := false
 
 # Tactile movement feel
 const SPRINT_LEAN_MAX := deg_to_rad(6.0)
@@ -141,6 +214,7 @@ func setup(model_path: String, p_role: int, p_color: Color, tag := "", tag_color
 	var box: AABB = acc[0] if acc[0] != null else AABB(Vector3.ZERO, Vector3.ONE * HEIGHT)
 	var k := HEIGHT / maxf(0.1, box.size.y)
 	if model_path.ends_with(".fbx"):
+		_fix_root_offset = true
 		k *= 0.5
 		visual_height = HEIGHT * 0.5
 	holder.scale = Vector3.ONE * k
@@ -164,16 +238,18 @@ func setup(model_path: String, p_role: int, p_color: Color, tag := "", tag_color
 		for b in skeleton.get_bone_count():
 			var b_name = skeleton.get_bone_name(b).to_lower()
 			if "foot" in b_name and not "toe" in b_name: ground_feet.append(b)
+			if bone_head < 0 and b_name.contains("head") and not b_name.contains("end") and not b_name.contains("top"):
+				bone_head = b
 			if b_name.contains("rightarm") or b_name.contains("upperarm_r") or b_name.contains("upperarm.r"):
 				bone_right_arm = b
 			elif b_name.contains("leftarm") or b_name.contains("upperarm_l") or b_name.contains("upperarm.l"):
 				bone_left_arm = b
 			elif b_name.contains("spine") or b_name == "torso":
 				bone_spine = b
-		var tk_mod := TKModifier.new()
-		tk_mod.name = "TKModifier"
-		tk_mod.actor = self
-		skeleton.add_child(tk_mod)
+		_pose_modifier = TKModifier.new()
+		_pose_modifier.name = "TKModifier"
+		_pose_modifier.actor = self
+		skeleton.add_child(_pose_modifier)
 
 	carry_socket = Node3D.new()
 	carry_socket.position = Vector3(0, HEIGHT + 0.7, 0)
@@ -182,17 +258,41 @@ func setup(model_path: String, p_role: int, p_color: Color, tag := "", tag_color
 	ring.position.y = 0.04
 	add_child(ring)
 	if tag != "":
-		name_tag = Gfx.label("◆ " + tag.to_upper(), tag_color.lightened(0.28), 32, 8)
-		# Premium fixed-size tactical nameplate above character head.
-		name_tag.fixed_size = true
-		name_tag.pixel_size = 0.00072
-		name_tag.outline_modulate = Color(0.04, 0.06, 0.12, 0.96)
-		name_tag.position.y = visual_height + 0.58
+		_nameplate_ink = tag_color
+		name_tag = Gfx.label(tag.to_upper(), tag_color, 20, 4)
+		name_tag.font = UI.font()
+		name_tag.add_to_group("crew_nameplates")
+		name_tag.outline_modulate = UI.BG_DEEP
+		name_tag.position.y = visual_height + 0.42
+		name_tag.visibility_range_end = WorldLabels.NAME_RANGE
+		name_tag.visibility_range_end_margin = 6.0
+		name_tag.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 		add_child(name_tag)
 	stand_y = holder.position.y
 	_holder_base_scale = holder.scale
 	play("idle")
 	return self
+
+
+func _process(_dt: float) -> void:
+	if not is_visible_in_tree() or name_tag == null:
+		return
+	var camera := get_viewport().get_camera_3d()
+	if camera == null:
+		return
+	var distance := camera.global_position.distance_to(name_tag.global_position)
+	var alpha := 1.0 - smoothstep(28.0, WorldLabels.NAME_RANGE, distance)
+	if name_tag.visible and alpha > 0.0:
+		WorldLabels.clamp_billboard(name_tag, camera, WorldLabels.NAME_MAX_PIXELS, 0.010)
+	var ink_alpha := 0.0 if name_tag.get_meta("overlaps_label", false) else alpha
+	name_tag.modulate = Color(_nameplate_ink, ink_alpha)
+	name_tag.outline_modulate = Color(UI.BG_DEEP, ink_alpha)
+	if health_bar != null:
+		var pixels := WorldLabels.pixels_per_meter(camera, health_bar.global_position)
+		var viewport_scale := maxf(1.0, get_viewport().get_stretch_transform().get_scale().y)
+		var world_scale := absf(health_bar.global_basis.get_scale().x)
+		health_bar.pixel_size = minf(0.010, 70.0 / maxf(1.0, pixels * 84.0 * viewport_scale * world_scale))
+		health_bar.modulate.a = alpha
 
 
 static func _aabb(n: Node, xf: Transform3D, acc: Array) -> void:
@@ -226,6 +326,17 @@ func flash(state: String, seconds := 0.8) -> void:
 	override_time = seconds
 
 
+## Keep distant combatants moving without evaluating their skeletal poses every frame.
+func set_animation_detail(enabled: bool) -> void:
+	if animation_detail == enabled:
+		return
+	animation_detail = enabled
+	if anim != null:
+		anim.active = enabled
+	if _pose_modifier != null:
+		_pose_modifier.active = enabled
+
+
 func animate(dt: float, speed: float, working := "", _carrying := false) -> void:
 	is_downed = working == "down"
 	down_blend = move_toward(down_blend, 1.0 if is_downed else 0.0, dt * 3.2)
@@ -256,8 +367,8 @@ func animate(dt: float, speed: float, working := "", _carrying := false) -> void
 	weapon_blend = move_toward(weapon_blend, 1.0 if weapon_drawn else 0.0, dt * 2.8)
 	weapon_recoil = move_toward(weapon_recoil, 0.0, dt * 5.0)
 	weapon_reload = maxf(0.0, weapon_reload - dt)
-	if held_weapon: held_weapon.visible = weapon_blend > 0.02
-	if holstered_weapon: holstered_weapon.visible = weapon_blend < 0.02
+	if held_weapon: held_weapon.visible = weapon_blend > 0.02 and not _fpv_active
+	if holstered_weapon: holstered_weapon.visible = weapon_blend < 0.02 and not _fpv_active
 	# Force the arm position procedurally if using Telekinesis
 	if carry_style == CarryStyle.TELEKINESIS:
 		_apply_procedural_tk_pose(dt)
@@ -510,9 +621,12 @@ func _aim_bone(bone_name: String, child_name: String, dir: Vector3, weight := 1.
 
 
 ## The firearm is a child of an actual hand bone, with a separate hip holster.
-func install_weapon(path: String) -> void:
+## `_path` is kept for call-site compatibility; every crew member now carries the CC0 Blaster-E rifle.
+func install_weapon(_path := RIFLE_PATH) -> void:
 	if skeleton == null: return
-	var hand := skeleton.find_bone("Middle1.R")
+	var hand := skeleton.find_bone("Hand.R")
+	if hand < 0:
+		hand = skeleton.find_bone("Middle1.R")
 	if hand < 0: return
 	hand_attachment = BoneAttachment3D.new()
 	hand_attachment.name = "RightHandWeaponAttachment"
@@ -521,27 +635,54 @@ func install_weapon(path: String) -> void:
 	weapon_grip = Node3D.new()
 	weapon_grip.name = "WeaponGrip"
 	hand_attachment.add_child(weapon_grip)
-	held_weapon = load(path).instantiate()
-	var bounds := [null]
-	_aabb(held_weapon, Transform3D.IDENTITY, bounds)
-	var box: AABB = bounds[0]
-	var scale_factor := maxf(1.2, visual_height * 0.8) / maxf(0.05, box.size.z)
-	held_weapon.scale = Vector3.ONE * scale_factor
-	held_weapon.rotation.y = 0.0
-	held_weapon.position = Vector3(0, 0.06, -0.18)
+	var unit := visual_height * 0.55 / RIFLE_LEN
+	held_weapon = make_rifle(unit)
+	held_weapon.position = Vector3(0, 0.03, 0)
 	_weapon_rest_pos = held_weapon.position
 	weapon_grip.add_child(held_weapon)
-	weapon_muzzle = Node3D.new()
-	weapon_muzzle.name = "Muzzle"
-	weapon_muzzle.position = held_weapon.position + Vector3(0, box.get_center().y * scale_factor, box.position.z * scale_factor - 0.03)
-	weapon_grip.add_child(weapon_muzzle)
-	holstered_weapon = load(path).instantiate()
+	weapon_muzzle = held_weapon.get_node("Muzzle")
+	holstered_weapon = make_rifle(unit)
 	holstered_weapon.name = "HolsteredWeapon"
-	holstered_weapon.scale = Vector3.ONE * scale_factor
 	holstered_weapon.position = Vector3(0.32, visual_height * 0.58, 0.4)
 	holstered_weapon.rotation_degrees = Vector3(80, 0, -15)
 	add_child(holstered_weapon)
 	held_weapon.visible = false
+
+
+## Blaster-E wrapped so the origin is the pistol grip and the barrel points down -Z; "Muzzle" marks the tip.
+static func make_rifle(unit_scale: float) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Rifle"
+	var scene := load(RIFLE_PATH) as PackedScene
+	if scene != null:
+		var mdl: Node3D = scene.instantiate()
+		mdl.name = "Model"
+		mdl.position = -RIFLE_GRIP
+		_finish_rifle(mdl)
+		root.add_child(mdl)
+	root.scale = Vector3.ONE * unit_scale
+	var muz := Node3D.new()
+	muz.name = "Muzzle"
+	muz.position = RIFLE_MUZZLE - RIFLE_GRIP
+	root.add_child(muz)
+	return root
+
+
+static func _finish_rifle(model_root: Node3D) -> void:
+	if _rifle_materials.is_empty():
+		var shader := Shader.new()
+		shader.code = RIFLE_FINISH
+		for part in ["receiver", "scope", "magazine"]:
+			var material := ShaderMaterial.new()
+			material.shader = shader
+			material.set_shader_parameter("scope", part == "scope")
+			material.set_shader_parameter("magazine", part == "magazine")
+			_rifle_materials.append(material)
+	if model_root is MeshInstance3D:
+		(model_root as MeshInstance3D).material_override = _rifle_materials[0]
+	for part in model_root.find_children("*", "MeshInstance3D", true, false):
+		(part as MeshInstance3D).material_override = _rifle_materials[1 if part.name == &"scope" else (2 if part.name == &"magazine" else 0)]
+
 
 func set_weapon_drawn(value: bool) -> void:
 	if held_weapon == null: return
@@ -552,11 +693,12 @@ func weapon_ready() -> bool:
 
 func recoil_weapon() -> void:
 	weapon_recoil = 0.11
+	_fpv_shot_pending = true
 
 func _apply_weapon_pose() -> void:
 	if skeleton == null: return
 	# Imported robot animations have a vertical root offset. Keep the lowest foot at the floor.
-	if role == 1 and down_blend <= 0.0 and not ground_feet.is_empty():
+	if _fix_root_offset and down_blend <= 0.0 and not ground_feet.is_empty():
 		var local_skeleton := _transform_from_actor(skeleton)
 		var foot_y := INF
 		for foot in ground_feet:
@@ -588,6 +730,434 @@ func _transform_from_actor(node: Node3D) -> Transform3D:
 	return result
 
 
+# ───────────────────────── FPV rifle + gloved hands ─────────────────────────
+# Caller (planet_b) adds `build_fpv_rig()` under its camera-locked node, then calls `tick_fpv(dt, speed)` each
+# frame and `set_fpv_active(on)` when the camera enters/leaves first person. The rig is in camera space (-Z forward).
+var fpv_rig: Node3D
+var _fpv_active := false
+var _fpv_sway: Node3D
+var _fpv_rifle: Node3D
+var _fpv_left: Node3D
+var _fpv_flash: Node3D
+var _fpv_flash_light: OmniLight3D
+var _fpv_mag_real: Node3D
+var _fpv_mag_fresh: Node3D
+var _fpv_mag_rest := Vector3.ZERO
+var _fpv_sleeve_mats: Array = []
+var _fpv_shot_pending := false
+var _fpv_flash_t := 0.0
+var _fpv_kick_z := 0.0
+var _fpv_kick_v := 0.0
+var _fpv_pitch := 0.0
+var _fpv_pitch_v := 0.0
+var _fpv_sprint := 0.0
+var _fpv_phase := 0.0
+var _fpv_time := 0.0
+var _fpv_lock_done := false
+var _team_color := Color.WHITE
+var _team_mats: Dictionary = {}
+var _team_gear: Node3D
+var _gear_mat: StandardMaterial3D
+var _visor_mat: StandardMaterial3D
+
+
+static func _prim(mesh: Mesh, col: Color, pos: Vector3, rough := 0.7, metal := 0.1) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	var m := StandardMaterial3D.new()
+	m.albedo_color = col
+	m.roughness = rough
+	m.metallic = metal
+	mi.material_override = m
+	mi.position = pos
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return mi
+
+
+static func _capsule(r: float, h: float, col: Color, pos: Vector3, axis: Vector3) -> MeshInstance3D:
+	var cm := CapsuleMesh.new()
+	cm.radius = r
+	cm.height = h
+	var mi := _prim(cm, col, pos, 0.75, 0.05)
+	mi.basis = Basis(Quaternion(Vector3.UP, axis.normalized()))
+	return mi
+
+
+## Tactical EVA glove. `left` hand cups the foregrip from below; right hand wraps the pistol grip.
+func _make_glove_hand(left: bool) -> Node3D:
+	var hand := Node3D.new()
+	hand.name = "LeftHand" if left else "RightHand"
+	var glove := Color("#1b2227")
+	var plate := Color("#2c3a42")
+	if left:
+		hand.add_child(_prim(_box(Vector3(0.07, 0.03, 0.085)), glove, Vector3.ZERO, 0.8, 0.05))
+		for i in 4:
+			hand.add_child(_capsule(0.0105, 0.05, glove, Vector3(0.042, 0.03, -0.03 + i * 0.02), Vector3.UP))
+		hand.add_child(_capsule(0.012, 0.05, glove, Vector3(-0.043, 0.026, -0.03), Vector3(-0.3, 1.0, 0.2)))
+		hand.add_child(_prim(_box(Vector3(0.05, 0.01, 0.06)), plate, Vector3(0.0, -0.019, 0.0), 0.5, 0.4))
+	else:
+		hand.add_child(_prim(_box(Vector3(0.03, 0.095, 0.07)), glove, Vector3.ZERO, 0.8, 0.05))
+		for i in 3:
+			hand.add_child(_capsule(0.0105, 0.05, glove, Vector3(-0.022, -0.004 - i * 0.022, -0.045), Vector3.RIGHT))
+		hand.add_child(_capsule(0.0095, 0.05, glove, Vector3(-0.03, 0.044, -0.062), Vector3(0.0, 0.0, -1.0)))   # trigger finger
+		hand.add_child(_capsule(0.012, 0.05, glove, Vector3(-0.058, 0.02, 0.012), Vector3(0.0, 0.0, 1.0)))     # thumb
+		hand.add_child(_prim(_box(Vector3(0.012, 0.07, 0.03)), plate, Vector3(0.02, 0.0, -0.028), 0.5, 0.4))
+	# Spacesuit forearm + dark cuff; runs back toward the camera and off the screen edge.
+	var dir := Vector3(-0.35, -0.3, 0.85) if left else Vector3(0.5, -0.25, 0.8)
+	dir = dir.normalized()
+	var wrist := Vector3(0.0, -0.005, 0.055) if left else Vector3(0.03, -0.02, 0.05)
+	var cuff_cyl := CylinderMesh.new()
+	cuff_cyl.top_radius = 0.05
+	cuff_cyl.bottom_radius = 0.05
+	cuff_cyl.height = 0.045
+	var cuff := _prim(cuff_cyl, Color("#38454d"), wrist + dir * 0.02, 0.45, 0.5)
+	cuff.basis = Basis(Quaternion(Vector3.UP, dir))
+	hand.add_child(cuff)
+	var sleeve_cyl := CylinderMesh.new()
+	sleeve_cyl.top_radius = 0.058
+	sleeve_cyl.bottom_radius = 0.047
+	sleeve_cyl.height = 0.6
+	var sleeve := _prim(sleeve_cyl, Color("#dfe6e5"), wrist + dir * 0.34, 0.65, 0.05)
+	sleeve.basis = Basis(Quaternion(Vector3.UP, dir))
+	hand.add_child(sleeve)
+	_fpv_sleeve_mats.append(sleeve.material_override)
+	return hand
+
+
+static func _box(size: Vector3) -> BoxMesh:
+	var b := BoxMesh.new()
+	b.size = size
+	return b
+
+
+func build_fpv_rig() -> Node3D:
+	if is_instance_valid(fpv_rig):
+		return fpv_rig
+	fpv_rig = Node3D.new()
+	fpv_rig.name = "FPVRig"
+	_fpv_sleeve_mats.clear()
+	_fpv_sway = Node3D.new()
+	_fpv_sway.name = "Sway"
+	_fpv_sway.position = FPV_REST
+	fpv_rig.add_child(_fpv_sway)
+	_fpv_rifle = make_rifle(FPV_SCALE)
+	_fpv_sway.add_child(_fpv_rifle)
+	var model := _fpv_rifle.get_node_or_null("Model")
+	if model != null:
+		_fpv_mag_real = model.find_child("magazine", true, false)
+		if _fpv_mag_real != null:
+			_fpv_mag_rest = _fpv_mag_real.position
+			_fpv_mag_fresh = _fpv_mag_real.duplicate()
+			_fpv_mag_fresh.name = "FreshMagazine"
+			_fpv_mag_real.get_parent().add_child(_fpv_mag_fresh)
+			_fpv_mag_fresh.visible = false
+	var right := _make_glove_hand(false)
+	right.position = Vector3(0.034, -0.047, 0.02)
+	_fpv_sway.add_child(right)
+	_fpv_left = _make_glove_hand(true)
+	_fpv_left.position = FPV_FORE
+	_fpv_sway.add_child(_fpv_left)
+	# Muzzle flash: hot core + star burst + short light, parked at the barrel tip.
+	_fpv_flash = Node3D.new()
+	_fpv_flash.name = "MuzzleFlash"
+	_fpv_flash.position = (RIFLE_MUZZLE - RIFLE_GRIP) * FPV_SCALE + Vector3(0, 0, -0.02)
+	var fm := StandardMaterial3D.new()
+	fm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	fm.albedo_color = Color(1.0, 0.82, 0.4, 0.95)
+	fm.emission_enabled = true
+	fm.emission = Color(1.0, 0.7, 0.25)
+	fm.emission_energy_multiplier = 3.0
+	fm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	fm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	var core := SphereMesh.new()
+	core.radius = 0.035
+	core.height = 0.07
+	var core_mi := MeshInstance3D.new()
+	core_mi.mesh = core
+	core_mi.material_override = fm
+	core_mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_fpv_flash.add_child(core_mi)
+	for k in 3:
+		var spike := MeshInstance3D.new()
+		var q := QuadMesh.new()
+		q.size = Vector2(0.2, 0.035)
+		spike.mesh = q
+		spike.material_override = fm
+		spike.rotation.z = k * PI / 3.0
+		spike.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_fpv_flash.add_child(spike)
+	_fpv_flash_light = OmniLight3D.new()
+	_fpv_flash_light.name = "MuzzleLight"
+	_fpv_flash_light.light_color = Color(1.0, 0.72, 0.35)
+	_fpv_flash_light.omni_range = 7.5
+	_fpv_flash_light.omni_attenuation = 1.45
+	_fpv_flash_light.position = _fpv_flash.position
+	_fpv_flash_light.hide()
+	_fpv_sway.add_child(_fpv_flash_light)
+	_fpv_flash.visible = false
+	_fpv_sway.add_child(_fpv_flash)
+	_tint_fpv_sleeves()
+	return fpv_rig
+
+
+func set_fpv_flash_color(color: Color) -> void:
+	if is_instance_valid(_fpv_flash_light):
+		_fpv_flash_light.light_color = color
+
+
+## First-person mode: the 3rd-person body, stump arms, rifle and holster stop drawing (they still cast shadows).
+func set_fpv_active(on: bool) -> void:
+	_fpv_active = on
+	if model != null:
+		for mi in model.find_children("*", "MeshInstance3D", true, false):
+			(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY if on else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	if is_instance_valid(_team_gear):
+		for mi in _team_gear.find_children("*", "MeshInstance3D", true, false):
+			(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY if on else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	if held_weapon: held_weapon.visible = not on and weapon_blend > 0.02
+	if holstered_weapon: holstered_weapon.visible = not on and weapon_blend < 0.02
+	if is_instance_valid(fpv_rig): fpv_rig.visible = on
+
+
+func _m2g(p: Vector3) -> Vector3:
+	return (p - RIFLE_GRIP) * FPV_SCALE
+
+
+## Drives rifle + gloved hands: spring recoil, muzzle flash, sprint carry, and the staged reload.
+func tick_fpv(dt: float, speed := 0.0) -> void:
+	if not is_instance_valid(fpv_rig) or _fpv_sway == null:
+		return
+	dt = clampf(dt, 0.0, 0.05)
+	_fpv_time += dt
+	var reloading := weapon_reload > 0.0
+	var p := clampf(1.0 - weapon_reload / 1.3, 0.0, 1.0) if reloading else 0.0
+	var grounded := position.y <= 0.05
+	var sprint_goal := 1.0 if (speed > 4.0 and grounded and not is_downed) else 0.0
+	_fpv_sprint = move_toward(_fpv_sprint, sprint_goal * (0.0 if reloading else 1.0), dt * 5.0)
+	var walk_amt := clampf(speed / 6.0, 0.0, 1.0) if grounded else 0.0
+	_fpv_phase += dt * (3.0 + speed * 0.9) * walk_amt
+	# Shot: backward kick + muzzle climb, then critically-damped spring recovery.
+	if _fpv_shot_pending:
+		_fpv_shot_pending = false
+		_fpv_kick_v = minf(_fpv_kick_v + 1.7, 2.4)
+		_fpv_pitch_v = minf(_fpv_pitch_v + 3.3, 4.6)
+		_fpv_flash_t = FPV_FLASH_TIME
+		_fpv_flash.rotation.z = randf() * TAU
+		_fpv_flash.scale = Vector3.ONE * randf_range(0.8, 1.35)
+	else:
+		_fpv_flash_t = maxf(0.0, _fpv_flash_t - dt)
+	_fpv_kick_v += (-170.0 * _fpv_kick_z - 19.0 * _fpv_kick_v) * dt
+	_fpv_kick_z += _fpv_kick_v * dt
+	_fpv_pitch_v += (-170.0 * _fpv_pitch - 19.0 * _fpv_pitch_v) * dt
+	_fpv_pitch += _fpv_pitch_v * dt
+	_fpv_flash.visible = _fpv_flash_t > 0.0
+	_fpv_flash_light.visible = _fpv_flash.visible
+	_fpv_flash_light.light_energy = 3.9 * pow(_fpv_flash_t / FPV_FLASH_TIME, 2.0)
+	# Pose composition.
+	var pos := FPV_REST
+	var rot := Vector3.ZERO   # x pitch (+ muzzle up), y yaw (+ muzzle left), z roll (+ top left)
+	var draw := 1.0 - smoothstep(0.0, 1.0, weapon_blend)
+	pos += Vector3(0.12, -0.75, 0.0) * draw
+	pos.y += sin(_fpv_time * 1.7) * 0.0025
+	var bob := walk_amt * (1.0 - _fpv_sprint)
+	pos += Vector3(sin(_fpv_phase) * 0.006, -absf(sin(_fpv_phase)) * 0.009, 0.0) * bob
+	var s := _fpv_sprint
+	pos += Vector3(-0.19, -0.13, 0.07) * s
+	rot += Vector3(-0.22, 0.6, 0.5) * s
+	pos += Vector3(sin(_fpv_phase) * 0.03, sin(_fpv_phase * 2.0) * 0.022, 0.0) * s
+	rot += Vector3(sin(_fpv_phase * 2.0) * 0.03, sin(_fpv_phase) * 0.05, sin(_fpv_phase) * 0.06) * s
+	pos.z += _fpv_kick_z
+	rot.x += _fpv_pitch
+	var left_pos := FPV_FORE
+	var left_rot := Vector3.ZERO
+	var real_vis := true
+	var fresh_vis := false
+	var real_off := Vector3.ZERO
+	var real_rot := Vector3.ZERO
+	var fresh_off := Vector3.ZERO
+	if reloading:
+		# Tilt the rifle so the magwell is exposed, then return to ready for the rack.
+		var tilt := smoothstep(0.0, 0.12, p) * (1.0 - smoothstep(0.84, 1.0, p))
+		rot += Vector3(0.2, 0.0, -0.55) * tilt
+		pos += Vector3(-0.04, 0.05, 0.05) * tilt
+		var well := FPV_MAG
+		var below := Vector3(0, -0.075, 0)
+		var mag_bottom := _m2g(well) + below
+		var pouch_off := Vector3(-0.25, -1.1, 0.15)
+		var pouch := _m2g(well + pouch_off) + below
+		var rack := _m2g(Vector3(-0.045, 0.1, 1.12))
+		if p < 0.12:
+			left_pos = FPV_FORE.lerp(mag_bottom, smoothstep(0.0, 1.0, p / 0.12))
+		elif p < 0.30:
+			var u := smoothstep(0.0, 1.0, (p - 0.12) / 0.18)
+			real_off = Vector3(0, -0.28 * u, 0)
+			left_pos = mag_bottom + Vector3(0, -0.28 * u * FPV_SCALE, 0)
+		elif p < 0.48:
+			var tau := (p - 0.30) / 0.18
+			real_off = Vector3(0, -0.28 - 3.0 * tau * tau, 0)
+			real_rot = Vector3(tau * 1.4, 0.0, tau * 0.8)
+			left_pos = (mag_bottom + Vector3(0, -0.28 * FPV_SCALE, 0)).lerp(pouch, smoothstep(0.0, 1.0, tau))
+		elif p < 0.62:
+			left_pos = pouch
+		if p >= 0.48:
+			real_vis = false
+		if p >= 0.45 and p < 0.62:
+			var rise := smoothstep(0.0, 1.0, (p - 0.45) / 0.17)
+			fresh_vis = true
+			fresh_off = pouch_off.lerp(Vector3(0, -0.45, 0), rise)
+			left_pos = _m2g(well + fresh_off) + below
+		elif p >= 0.62 and p < 0.84:
+			fresh_vis = true
+			var seat := smoothstep(0.0, 1.0, clampf((p - 0.62) / 0.14, 0.0, 1.0))
+			seat *= seat
+			fresh_off = Vector3(0, -0.45 * (1.0 - seat), 0)
+			if p < 0.76:
+				left_pos = _m2g(well + fresh_off) + below
+			else:
+				left_pos = _m2g(well) + below
+		if p >= 0.76 and not _fpv_lock_done:
+			_fpv_lock_done = true
+			_fpv_pitch_v += 2.2
+			_fpv_kick_v += 0.8
+		if p >= 0.76 and p < 0.84:
+			var r := smoothstep(0.0, 1.0, (p - 0.76) / 0.08)
+			left_pos = _m2g(well) + below
+			left_pos = left_pos.lerp(rack, r)
+		elif p >= 0.84 and p < 0.90:
+			var pull := smoothstep(0.0, 1.0, (p - 0.84) / 0.06)
+			left_pos = rack + Vector3(0, 0, 0.07 * pull)
+			pos.z += 0.012 * pull
+		elif p >= 0.90:
+			var back := smoothstep(0.0, 1.0, (p - 0.90) / 0.10)
+			left_pos = (rack + Vector3(0, 0, 0.07)).lerp(FPV_FORE, back)
+		left_rot.z = -0.3 * tilt
+	else:
+		_fpv_lock_done = false
+	_fpv_sway.position = pos
+	_fpv_sway.basis = Basis.from_euler(Vector3(rot.x, rot.y, rot.z))
+	_fpv_left.position = left_pos
+	_fpv_left.rotation = left_rot
+	if _fpv_mag_real != null:
+		_fpv_mag_real.visible = real_vis
+		_fpv_mag_real.position = _fpv_mag_rest + real_off
+		_fpv_mag_real.rotation = real_rot
+		_fpv_mag_fresh.visible = fresh_vis
+		_fpv_mag_fresh.position = _fpv_mag_rest + fresh_off
+
+
+func _tint_fpv_sleeves() -> void:
+	for m in _fpv_sleeve_mats:
+		(m as StandardMaterial3D).albedo_color = Color("#e3e9e8").lerp(_team_color, 0.35 if _team_color != Color.WHITE else 0.0)
+
+
+# ───────────────────────── Team suit tinting ─────────────────────────
+## Boldly tint the suit (body armor, backpack, helmet trim, visor glow) to a team colour. Textures/lighting are
+## kept (albedo is multiplied, emission is only a low base) so shading stays readable instead of going flat.
+func apply_team_suit_color(col: Color, is_enemy: bool = false) -> void:
+	_team_color = col
+	# Bare-skin / face / hair materials are never tinted; only the outfit is.
+	var keep := ["skin", "eye", "hair", "moustache", "earring", "gunner_brown"]
+	if model != null:
+		for mi: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
+			if mi.mesh == null:
+				continue
+			for i in mi.mesh.get_surface_count():
+				var mat := _team_material(mi, i)
+				if mat == null:
+					continue
+				var base: Color = mat.get_meta("tk_base", Color.WHITE)
+				var n := String(mat.resource_name).to_lower()
+				var skip := false
+				for kw in keep:
+					if n.contains(kw):
+						skip = true
+				if skip:
+					continue
+				if n.contains("black") or n.contains("grey") or n.contains("gray") or n.contains("edges") or n.contains("webbing"):
+					# Boots / trim: dark base with a crisp glowing team accent.
+					mat.albedo_color = base.lerp(col.darkened(0.55), 0.6 if is_enemy else 0.35)
+					mat.emission_enabled = true
+					mat.emission = col
+					mat.emission_energy_multiplier = 1.6 if is_enemy else 0.9
+				else:
+					# Outfit (jacket, vest, trousers, armour, shirt): bold team colour; keeps any albedo texture shading.
+					mat.albedo_color = Color.WHITE.lerp(col, 0.9 if is_enemy else 0.7)
+					mat.emission_enabled = true
+					mat.emission = col.darkened(0.55)
+					mat.emission_energy_multiplier = 0.7 if is_enemy else 0.35
+	_ensure_team_gear()
+	_gear_mat.albedo_color = col
+	_gear_mat.emission = col
+	_gear_mat.emission_energy_multiplier = 3.0 if is_enemy else 2.0
+	_visor_mat.albedo_color = col
+	_visor_mat.emission = col
+	_visor_mat.emission_energy_multiplier = 3.2 if is_enemy else 2.4
+	_tint_fpv_sleeves()
+	set_ring_color(col)
+
+
+func _team_material(mi: MeshInstance3D, surf: int) -> BaseMaterial3D:
+	var cur := mi.get_surface_override_material(surf)
+	if cur is BaseMaterial3D and cur.has_meta("tk_team"):
+		return cur
+	var src := mi.get_active_material(surf)
+	if not (src is BaseMaterial3D):
+		return null
+	var mat: BaseMaterial3D = src.duplicate()
+	mat.set_meta("tk_team", true)
+	mat.set_meta("tk_base", (src as BaseMaterial3D).albedo_color)
+	mi.set_surface_override_material(surf, mat)
+	return mat
+
+
+## Slim glowing team trim for rigged crew with no spacesuit: a chest band plus a thin halo over the head.
+## No backpack / helmet / visor blocks, so the sleek character models stay visible.
+func _ensure_team_gear() -> void:
+	if is_instance_valid(_team_gear):
+		return
+	_team_gear = Node3D.new()
+	_team_gear.name = "TeamGear"
+	add_child(_team_gear)
+	var k := visual_height / HEIGHT
+	_gear_mat = StandardMaterial3D.new()
+	_gear_mat.roughness = 0.35
+	_gear_mat.emission_enabled = true
+	_visor_mat = _gear_mat
+	var band := MeshInstance3D.new()
+	band.name = "ChestBand"
+	var bm := TorusMesh.new()
+	bm.inner_radius = 0.30 * k
+	bm.outer_radius = 0.33 * k
+	band.mesh = bm
+	band.material_override = _gear_mat
+	_team_gear.add_child(band)
+	var halo := MeshInstance3D.new()
+	halo.name = "HeadHalo"
+	var hm := TorusMesh.new()
+	hm.inner_radius = 0.20 * k
+	hm.outer_radius = 0.23 * k
+	halo.mesh = hm
+	halo.material_override = _gear_mat
+	_team_gear.add_child(halo)
+	if _fpv_active:
+		set_fpv_active(true)
+
+
+func _update_team_gear() -> void:
+	if not is_instance_valid(_team_gear) or skeleton == null or not is_inside_tree():
+		return
+	var k := visual_height / HEIGHT
+	var xf := skeleton.global_transform
+	var spine_w := xf * skeleton.get_bone_global_pose(bone_spine).origin if bone_spine >= 0 else global_position + Vector3.UP * visual_height * 0.5
+	var head_w := xf * skeleton.get_bone_global_pose(bone_head).origin if bone_head >= 0 else spine_w + Vector3.UP * visual_height * 0.3
+	var b := global_basis
+	var chest := spine_w.lerp(head_w, 0.35)
+	var band: Node3D = _team_gear.get_node("ChestBand")
+	band.global_transform = Transform3D(b, chest)
+	var halo: Node3D = _team_gear.get_node("HeadHalo")
+	halo.global_transform = Transform3D(b, head_w + Vector3(0, 0.38 * k, 0))
+
+
 func set_health(value: float, knocked := false) -> void:
 	var hp := clampi(roundi(value), 0, 100)
 	if health_bar == null:
@@ -603,11 +1173,13 @@ func set_health(value: float, knocked := false) -> void:
 	displayed_hp = hp
 	var image := Image.create(84, 10, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0.02, 0.03, 0.04, 0.92))
-	image.fill_rect(Rect2i(2, 2, maxi(0, roundi(float(hp) * 0.8)), 6), Color("#f26b62") if hp < 35 else Color("#8cdfba"))
+	image.fill_rect(Rect2i(2, 2, maxi(0, roundi(float(hp) * 0.8)), 6), UI.ramp_color(float(hp) / 100.0))
 	health_bar.texture = ImageTexture.create_from_image(image)
 
 
 func poll_step(dt: float, speed: float) -> String:
+	var player_step := player_step_pending
+	player_step_pending = false
 	if is_downed or position.y > 0.05 or speed <= 0.6:
 		step_clock = 0.0
 		return ""
@@ -616,8 +1188,37 @@ func poll_step(dt: float, speed: float) -> String:
 		step_clock -= 0.36
 		var clip := "step_%d" % (step_index % 4)
 		step_index += 1
+		if player_step:
+			# The local player's footstep is played exactly once, here, and "" is returned so callers
+			# (planet_b plays returned clips via sfx_3d) never double-fire it.
+			_play_player_step(speed > 6.0)
+			return ""
 		return clip
 	return ""
+
+
+var _step_fallback: AudioStreamPlayer3D
+
+## Player footsteps go through the AudioManager autoload; if it is missing (e.g. a scene run in isolation)
+## a local AudioStreamPlayer3D plays the same synthesized walk/run clip instead.
+func _play_player_step(running: bool) -> void:
+	var id := "run" if running else "walk"
+	var db := -7.0 if running else -10.0
+	var am := get_node_or_null("/root/AudioManager")
+	if am and am.has_method("play_sfx"):
+		am.play_sfx(id, db, 0.10)
+		return
+	var stream: AudioStream = SfxGen.build_all().get("sfx_" + id)
+	if stream == null or not is_inside_tree():
+		return
+	if not is_instance_valid(_step_fallback):
+		_step_fallback = AudioStreamPlayer3D.new()
+		_step_fallback.name = "StepFallback"
+		add_child(_step_fallback)
+	_step_fallback.stream = stream
+	_step_fallback.volume_db = db
+	_step_fallback.pitch_scale = randf_range(0.9, 1.1)
+	_step_fallback.play()
 
 
 func set_ring_color(col: Color, alpha := 0.7) -> void:

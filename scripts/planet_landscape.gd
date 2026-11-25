@@ -184,6 +184,7 @@ func _scatter(parent: Node3D, plants: bool, dense_meadow: bool = false) -> void:
 	var patch := MultiMesh.new()
 	patch.transform_format = MultiMesh.TRANSFORM_3D
 	patch.use_colors = true
+	patch.use_custom_data = plants
 	var material: Material
 	if plants:
 		if dense_meadow:
@@ -231,6 +232,8 @@ func _scatter(parent: Node3D, plants: bool, dense_meadow: bool = false) -> void:
 		patch.set_instance_transform(i, Transform3D(basis, Vector3(x, y, z)))
 		var palette := Color(0.16, 0.44, 0.11) if plants else (Color(0.35, 0.33, 0.30) if lunar else Color(0.42, 0.46, 0.49))
 		patch.set_instance_color(i, palette * rng.randf_range(0.80, 1.25))
+		if plants:
+			patch.set_instance_custom_data(i, _wind_site(Vector3(x, y, z), i))
 		i += 1
 	var batch := MultiMeshInstance3D.new()
 	batch.name = "CoastalScrub" if plants else "BoulderField"
@@ -273,20 +276,23 @@ func _trees(parent: Node3D) -> void:
 	var trunk_mat := StandardMaterial3D.new()
 	trunk_mat.albedo_color = Color("#5e4532")
 	trunk_mat.roughness = 0.92
-	var canopy_mat := StandardMaterial3D.new()
-	canopy_mat.vertex_color_use_as_albedo = true
-	canopy_mat.roughness = 0.85
+	var canopy_mat := ShaderMaterial.new()
+	canopy_mat.shader = WIND_SHADER
+	canopy_mat.set_shader_parameter("canopy", true)
+	wind_materials.append(canopy_mat)
 	var parts := [["FoothillTrunks", _trunk_mesh(), trunk_mat, false], ["FoothillCanopies", _canopy_mesh(), canopy_mat, true]]
 	for part in parts:
 		var mm := MultiMesh.new()
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		mm.use_colors = part[3]
+		mm.use_custom_data = part[3]
 		mm.mesh = part[1]
 		mm.instance_count = xforms.size()
 		for i in xforms.size():
 			mm.set_instance_transform(i, xforms[i])
 			if part[3]:
 				mm.set_instance_color(i, palette[i % palette.size()] * rng.randf_range(0.92, 1.12))
+				mm.set_instance_custom_data(i, _wind_site(xforms[i].origin, i))
 		var batch := MultiMeshInstance3D.new()
 		batch.name = part[0]
 		batch.multimesh = mm
@@ -294,6 +300,10 @@ func _trees(parent: Node3D) -> void:
 		batch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if part[3] else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		parent.add_child(batch)
 		trees.append(mm)
+
+
+func _wind_site(origin: Vector3, index: int) -> Color:
+	return Color((origin.x + 600.0) / 1200.0, (origin.z + 600.0) / 1200.0, fposmod(index * 0.618034, 1.0), 1.0)
 
 
 func _trunk_mesh() -> ArrayMesh:
@@ -314,10 +324,9 @@ func _trunk_mesh() -> ArrayMesh:
 
 
 func _canopy_mesh() -> ArrayMesh:
-	# Three stacked faceted cones; flat per-face normals for a clean low-poly look.
 	var builder := SurfaceTool.new()
 	builder.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var sides := 7
+	var sides := 14
 	var tiers := [[1.9, 2.0, 2.6], [3.4, 1.55, 2.3], [4.8, 1.05, 2.0]]
 	for tier in tiers:
 		var base_y: float = tier[0]
@@ -325,20 +334,24 @@ func _canopy_mesh() -> ArrayMesh:
 		var apex := Vector3(0, base_y + tier[2], 0)
 		var shade := 1.0 - 0.08 * (2 - tiers.find(tier))
 		for k in sides:
-			var a0 := TAU * k / sides
-			var a1 := TAU * (k + 1) / sides
-			var p0 := Vector3(cos(a0) * radius, base_y, sin(a0) * radius)
-			var p1 := Vector3(cos(a1) * radius, base_y, sin(a1) * radius)
+			var a0 := TAU * k / sides + base_y
+			var a1 := TAU * (k + 1) / sides + base_y
+			var p0 := Vector3(cos(a0), 0, sin(a0)) * radius * (1.0 if k % 2 == 0 else 0.67)
+			var p1 := Vector3(cos(a1), 0, sin(a1)) * radius * (0.67 if k % 2 == 0 else 1.0)
+			p0.y = base_y + (0.0 if k % 2 == 0 else 0.28)
+			p1.y = base_y + (0.28 if k % 2 == 0 else 0.0)
 			var n := (p1 - apex).cross(p0 - apex).normalized()
 			builder.set_color(Color(shade, shade, shade))
-			for v in [apex, p0, p1]:
+			for vertex: Vector3 in [apex, p0, p1]:
 				builder.set_normal(n)
-				builder.add_vertex(v)
+				builder.set_uv(Vector2(float(k + int(vertex == p1)) / sides, smoothstep(1.8, 6.8, vertex.y)))
+				builder.add_vertex(vertex)
 			var c := Vector3(0, base_y, 0)
 			builder.set_color(Color(shade * 0.7, shade * 0.7, shade * 0.7))
-			for v in [c, p1, p0]:
+			for vertex: Vector3 in [c, p1, p0]:
 				builder.set_normal(Vector3.DOWN)
-				builder.add_vertex(v)
+				builder.set_uv(Vector2(float(k + int(vertex == p1)) / sides, smoothstep(1.8, 6.8, vertex.y)))
+				builder.add_vertex(vertex)
 	return builder.commit()
 
 

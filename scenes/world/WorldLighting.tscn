@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/WorldLighting.gd" id="1"]
+
+[node name="WorldLighting" type="Node3D"]
+script = ExtResource("1")
+
+[node name="StarLight" type="DirectionalLight3D" parent="."]
+light_color = Color(1, 0.62, 0.38, 1)
+light_energy = 2.3
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]

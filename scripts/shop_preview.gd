@@ -8,13 +8,13 @@ const STAGE_FLOOR_WIDTH := 8.0
 const STAGE_FLOOR_CLEARANCE := 0.08
 const FOCUS_TWEEN := &"shop_preview_focus_tween"
 
-static func create(parent: Control, with_stage: bool = false) -> Dictionary:
+static func create(parent: Control, with_stage: bool = false, blueprint: bool = false) -> Dictionary:
 	var view := SubViewportContainer.new()
 	view.custom_minimum_size = Vector2(400, 300)
 	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	view.stretch = true
 	var frame := PanelContainer.new()
-	var fs := UI.style(Color(0, 0, 0, 0), Color(1, 1, 1, 0.14), 12, 12, 1)
+	var fs := UI.style(Color.TRANSPARENT, Color(UI.CYAN, 0.40), 12, 12, 1).duplicate() as StyleBoxFlat
 	fs.shadow_color = Color(0, 0, 0, 0.6)
 	fs.shadow_size = 18
 	frame.add_theme_stylebox_override("panel", fs)
@@ -24,7 +24,7 @@ static func create(parent: Control, with_stage: bool = false) -> Dictionary:
 	parent.add_child(frame)
 	var viewport := SubViewport.new()
 	viewport.size = Vector2i(800, 220)
-	viewport.own_world_3d = true
+	viewport.world_3d = World3D.new()
 	viewport.transparent_bg = false
 	view.add_child(viewport)
 	var preview_root := Node3D.new()
@@ -33,7 +33,7 @@ static func create(parent: Control, with_stage: bool = false) -> Dictionary:
 	var environment := WorldEnvironment.new()
 	environment.environment = Environment.new()
 	environment.environment.background_mode = Environment.BG_COLOR
-	environment.environment.background_color = Color(0.06, 0.045, 0.1)
+	environment.environment.background_color = UI.BG_DEEP
 	environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.environment.ambient_light_color = Color(0.85, 0.9, 1.0)
 	environment.environment.ambient_light_energy = 0.75
@@ -46,15 +46,15 @@ static func create(parent: Control, with_stage: bool = false) -> Dictionary:
 	camera.rotation.x = -0.14
 	viewport.add_child(camera)
 	if with_stage:
-		environment.environment.background_color = Color("#f3f5f8")
-		environment.environment.ambient_light_color = Color(0.96, 0.97, 1.0)
-		environment.environment.ambient_light_energy = 0.72
+		environment.environment.background_color = Color("#101d30") if blueprint else Color("#f3f5f8")
+		environment.environment.ambient_light_color = Color("#b8d7ff") if blueprint else Color(0.96, 0.97, 1.0)
+		environment.environment.ambient_light_energy = 0.48 if blueprint else 0.72
 		environment.environment.tonemap_mode = Environment.TONE_MAPPER_ACES
 		environment.environment.glow_enabled = false
 		camera.position.y = tan(STAGE_TILT) * camera.position.z - 0.25
 		camera.rotation.x = -STAGE_TILT
-		_add_stage_lights(viewport)
-		_add_stage_floor(viewport)
+		_add_stage_lights(viewport, blueprint)
+		_add_stage_floor(viewport, blueprint)
 	else:
 		var light := DirectionalLight3D.new()
 		light.rotation_degrees = Vector3(-40, -30, 0)
@@ -67,7 +67,7 @@ static func create(parent: Control, with_stage: bool = false) -> Dictionary:
 		viewport.add_child(fill)
 	return {"root": preview_root, "view": view, "camera": camera}
 
-static func _add_stage_lights(viewport: SubViewport) -> void:
+static func _add_stage_lights(viewport: SubViewport, blueprint: bool) -> void:
 	var key := DirectionalLight3D.new()
 	key.name = "StageKey"
 	key.rotation_degrees = Vector3(-45, -35, 0)
@@ -87,12 +87,12 @@ static func _add_stage_lights(viewport: SubViewport) -> void:
 	var rim := DirectionalLight3D.new()
 	rim.name = "StageRim"
 	rim.rotation_degrees = Vector3(-25, 165, 0)
-	rim.light_color = Color(0.94, 0.97, 1.0)
-	rim.light_energy = 0.65
+	rim.light_color = Color("#77cfff") if blueprint else Color(0.94, 0.97, 1.0)
+	rim.light_energy = 0.95 if blueprint else 0.65
 	rim.light_specular = 0.0
 	viewport.add_child(rim)
 
-static func _add_stage_floor(viewport: SubViewport) -> void:
+static func _add_stage_floor(viewport: SubViewport, blueprint: bool) -> void:
 	var cubes_floor := MultiMeshInstance3D.new()
 	cubes_floor.name = STAGE_FLOOR_NAME
 	cubes_floor.position.y = STAGE_FLOOR_Y
@@ -106,6 +106,8 @@ static func _add_stage_floor(viewport: SubViewport) -> void:
 	material.vertex_color_use_as_albedo = true
 	material.roughness = 0.85
 	material.metallic = 0.05
+	if blueprint:
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	cube.material = material
 
 	var tiles := MultiMesh.new()
@@ -115,8 +117,8 @@ static func _add_stage_floor(viewport: SubViewport) -> void:
 	tiles.instance_count = tiles_per_side * tiles_per_side
 	var random := RandomNumberGenerator.new()
 	random.seed = 37
-	var light_tile := Color("#eef2f6")
-	var grey_tile := Color("#dde3ec")
+	var light_tile := Color("#1d3149") if blueprint else Color("#eef2f6")
+	var grey_tile := Color("#16263c") if blueprint else Color("#dde3ec")
 	for z in range(tiles_per_side):
 		for x in range(tiles_per_side):
 			var index := z * tiles_per_side + x

@@ -1,0 +1,191 @@
+[gd_scene load_steps=14 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_stone"]
+albedo_color = Color(0.55, 0.45, 0.38, 1)
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="mat_crimson_a"]
+albedo_color = Color(0.5, 0.16, 0.09, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="mat_crimson_b"]
+albedo_color = Color(0.38, 0.11, 0.07, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="mat_steel"]
+albedo_color = Color(0.22, 0.24, 0.25, 1)
+metallic = 0.7
+roughness = 0.5
+
+[sub_resource type="BoxMesh" id="mesh_pillar"]
+size = Vector3(4, 14, 5)
+
+[sub_resource type="BoxMesh" id="mesh_span"]
+size = Vector3(22, 3.5, 6)
+
+[sub_resource type="BoxMesh" id="mesh_deck"]
+size = Vector3(24, 0.4, 2.4)
+
+[sub_resource type="BoxMesh" id="mesh_leg"]
+size = Vector3(0.5, 6, 0.5)
+
+[sub_resource type="BoxMesh" id="mesh_rail"]
+size = Vector3(24, 0.12, 0.12)
+
+[sub_resource type="BoxMesh" id="mesh_tier1"]
+size = Vector3(10, 4, 9)
+
+[sub_resource type="BoxMesh" id="mesh_tier2"]
+size = Vector3(8, 4, 7.5)
+
+[sub_resource type="BoxMesh" id="mesh_tier3"]
+size = Vector3(6, 4, 6)
+
+[sub_resource type="BoxShape3D" id="shape_pillar"]
+size = Vector3(4, 14, 5)
+
+[sub_resource type="BoxShape3D" id="shape_span"]
+size = Vector3(22, 3.5, 6)
+
+[sub_resource type="BoxShape3D" id="shape_deck"]
+size = Vector3(24, 0.4, 2.4)
+
+[sub_resource type="BoxShape3D" id="shape_tier1"]
+size = Vector3(10, 4, 9)
+
+[sub_resource type="BoxShape3D" id="shape_tier2"]
+size = Vector3(8, 4, 7.5)
+
+[sub_resource type="BoxShape3D" id="shape_tier3"]
+size = Vector3(6, 4, 6)
+
+[node name="Canyon" type="Node3D"]
+
+[node name="PillarL" type="MeshInstance3D" parent="."]
+position = Vector3(-9, 7, 0)
+mesh = SubResource("mesh_pillar")
+surface_material_override/0 = SubResource("mat_stone")
+
+[node name="PillarR" type="MeshInstance3D" parent="."]
+position = Vector3(9, 7, 0)
+mesh = SubResource("mesh_pillar")
+surface_material_override/0 = SubResource("mat_stone")
+
+[node name="ArchSpan" type="MeshInstance3D" parent="."]
+position = Vector3(0, 15.75, 0)
+rotation = Vector3(0, 0, 0.02)
+mesh = SubResource("mesh_span")
+surface_material_override/0 = SubResource("mat_stone")
+
+[node name="ButtressL1" type="MeshInstance3D" parent="."]
+position = Vector3(-17, 2, 0)
+mesh = SubResource("mesh_tier1")
+surface_material_override/0 = SubResource("mat_crimson_a")
+
+[node name="ButtressL2" type="MeshInstance3D" parent="."]
+position = Vector3(-17, 6, 0.4)
+rotation = Vector3(0, 0.08, 0)
+mesh = SubResource("mesh_tier2")
+surface_material_override/0 = SubResource("mat_crimson_b")
+
+[node name="ButtressL3" type="MeshInstance3D" parent="."]
+position = Vector3(-16.6, 10, 0.8)
+rotation = Vector3(0, 0.18, 0)
+mesh = SubResource("mesh_tier3")
+surface_material_override/0 = SubResource("mat_crimson_a")
+
+[node name="ButtressR1" type="MeshInstance3D" parent="."]
+position = Vector3(17, 2, 0)
+mesh = SubResource("mesh_tier1")
+surface_material_override/0 = SubResource("mat_crimson_b")
+
+[node name="ButtressR2" type="MeshInstance3D" parent="."]
+position = Vector3(17, 6, -0.4)
+rotation = Vector3(0, -0.1, 0)
+mesh = SubResource("mesh_tier2")
+surface_material_override/0 = SubResource("mat_crimson_a")
+
+[node name="ButtressR3" type="MeshInstance3D" parent="."]
+position = Vector3(16.6, 10, -0.8)
+rotation = Vector3(0, -0.2, 0)
+mesh = SubResource("mesh_tier3")
+surface_material_override/0 = SubResource("mat_crimson_b")
+
+[node name="WalkwayDeck" type="MeshInstance3D" parent="."]
+position = Vector3(0, 6, 4.5)
+mesh = SubResource("mesh_deck")
+surface_material_override/0 = SubResource("mat_steel")
+
+[node name="WalkwayLegA" type="MeshInstance3D" parent="."]
+position = Vector3(-10, 3, 4.5)
+mesh = SubResource("mesh_leg")
+surface_material_override/0 = SubResource("mat_steel")
+
+[node name="WalkwayLegB" type="MeshInstance3D" parent="."]
+position = Vector3(0, 3, 4.5)
+mesh = SubResource("mesh_leg")
+surface_material_override/0 = SubResource("mat_steel")
+
+[node name="WalkwayLegC" type="MeshInstance3D" parent="."]
+position = Vector3(10, 3, 4.5)
+mesh = SubResource("mesh_leg")
+surface_material_override/0 = SubResource("mat_steel")
+
+[node name="RailFront" type="MeshInstance3D" parent="."]
+position = Vector3(0, 7.2, 5.6)
+mesh = SubResource("mesh_rail")
+surface_material_override/0 = SubResource("mat_steel")
+
+[node name="RailBack" type="MeshInstance3D" parent="."]
+position = Vector3(0, 7.2, 3.4)
+mesh = SubResource("mesh_rail")
+surface_material_override/0 = SubResource("mat_steel")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="PillarLShape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-9, 7, 0)
+shape = SubResource("shape_pillar")
+
+[node name="PillarRShape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(9, 7, 0)
+shape = SubResource("shape_pillar")
+
+[node name="SpanShape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 15.75, 0)
+rotation = Vector3(0, 0, 0.02)
+shape = SubResource("shape_span")
+
+[node name="DeckShape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 6, 4.5)
+shape = SubResource("shape_deck")
+
+[node name="ButtressL1Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-17, 2, 0)
+shape = SubResource("shape_tier1")
+
+[node name="ButtressL2Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-17, 6, 0.4)
+rotation = Vector3(0, 0.08, 0)
+shape = SubResource("shape_tier2")
+
+[node name="ButtressL3Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-16.6, 10, 0.8)
+rotation = Vector3(0, 0.18, 0)
+shape = SubResource("shape_tier3")
+
+[node name="ButtressR1Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(17, 2, 0)
+shape = SubResource("shape_tier1")
+
+[node name="ButtressR2Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(17, 6, -0.4)
+rotation = Vector3(0, -0.1, 0)
+shape = SubResource("shape_tier2")
+
+[node name="ButtressR3Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(16.6, 10, -0.8)
+rotation = Vector3(0, -0.2, 0)
+shape = SubResource("shape_tier3")

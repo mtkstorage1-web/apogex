@@ -3,10 +3,13 @@ class_name ExhaustFX
 extends Node3D
 
 var intensity := 1.0
+var length_scale := 1.0
 var plume_materials: Array = []
 var emitters: Array = []
 var lights: Array = []
 var age := 0.0
+var _crackle := 0.0
+var _shown_intensity := -1.0
 static var _soft_quad: QuadMesh
 
 static func create(radius: float, plume_length: float, warm := false) -> ExhaustFX:
@@ -25,8 +28,8 @@ static func create(radius: float, plume_length: float, warm := false) -> Exhaust
 		material.shader = preload("res://assets/shaders/exhaust.gdshader")
 		material.set_shader_parameter("plume_length", mesh.height)
 		material.set_shader_parameter("phase", float(layer) * 3.1)
-		material.set_shader_parameter("hot_color", (Color(1.0, 0.91, 0.68) if warm else Color(0.65, 0.87, 1.0)) if layer == 0 else (Color(1.0, 0.58, 0.16) if warm else Color(0.18, 0.55, 1.0)))
-		material.set_shader_parameter("tail_color", Color(1.0, 0.22, 0.035) if warm else Color(0.11, 0.24, 0.75))
+		material.set_shader_parameter("hot_color", (Color(1.0, 0.96, 0.8) if warm else Color(0.85, 0.97, 1.0)) if layer == 0 else (Color(1.0, 0.48, 0.1) if warm else Color(0.1, 0.75, 1.0)))
+		material.set_shader_parameter("tail_color", Color(1.0, 0.12, 0.35) if warm else Color(0.55, 0.15, 1.0))
 		var mi := MeshInstance3D.new()
 		mi.mesh = mesh
 		mi.material_override = material
@@ -53,8 +56,8 @@ static func create(radius: float, plume_length: float, warm := false) -> Exhaust
 	particles.scale_amount_max = radius * 0.65
 	var fade := Gradient.new()
 	fade.set_color(0, Color(1.0, 0.65, 0.25, 0.18) if warm else Color(0.45, 0.75, 1.0, 0.3))
-	fade.add_point(0.35, Color(0.75, 0.28, 0.06, 0.09) if warm else Color(0.1, 0.4, 1.0, 0.13))
-	fade.set_color(1, Color(0.08, 0.15, 0.4, 0.0))
+	fade.add_point(0.35, Color(0.75, 0.28, 0.06, 0.09) if warm else Color(0.2, 0.55, 1.0, 0.16))
+	fade.set_color(1, Color(0.5, 0.1, 0.7, 0.0))
 	particles.color_ramp = fade
 	particles.mesh = soft_quad()
 	particles.material_override = particles.mesh.material
@@ -83,11 +86,19 @@ static func soft_quad() -> QuadMesh:
 
 func _process(dt: float) -> void:
 	age += dt
-	var power := intensity * (0.94 + 0.06 * sin(age * 27.0))
+	# Ease toward the requested intensity so boost on/off swells instead of popping a frame-hard step
+	# (a hard brightness jump on thin additive plume edges reads as aliasing flicker without MSAA).
+	if _shown_intensity < 0.0:
+		_shown_intensity = intensity
+	_shown_intensity = lerpf(_shown_intensity, intensity, 1.0 - exp(-dt * 10.0))
+	scale.z = length_scale * lerpf(0.28, 1.0, clampf(_shown_intensity, 0.0, 1.0))
+	var power := _shown_intensity * (0.94 + 0.06 * sin(age * 27.0))
 	for material in plume_materials: material.set_shader_parameter("intensity", power)
 	for emitter in emitters: emitter.emitting = is_visible_in_tree() and intensity > 0.02
-	# Warm golden-amber ignition flicker: layered fast sines + small random crackle.
-	var flicker := 0.82 + 0.1 * sin(age * 31.0) + 0.06 * sin(age * 57.0 + 1.3) + 0.08 * randf()
+	# Warm golden-amber ignition flicker: layered fast sines + a low-passed random crackle
+	# (raw per-frame randf() strobed the light and halo at the frame rate).
+	_crackle = lerpf(_crackle, randf(), 1.0 - exp(-dt * 18.0))
+	var flicker := 0.82 + 0.1 * sin(age * 31.0) + 0.06 * sin(age * 57.0 + 1.3) + 0.08 * _crackle
 	var lit := is_visible_in_tree() and intensity > 0.02
 	for light in lights:
 		light.light_energy = power * 0.62 * flicker if lit else 0.0

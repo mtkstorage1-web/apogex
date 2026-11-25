@@ -1,0 +1,516 @@
+{
+  "kit": "APOGEX Phase 4 Tactical Deployables, Defense Turrets & Mothership Weapon Battery",
+  "authoring_tool": "Blender 5.3.0",
+  "format": "glTF 2.0 binary",
+  "coordinate_system": {
+    "units": "meters",
+    "up": "+Y",
+    "forward": "-Z",
+    "dimensions_order": [
+      "X",
+      "Y",
+      "Z"
+    ]
+  },
+  "validation": {
+    "source": "GLB scene graph and binary accessors",
+    "bounds_tolerance_m": 2e-06,
+    "normal_unit_tolerance": 2e-06,
+    "degenerate_area_threshold_m2": 1e-12,
+    "visual_review": "Multiple angles per asset in live Blender via Blender MCP"
+  },
+  "assets": [
+    {
+      "file": "helion_defense_turret.glb",
+      "description": "Automated plasma point-defense turret",
+      "faction_palette": "Helion",
+      "dimensions_xyz_m": [
+        2.8,
+        3.45,
+        2.8
+      ],
+      "height_above_ground_m": 3.2,
+      "ground_y_m": 0,
+      "foundation_depth_m": 0.25,
+      "bounds_xyz_m": {
+        "min": [
+          -1.4,
+          -0.25,
+          -1.815102
+        ],
+        "max": [
+          1.4,
+          3.2,
+          0.984898
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 6504,
+      "triangle_budget": [
+        3000,
+        7000
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "minimum_triangle_area_m2": 2.1092764e-05,
+      "normals": {
+        "count": 12536,
+        "finite": true,
+        "max_unit_length_error": 1.1150418e-07
+      },
+      "pbr_materials": [
+        "APOGEX Helion | Carbon Seal",
+        "APOGEX Helion | Porcelain Ceramic",
+        "APOGEX Helion | Brushed Titanium",
+        "APOGEX Helion | Naval Blue",
+        "APOGEX Helion | Plasma Cyan",
+        "APOGEX Helion | Marking Blue",
+        "APOGEX Helion | Ice White"
+      ],
+      "emissive_materials": [
+        "APOGEX Helion | Plasma Cyan",
+        "APOGEX Helion | Ice White"
+      ],
+      "markers": {
+        "Muzzle_L": {
+          "position_xyz_m": [
+            -0.511694,
+            2.13,
+            -1.81992
+          ],
+          "axis": "-Z"
+        },
+        "Muzzle_R": {
+          "position_xyz_m": [
+            0.511694,
+            2.13,
+            -1.81992
+          ],
+          "axis": "-Z"
+        }
+      },
+      "visual_review": [
+        "front three-quarter",
+        "rear three-quarter",
+        "right"
+      ],
+      "sha256": "c5b1d3a80ade0f736a29be145f36f8b1993ad169dcb5b63bd779d9792435b3ed",
+      "pivots": {
+        "yaw": {
+          "name": "TurretYaw",
+          "axis": "+Y",
+          "position_xyz_m": [
+            0,
+            1.24,
+            0
+          ]
+        },
+        "pitch": {
+          "name": "TurretPitch",
+          "axis": "+X",
+          "position_xyz_m": [
+            0,
+            2.1,
+            0.11776
+          ]
+        }
+      }
+    },
+    {
+      "file": "cinder_defense_turret.glb",
+      "description": "Heavy autocannon defense turret",
+      "faction_palette": "Cinder",
+      "dimensions_xyz_m": [
+        3.0,
+        3.55,
+        3.0
+      ],
+      "height_above_ground_m": 3.3,
+      "ground_y_m": 0,
+      "foundation_depth_m": 0.25,
+      "bounds_xyz_m": {
+        "min": [
+          -1.5,
+          -0.25,
+          -1.620185
+        ],
+        "max": [
+          1.5,
+          3.3,
+          1.379815
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 6068,
+      "triangle_budget": [
+        3000,
+        7000
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "minimum_triangle_area_m2": 4.9645975e-05,
+      "normals": {
+        "count": 11748,
+        "finite": true,
+        "max_unit_length_error": 1.4222461e-07
+      },
+      "pbr_materials": [
+        "APOGEX Cinder | Dark Recess",
+        "APOGEX Cinder | Forged Graphite",
+        "APOGEX Cinder | Weathered Steel",
+        "APOGEX Cinder | Oxide Red",
+        "APOGEX Cinder | Burnt Orange",
+        "APOGEX Cinder | Charge Amber",
+        "APOGEX Cinder | Hot Filament"
+      ],
+      "emissive_materials": [
+        "APOGEX Cinder | Charge Amber",
+        "APOGEX Cinder | Hot Filament"
+      ],
+      "markers": {
+        "Muzzle_L": {
+          "position_xyz_m": [
+            -0.61,
+            2.26,
+            -1.623598
+          ],
+          "axis": "-Z"
+        },
+        "Muzzle_R": {
+          "position_xyz_m": [
+            0.61,
+            2.26,
+            -1.623598
+          ],
+          "axis": "-Z"
+        }
+      },
+      "visual_review": [
+        "front three-quarter",
+        "rear three-quarter",
+        "right",
+        "top"
+      ],
+      "sha256": "0bdd382919c543ea3e390dad84114c977d087b869806e0e00eb3a714818becfb",
+      "pivots": {
+        "yaw": {
+          "name": "TurretYaw",
+          "axis": "+Y",
+          "position_xyz_m": [
+            0,
+            1.18,
+            0.097513
+          ]
+        },
+        "pitch": {
+          "name": "TurretPitch",
+          "axis": "+X",
+          "position_xyz_m": [
+            0,
+            2.05,
+            0.058508
+          ]
+        }
+      }
+    },
+    {
+      "file": "deployable_shield_gen.glb",
+      "description": "Field deployable energy shield generator",
+      "faction_palette": "Tactical",
+      "dimensions_xyz_m": [
+        2.4,
+        3.85,
+        2.4
+      ],
+      "height_above_ground_m": 3.6,
+      "ground_y_m": 0,
+      "foundation_depth_m": 0.25,
+      "bounds_xyz_m": {
+        "min": [
+          -1.2,
+          -0.25,
+          -1.2
+        ],
+        "max": [
+          1.2,
+          3.6,
+          1.2
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 5760,
+      "triangle_budget": [
+        2500,
+        6000
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "minimum_triangle_area_m2": 2.4298833e-05,
+      "normals": {
+        "count": 11620,
+        "finite": true,
+        "max_unit_length_error": 1.0491562e-07
+      },
+      "pbr_materials": [
+        "APOGEX Tactical | Field Gunmetal",
+        "APOGEX Tactical | Shock Black",
+        "APOGEX Tactical | Diagnostic Cyan",
+        "APOGEX Tactical | Utility Ceramic",
+        "APOGEX Tactical | Hazard Yellow",
+        "APOGEX Tactical | Arc White"
+      ],
+      "emissive_materials": [
+        "APOGEX Tactical | Diagnostic Cyan",
+        "APOGEX Tactical | Arc White"
+      ],
+      "markers": {
+        "ShieldEmitter": {
+          "position_xyz_m": [
+            0,
+            3.6,
+            0
+          ],
+          "axis": "+Y"
+        }
+      },
+      "visual_review": [
+        "front three-quarter",
+        "rear three-quarter",
+        "top"
+      ],
+      "sha256": "4abb1f6826b14ddb7555245e7c7c43fbee2e80625f8631dbe292da8adc42b713"
+    },
+    {
+      "file": "supply_ammo_pod.glb",
+      "description": "Orbital-dropped armored resupply and repair pod",
+      "faction_palette": "Tactical",
+      "dimensions_xyz_m": [
+        2.2,
+        2.85,
+        2.2
+      ],
+      "height_above_ground_m": 2.6,
+      "ground_y_m": 0,
+      "foundation_depth_m": 0.25,
+      "bounds_xyz_m": {
+        "min": [
+          -1.1,
+          -0.25,
+          -1.305928
+        ],
+        "max": [
+          1.1,
+          2.6,
+          0.894072
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 5940,
+      "triangle_budget": [
+        2500,
+        6000
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "minimum_triangle_area_m2": 2.9283022e-05,
+      "normals": {
+        "count": 12380,
+        "finite": true,
+        "max_unit_length_error": 9.7979044e-08
+      },
+      "pbr_materials": [
+        "APOGEX Tactical | Field Gunmetal",
+        "APOGEX Tactical | Utility Ceramic",
+        "APOGEX Tactical | Shock Black",
+        "APOGEX Tactical | Hazard Yellow",
+        "APOGEX Tactical | Heat Tile",
+        "APOGEX Tactical | Diagnostic Cyan",
+        "APOGEX Tactical | Field Green",
+        "APOGEX Tactical | Mast Green"
+      ],
+      "emissive_materials": [
+        "APOGEX Tactical | Diagnostic Cyan",
+        "APOGEX Tactical | Mast Green"
+      ],
+      "markers": {
+        "StatusBeacon": {
+          "position_xyz_m": [
+            0,
+            2.217733,
+            0
+          ],
+          "axis": "+Y"
+        }
+      },
+      "visual_review": [
+        "front bay",
+        "rear-left bay",
+        "rear-right bay",
+        "top"
+      ],
+      "sha256": "c28742fce9ba78b87c1bfce55f5aa0c83b54582c78a399d919bcb5e5c2e70f75"
+    },
+    {
+      "file": "orbital_strike_beacon.glb",
+      "description": "Commander orbital strike designator beacon",
+      "faction_palette": "Tactical",
+      "dimensions_xyz_m": [
+        1.2,
+        2.6,
+        1.2
+      ],
+      "height_above_ground_m": 2.4,
+      "ground_y_m": 0,
+      "foundation_depth_m": 0.2,
+      "bounds_xyz_m": {
+        "min": [
+          -0.6,
+          -0.2,
+          -0.731809
+        ],
+        "max": [
+          0.6,
+          2.4,
+          0.468191
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 2668,
+      "triangle_budget": [
+        1500,
+        4000
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "minimum_triangle_area_m2": 5.1463386e-05,
+      "normals": {
+        "count": 5284,
+        "finite": true,
+        "max_unit_length_error": 1.0485828e-07
+      },
+      "pbr_materials": [
+        "APOGEX Tactical | Shock Black",
+        "APOGEX Tactical | Field Gunmetal",
+        "APOGEX Tactical | Utility Ceramic",
+        "APOGEX Tactical | Hazard Yellow",
+        "APOGEX Tactical | Hazard Red",
+        "APOGEX Tactical | Uplink Amber",
+        "APOGEX Tactical | Uplink Crimson"
+      ],
+      "emissive_materials": [
+        "APOGEX Tactical | Uplink Amber",
+        "APOGEX Tactical | Uplink Crimson"
+      ],
+      "markers": {
+        "UplinkEmitter": {
+          "position_xyz_m": [
+            0,
+            2.4,
+            0
+          ],
+          "axis": "+Y"
+        }
+      },
+      "visual_review": [
+        "front three-quarter",
+        "rear three-quarter",
+        "elevated lens view"
+      ],
+      "sha256": "2cb5d695039222d17ba27c9443ad41ce834ff2cf2cc99a6bce52ee75568aeb86"
+    },
+    {
+      "file": "mothership_turret_battery.glb",
+      "description": "Capital-ship exterior defense battery",
+      "faction_palette": "Tactical",
+      "dimensions_xyz_m": [
+        10.0,
+        6.5,
+        12.0
+      ],
+      "height_above_ground_m": 6.5,
+      "ground_y_m": 0,
+      "foundation_depth_m": 0,
+      "bounds_xyz_m": {
+        "min": [
+          -5.0,
+          0.0,
+          -7.26997
+        ],
+        "max": [
+          5.0,
+          6.5,
+          4.730031
+        ]
+      },
+      "forward": "-Z",
+      "triangles": 7128,
+      "triangle_budget": [
+        4000,
+        9000
+      ],
+      "degenerate_triangles": 0,
+      "inverted_normal_triangles": 0,
+      "minimum_triangle_area_m2": 0.00016065978,
+      "normals": {
+        "count": 14296,
+        "finite": true,
+        "max_unit_length_error": 9.5514072e-08
+      },
+      "pbr_materials": [
+        "APOGEX Tactical | Field Gunmetal",
+        "APOGEX Tactical | Utility Ceramic",
+        "APOGEX Tactical | Shock Black",
+        "APOGEX Tactical | Diagnostic Cyan",
+        "APOGEX Tactical | Hazard Yellow"
+      ],
+      "emissive_materials": [
+        "APOGEX Tactical | Diagnostic Cyan"
+      ],
+      "markers": {
+        "Muzzle_L": {
+          "position_xyz_m": [
+            -1.73,
+            3.873635,
+            -7.270515
+          ],
+          "axis": "-Z"
+        },
+        "Muzzle_R": {
+          "position_xyz_m": [
+            1.73,
+            3.873635,
+            -7.270515
+          ],
+          "axis": "-Z"
+        }
+      },
+      "visual_review": [
+        "front three-quarter",
+        "rear three-quarter",
+        "top",
+        "right"
+      ],
+      "sha256": "f0e1ac2dd2bacab2fc13db4575764438e6f26a584218d35effd1817955849816",
+      "pivots": {
+        "yaw": {
+          "name": "BatteryYaw",
+          "axis": "+Y",
+          "position_xyz_m": [
+            0,
+            1.713729,
+            -0.043595
+          ]
+        },
+        "pitch": {
+          "name": "BatteryPitch",
+          "axis": "+X",
+          "position_xyz_m": [
+            0,
+            3.893916,
+            -0.174379
+          ]
+        }
+      }
+    }
+  ]
+}

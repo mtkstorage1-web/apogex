@@ -14,3 +14,9 @@ artifacts/ad/raw.avi
 .vscode/
 .idea/
 .claude/settings.local.json
+build/
+
+# Exclude heavy capture artifacts, raw screenshots, and local agent metadata
+artifacts/
+shots/
+.claude/

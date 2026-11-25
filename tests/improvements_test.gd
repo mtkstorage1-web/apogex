@@ -11,6 +11,7 @@ func check(value: bool, message: String) -> void:
 func _initialize() -> void:
 	call_deferred("run")
 
+
 func run() -> void:
 	var g = load("res://main.tscn").instantiate()
 	root.add_child(g)
@@ -38,55 +39,76 @@ func run() -> void:
 	# Switch to autotest mode for deterministic non-captured headless runtime checks
 	g.autotest = true
 	g.opts["seed"] = 4545
+	LobbyPages.play_mode = "practice"
 	g.quick_deploy()
 
-	# 2. Flight stations, loadout color & overlay
-	check(g.world is Flight, "quick deploy enters Flight")
-	var fl: Flight = g.world
-	check(is_instance_valid(fl.turret_rig) and is_instance_valid(fl.turret_head), "Flight builds dorsal turret rig")
-	check(fl.plate_nodes.size() == 3 and fl.system_nodes.size() == 4, "Flight builds 3 hull plates and 4 system beacons")
-	check(is_instance_valid(fl.shield_dome) and is_instance_valid(fl.overlay), "Flight builds shield dome and tactical overlay")
-	g.sim.loadout["engine"] = "lancer"
-	check(fl._turret_color() == Color("#22d3ee"), "Flight turret color reflects Lancer engine loadout")
-	g.sim.ultimate[0] = 100.0
-	g.sim.selected = 0
-	g.pressed_now[KEY_F] = true
+	# 2. Chase framing and walkable live interior.
+	check(g.piloting and g.sim.on_surface("planet_a"), "Quick Deploy seats the pilot on the pad")
+	g._swap_flight_location("space")
+	var fl: Flight = g.vessel
+	fl.basis = Basis.looking_at((Universe.C_ORIGIN - fl.position).normalized())
+	fl.update_camera()
+	var frame_bounds := [null]
+	for child in fl.ship.get_children():
+		if ShipCatalog.VARIANTS.has(child.name) or String(child.name).begins_with("Landing"):
+			Actor._aabb(child, fl.ship.global_transform, frame_bounds)
+	var exterior: AABB = frame_bounds[0]
+	var viewport_rect := root.get_visible_rect()
+	var framed := true
+	for i in 8:
+		var corner := exterior.get_endpoint(i)
+		var screen: Vector2 = g.cam.unproject_position(corner)
+		framed = framed and not g.cam.is_position_behind(corner) and viewport_rect.has_point(screen)
+	check(framed, "pilot chase camera frames the scaled ship")
+	g.pressed_now[KEY_I] = true
 	g._process(0.05)
-	check(fl.shield_dome.visible, "Flight shield dome appears when shield is active")
-	for role in [1, 2, 3, 0]:
-		g.sim.selected = role
+	check(g.interior_active() and "PILOT VIEW" in g.hud.footer.text,
+		"I enters the ship interior and shows its return hint")
+	check(g.hud.prompt_panel.visible and not g.hud._prompt_text.begins_with("PRESS L"),
+		"Exterior Flight HUD refresh preserves the interior interaction prompt")
+	var cabin: Node3D = g.interior
+	var camera: Camera3D = g.cam
+	check(cabin.global_position.distance_to(fl.ship.global_position) < 10.0
+		and camera.global_basis.z.dot(fl.ship.global_basis.z.normalized()) > 0.99,
+		"flight cabin starts within 10 m of the live ship with the camera facing the forward canopy")
+	var moon: Node3D = g.universe.body_c
+	check(moon.is_visible_in_tree() and (-camera.global_basis.z).dot(camera.global_position.direction_to(moon.global_position)) > 0.95,
+		"the real Moon is ahead of the cockpit camera during outbound flight")
+	var ship_position := fl.position
+	var ship_basis := fl.ship.global_basis
+	var camera_in_cabin := cabin.to_local(camera.global_position)
+	fl.flight_speed = 34.0
+	fl.basis = fl.basis * Basis(Vector3.FORWARD, 0.25)
+	for step in 5:
 		g._process(0.05)
-	check(fl.overlay != null and fl.overlay_layer.visible, "Flight overlay ticks cleanly across all 4 roles")
+	check(ship_position.distance_to(fl.position) > 1.0 and not ship_basis.is_equal_approx(fl.ship.global_basis)
+		and cabin.global_position.distance_to(fl.ship.global_position) < 10.0
+		and cabin.global_basis.is_equal_approx(fl.ship.global_basis.orthonormalized()),
+		"flight cabin tracks live ship translation and roll")
+	check(camera_in_cabin.distance_to(cabin.to_local(camera.global_position)) < 0.05
+		and camera.global_basis.y.dot(fl.ship.global_basis.y.normalized()) > 0.99,
+		"cockpit camera stays attached in cabin space as the ship banks")
+	g.pressed_now[KEY_I] = true
+	g._process(0.05)
+	check(not g.interior_active() and g.hud.footer.text.contains("W FORWARD"),
+		"I returns to exterior Flight and restores the pilot controls")
 
-	var idle_position := fl.position
-	var idle_time: float = g.sim.flight_time
-	for step in 20:
-		g._process(0.05)
-	check(fl.position.is_equal_approx(idle_position), "Flight holds position without thrust")
-	check(is_equal_approx(g.sim.flight_time, idle_time), "Flight time holds without thrust")
-
-	var forward_action: String = g.KEY_ACTIONS[KEY_W]
-	Input.action_press(forward_action)
-	for step in 40:
-		g._process(0.05)
 	var outbound_position := fl.position
-	var outbound_moon_distance := outbound_position.distance_to(Universe.B_ORIGIN)
-	var outbound_distance := outbound_position.distance_to(fl.path_b)
-	check(outbound_position.z < idle_position.z and outbound_distance < idle_position.distance_to(fl.path_b),
-		"W drives Flight forward and closer to the Moon approach")
-
-	g.yaw = PI
-	for step in 20:
+	var outbound_distance := outbound_position.distance_to(Universe.C_ORIGIN)
+	for frame in 40:
 		g._process(0.05)
-	Input.action_release(forward_action)
-	check(fl.position.distance_to(Universe.B_ORIGIN) > outbound_moon_distance,
-		"W after a 180-degree turn flies away from the Moon")
-	check(fl.position.distance_to(Universe.A_ORIGIN) < outbound_position.distance_to(Universe.A_ORIGIN),
-		"W after a 180-degree turn flies closer to Earth")
+	check(fl.position.distance_to(Universe.C_ORIGIN) < outbound_distance, "Cruise momentum moves the ship toward the Moon")
+	fl.basis = Basis.looking_at((Universe.A_ORIGIN - fl.position).normalized())
+	var turnaround_position := fl.position
+	for frame in 20:
+		g._process(0.05)
+	check(fl.position.distance_to(Universe.A_ORIGIN) < turnaround_position.distance_to(Universe.A_ORIGIN),
+		"A turn can fly back toward Earth in the same space map")
+	g._swap_flight_location("planet_c")
+	fl.touch_down(fl.landing_zone)
+	g.disembark_ship()
 
-	# 3. Planet B waypoints, distinct weapons, abilities & steps
-	g.sim.phase = "landing"
-	g._end_cine("landing")
+	# 3. Moon waypoints, distinct weapons, abilities and steps.
 	check(g.world is PlanetB, "landing transitions to PlanetB")
 	var pb: PlanetB = g.world
 	check(is_instance_valid(pb.priority_beacon) and is_instance_valid(pb.hatch_beacon) and is_instance_valid(pb.scan_beam) and is_instance_valid(pb.shield_bubble), "PlanetB builds 3D beacons, scan beam, and shield bubble")
@@ -130,6 +152,14 @@ func run() -> void:
 	var step_clip: String = pb.actors[0].poll_step(0.4, 5.4)
 	check(step_clip.begins_with("step_"), "Actor.poll_step emits footstep clip name")
 
+	check(g.board_ship(), "Moon cockpit boards the returning crew")
+	g._swap_flight_location("space")
+	g._swap_flight_location("planet_a")
+	fl.touch_down(fl.landing_zone)
+	check(fl.ship.scale.is_equal_approx(Vector3.ONE * 1.45)
+		and fl.position.is_equal_approx(Universe.A_ORIGIN),
+		"Home touchdown preserves ship scale at the Earth landing point")
+
 	# 4. Typography, InputMap, HUD layout bounds & MissionControlUI
 	var sans := UI.font(false)
 	var mono := UI.font(true)
@@ -153,7 +183,7 @@ func run() -> void:
 	for dimensions in [Vector2i(1280, 720), Vector2i(3004, 1805)]:
 		root.content_scale_size = dimensions
 		root.size = dimensions
-		g.sim.phase = "flight"
+		g.sim.set_location("space")
 		g.hud.update_common(g.sim, 0)
 		await process_frame
 		await process_frame
