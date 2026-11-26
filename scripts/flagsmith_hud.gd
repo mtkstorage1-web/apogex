@@ -34,21 +34,48 @@ func _run_demo_choreography() -> void:
 	var mgr = get_node_or_null("/root/FlagsmithManager")
 	if mgr == null:
 		return
-	await get_tree().create_timer(3.5).timeout
-	_panel.visible = true
-	await get_tree().create_timer(3.0).timeout
-	mgr.set_local_override("exp_extraction_balance", true, "fast_blitz")
-	await get_tree().create_timer(1.8).timeout
-	mgr.set_local_override("exp_combat_pacing", true, "turbo_clash")
-	await get_tree().create_timer(1.8).timeout
-	mgr.set_local_override("feature_moon_low_gravity", true, null)
-	await get_tree().create_timer(2.2).timeout
-	_panel.visible = false
 	var main_node = get_tree().current_scene
-	if main_node and main_node.has_method("start_match"):
-		main_node.start_match()
-	await get_tree().create_timer(6.0).timeout
-	mgr.track_event("flag_delivered", {"count": 2})
+	if main_node:
+		if "graphics" in main_node and main_node.graphics != null and main_node.graphics.has_method("set_preset"):
+			main_node.graphics.set_preset(3) # ULTRA
+			if main_node.has_method("apply_graphics"):
+				main_node.apply_graphics()
+
+	# 1. Squad Lobby + Flagsmith Inspector (0s - 8.5s)
+	await get_tree().create_timer(2.2, true, false, true).timeout
+	_panel.visible = true
+	await get_tree().create_timer(1.8, true, false, true).timeout
+	mgr.set_local_override("exp_extraction_balance", true, "fast_blitz")
+	await get_tree().create_timer(1.2, true, false, true).timeout
+	mgr.set_local_override("exp_combat_pacing", true, "turbo_clash")
+	await get_tree().create_timer(1.2, true, false, true).timeout
+	mgr.set_local_override("feature_moon_low_gravity", true, null)
+	await get_tree().create_timer(1.6, true, false, true).timeout
+
+	# 2. Earth Spaceport: Build Spacecraft & Board Cockpit (8.5s - 13.5s)
+	_panel.visible = false
+	main_node = get_tree().current_scene
+	if main_node and main_node.has_method("quick_deploy"):
+		main_node.quick_deploy()
+	Engine.time_scale = 2.0
+	await get_tree().create_timer(5.0, true, false, true).timeout
+
+	# 3. Launch into Space Transit (13.5s - 19.0s)
+	if main_node and main_node.has_method("_begin_travel"):
+		main_node._begin_travel("space")
+	await get_tree().create_timer(5.5, true, false, true).timeout
+
+	# 4. Land on Planet C · Moon — Frontier Arena & Science Flags (19.0s - 27.0s)
+	if main_node and main_node.has_method("_begin_travel"):
+		main_node._begin_travel("planet_c")
+	await get_tree().create_timer(8.0, true, false, true).timeout
+
+	# 5. Return to Earth & Show Updated Flagsmith A/B Telemetry (27.0s - 36.0s)
+	if main_node and main_node.has_method("_begin_travel"):
+		main_node._begin_travel("planet_a")
+	Engine.time_scale = 1.0
+	await get_tree().create_timer(3.0, true, false, true).timeout
+	mgr.track_event("flag_delivered", {"count": 3})
 	mgr.track_event("match_ended", {"won": true})
 	_panel.visible = true
 
