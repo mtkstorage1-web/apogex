@@ -1,14 +1,23 @@
 extends CanvasLayer
 
-# Toggleable Flagsmith Experiment Inspector (F9 or corner ⚑ FLAGS button)
+# Sleek, APOGEX-styled Flagsmith Experiment Inspector (F9 or bottom-left ⚑ FLAGS pill)
+
+const COL_BG := Color(0.055, 0.075, 0.14, 0.94)
+const COL_CARD := Color(0.09, 0.12, 0.21, 0.92)
+const COL_BORDER := Color(0.29, 0.84, 0.96, 0.35)
+const COL_CYAN := Color(0.30, 0.84, 0.96, 1.0)
+const COL_GOLD := Color(0.95, 0.79, 0.30, 1.0)
+const COL_GREEN := Color(0.45, 0.90, 0.62, 1.0)
+const COL_MUTED := Color(0.65, 0.72, 0.84, 1.0)
+const COL_TEXT := Color(0.95, 0.97, 1.0, 1.0)
 
 var _panel: PanelContainer
-var _status_label: Label
+var _status_pill: Label
 var _key_input: LineEdit
 var _connect_btn: Button
 var _meta_label: Label
 var _flags_box: VBoxContainer
-var _telemetry_label: RichTextLabel
+var _telemetry_box: VBoxContainer
 var _error_label: Label
 
 func _ready() -> void:
@@ -18,80 +27,156 @@ func _ready() -> void:
 		var mgr = get_node("/root/FlagsmithManager")
 		mgr.flags_updated.connect(_render)
 		_render(mgr.get_snapshot())
+	if OS.get_cmdline_user_args().has("--demo-record"):
+		_run_demo_choreography()
+
+func _run_demo_choreography() -> void:
+	var mgr = get_node_or_null("/root/FlagsmithManager")
+	if mgr == null:
+		return
+	await get_tree().create_timer(3.5).timeout
+	_panel.visible = true
+	await get_tree().create_timer(3.0).timeout
+	mgr.set_local_override("exp_extraction_balance", true, "fast_blitz")
+	await get_tree().create_timer(1.8).timeout
+	mgr.set_local_override("exp_combat_pacing", true, "turbo_clash")
+	await get_tree().create_timer(1.8).timeout
+	mgr.set_local_override("feature_moon_low_gravity", true, null)
+	await get_tree().create_timer(2.2).timeout
+	_panel.visible = false
+	var main_node = get_tree().current_scene
+	if main_node and main_node.has_method("start_match"):
+		main_node.start_match()
+	await get_tree().create_timer(6.0).timeout
+	mgr.track_event("flag_delivered", {"count": 2})
+	mgr.track_event("match_ended", {"won": true})
+	_panel.visible = true
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F9:
 		_panel.visible = not _panel.visible
 		get_viewport().set_input_as_handled()
 
+func _make_box(bg: Color, border: Color, radius: int = 10, pad_x: int = 14, pad_y: int = 10) -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = bg
+	s.border_color = border
+	s.set_border_width_all(1)
+	s.set_corner_radius_all(radius)
+	s.content_margin_left = pad_x
+	s.content_margin_right = pad_x
+	s.content_margin_top = pad_y
+	s.content_margin_bottom = pad_y
+	return s
+
 func _build_ui() -> void:
+	# Sleek bottom-left toggle pill
 	var toggle_btn := Button.new()
-	toggle_btn.text = "⚑ FLAGS (F9)"
+	toggle_btn.text = "⚑  FLAGS · F9"
 	toggle_btn.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	toggle_btn.offset_left = 18
-	toggle_btn.offset_right = 154
-	toggle_btn.offset_top = -52
+	toggle_btn.offset_left = 20
+	toggle_btn.offset_right = 156
+	toggle_btn.offset_top = -54
 	toggle_btn.offset_bottom = -18
+	toggle_btn.add_theme_font_size_override("font_size", 13)
+	toggle_btn.add_theme_color_override("font_color", COL_GOLD)
+	toggle_btn.add_theme_stylebox_override("normal", _make_box(COL_BG, COL_GOLD * Color(1, 1, 1, 0.55), 8, 12, 6))
+	toggle_btn.add_theme_stylebox_override("hover", _make_box(COL_CARD, COL_GOLD, 8, 12, 6))
+	toggle_btn.add_theme_stylebox_override("pressed", _make_box(COL_CARD, COL_CYAN, 8, 12, 6))
 	toggle_btn.pressed.connect(func(): _panel.visible = not _panel.visible)
 	add_child(toggle_btn)
 
+	# Clean floating dark-glass card anchored bottom-left above the pill
 	_panel = PanelContainer.new()
 	_panel.visible = false
-	_panel.position = Vector2(18, 96)
-	_panel.custom_minimum_size = Vector2(420, 460)
+	_panel.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	_panel.offset_left = 20
+	_panel.offset_right = 410
+	_panel.offset_top = -520
+	_panel.offset_bottom = -64
+	_panel.add_theme_stylebox_override("panel", _make_box(COL_BG, COL_BORDER, 12, 16, 14))
 	add_child(_panel)
 
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 14)
-	margin.add_theme_constant_override("margin_right", 14)
-	margin.add_theme_constant_override("margin_top", 12)
-	margin.add_theme_constant_override("margin_bottom", 12)
-	_panel.add_child(margin)
-
 	var root := VBoxContainer.new()
-	root.add_theme_constant_override("separation", 8)
-	margin.add_child(root)
+	root.add_theme_constant_override("separation", 10)
+	_panel.add_child(root)
+
+	# Header row
+	var head := HBoxContainer.new()
+	root.add_child(head)
 
 	var title := Label.new()
-	title.text = "TOGGLE WARS · FLAGSMITH INSPECTOR"
-	root.add_child(title)
+	title.text = "FLAGSMITH"
+	title.add_theme_font_size_override("font_size", 16)
+	title.add_theme_color_override("font_color", COL_TEXT)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(title)
 
-	_status_label = Label.new()
-	root.add_child(_status_label)
+	_status_pill = Label.new()
+	_status_pill.add_theme_font_size_override("font_size", 11)
+	head.add_child(_status_pill)
 
+	var close_btn := Button.new()
+	close_btn.text = "✕"
+	close_btn.flat = true
+	close_btn.add_theme_color_override("font_color", COL_MUTED)
+	close_btn.pressed.connect(func(): _panel.visible = false)
+	head.add_child(close_btn)
+
+	# Compact Environment Key bar
 	var key_row := HBoxContainer.new()
+	key_row.add_theme_constant_override("separation", 6)
 	root.add_child(key_row)
 
 	_key_input = LineEdit.new()
-	_key_input.placeholder_text = "Paste Flagsmith Client Environment Key..."
+	_key_input.placeholder_text = "Flagsmith Environment Key (optional)"
 	_key_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_key_input.add_theme_font_size_override("font_size", 12)
+	_key_input.add_theme_stylebox_override("normal", _make_box(COL_CARD, Color(1, 1, 1, 0.12), 6, 8, 5))
 	key_row.add_child(_key_input)
 
 	_connect_btn = Button.new()
-	_connect_btn.text = "Connect"
+	_connect_btn.text = "Sync"
+	_connect_btn.add_theme_font_size_override("font_size", 12)
+	_connect_btn.add_theme_color_override("font_color", Color(0.05, 0.08, 0.14))
+	_connect_btn.add_theme_stylebox_override("normal", _make_box(COL_CYAN, COL_CYAN, 6, 10, 5))
+	_connect_btn.add_theme_stylebox_override("hover", _make_box(COL_GOLD, COL_GOLD, 6, 10, 5))
 	_connect_btn.pressed.connect(_on_connect_pressed)
 	key_row.add_child(_connect_btn)
 
 	_error_label = Label.new()
-	_error_label.modulate = Color(1.0, 0.45, 0.5)
+	_error_label.add_theme_font_size_override("font_size", 11)
+	_error_label.add_theme_color_override("font_color", Color(1.0, 0.45, 0.5))
 	_error_label.visible = false
 	root.add_child(_error_label)
 
 	_meta_label = Label.new()
+	_meta_label.add_theme_font_size_override("font_size", 11)
+	_meta_label.add_theme_color_override("font_color", COL_MUTED)
 	root.add_child(_meta_label)
 
+	var sep1 := HSeparator.new()
+	sep1.modulate = Color(1, 1, 1, 0.15)
+	root.add_child(sep1)
+
+	# Experiments & Flags list
 	_flags_box = VBoxContainer.new()
 	_flags_box.add_theme_constant_override("separation", 6)
 	root.add_child(_flags_box)
 
-	var tel_header := Label.new()
-	tel_header.text = "LIVE A/B CONVERSION TELEMETRY"
-	root.add_child(tel_header)
+	var sep2 := HSeparator.new()
+	sep2.modulate = Color(1, 1, 1, 0.15)
+	root.add_child(sep2)
 
-	_telemetry_label = RichTextLabel.new()
-	_telemetry_label.custom_minimum_size = Vector2(380, 110)
-	_telemetry_label.fit_content = false
-	root.add_child(_telemetry_label)
+	var tel_title := Label.new()
+	tel_title.text = "A/B TELEMETRY"
+	tel_title.add_theme_font_size_override("font_size", 11)
+	tel_title.add_theme_color_override("font_color", COL_CYAN)
+	root.add_child(tel_title)
+
+	_telemetry_box = VBoxContainer.new()
+	_telemetry_box.add_theme_constant_override("separation", 3)
+	root.add_child(_telemetry_box)
 
 func _on_connect_pressed() -> void:
 	if not has_node("/root/FlagsmithManager"):
@@ -104,10 +189,19 @@ func _on_connect_pressed() -> void:
 		mgr.set_environment_key(k)
 
 func _render(snap: Dictionary) -> void:
-	if _status_label == null:
+	if _status_pill == null:
 		return
 	var m := str(snap.get("mode", "fallback"))
-	_status_label.text = "Status: " + ("LIVE FLAGSMITH CLOUD" if m == "live" else ("SYNCING..." if m == "connecting" else "LOCAL FALLBACK MODE"))
+	if m == "live":
+		_status_pill.text = "● LIVE CLOUD"
+		_status_pill.add_theme_color_override("font_color", COL_GREEN)
+	elif m == "connecting":
+		_status_pill.text = "● SYNCING"
+		_status_pill.add_theme_color_override("font_color", COL_CYAN)
+	else:
+		_status_pill.text = "● LOCAL FALLBACK"
+		_status_pill.add_theme_color_override("font_color", COL_GOLD)
+
 	_connect_btn.text = "Refresh" if bool(snap.get("has_key", false)) else "Connect"
 	if _key_input.text.is_empty() and not str(snap.get("environment_key", "")).is_empty():
 		_key_input.text = str(snap["environment_key"])
@@ -117,10 +211,10 @@ func _render(snap: Dictionary) -> void:
 	_error_label.text = err_msg
 
 	var tr: Dictionary = snap.get("traits", {})
-	_meta_label.text = "ID: %s | Mode: %s | Delivered: %s" % [
+	_meta_label.text = "%s  ·  %s  ·  %d flags" % [
 		str(snap.get("identity", "")),
-		str(tr.get("mode", "arena_clash")),
-		str(tr.get("flags_delivered", 0)),
+		str(tr.get("mode", "arena_clash")).to_upper(),
+		int(tr.get("flags_delivered", 0)),
 	]
 
 	for c in _flags_box.get_children():
@@ -135,11 +229,16 @@ func _render(snap: Dictionary) -> void:
 		var row := HBoxContainer.new()
 		var lbl := Label.new()
 		lbl.text = str(def["label"])
+		lbl.add_theme_font_size_override("font_size", 12)
+		lbl.add_theme_color_override("font_color", COL_TEXT)
 		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(lbl)
 
 		var opt := OptionButton.new()
 		opt.disabled = is_live
+		opt.add_theme_font_size_override("font_size", 12)
+		opt.add_theme_color_override("font_color", COL_CYAN)
+		opt.add_theme_stylebox_override("normal", _make_box(COL_CARD, COL_BORDER, 6, 8, 3))
 		var current := str(flags_dict.get(exp_name, {}).get("value", def["default"]))
 		var variants: Array = def["variants"]
 		for i in range(variants.size()):
@@ -156,6 +255,8 @@ func _render(snap: Dictionary) -> void:
 		var def: Dictionary = mgr.BOOLEAN_FLAG_DEFAULTS[flag_name]
 		var chk := CheckButton.new()
 		chk.text = str(def["label"])
+		chk.add_theme_font_size_override("font_size", 12)
+		chk.add_theme_color_override("font_color", COL_MUTED)
 		chk.button_pressed = bool(flags_dict.get(flag_name, {}).get("enabled", def["enabled"]))
 		chk.disabled = is_live
 		chk.toggled.connect(func(pressed: bool):
@@ -163,18 +264,31 @@ func _render(snap: Dictionary) -> void:
 		)
 		_flags_box.add_child(chk)
 
+	for c in _telemetry_box.get_children():
+		c.queue_free()
+
 	var tel: Array = snap.get("telemetry", [])
 	if tel.is_empty():
-		_telemetry_label.text = "Play a match or deliver Science Flags to record A/B conversions."
+		var empty := Label.new()
+		empty.text = "No runs recorded yet."
+		empty.add_theme_font_size_override("font_size", 11)
+		empty.add_theme_color_override("font_color", COL_MUTED)
+		_telemetry_box.add_child(empty)
 	else:
-		var lines: PackedStringArray = []
-		for t in tel:
+		for t in tel.slice(0, 4):
 			var total := int(t.get("wins", 0)) + int(t.get("losses", 0))
 			var wr := ("%d%%" % int(round(float(t.get("wins", 0)) * 100.0 / float(total)))) if total > 0 else "—"
-			lines.append("%s | runs:%d | flags:%d | win:%s" % [
-				str(t.get("variant", "")),
-				int(t.get("starts", 0)),
-				int(t.get("deliveries", 0)),
-				wr,
-			])
-		_telemetry_label.text = "\n".join(lines)
+			var row := HBoxContainer.new()
+			var name_lbl := Label.new()
+			name_lbl.text = str(t.get("variant", ""))
+			name_lbl.add_theme_font_size_override("font_size", 11)
+			name_lbl.add_theme_color_override("font_color", COL_TEXT)
+			name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			row.add_child(name_lbl)
+
+			var stats_lbl := Label.new()
+			stats_lbl.text = "%d runs · %d flags · %s" % [int(t.get("starts", 0)), int(t.get("deliveries", 0)), wr]
+			stats_lbl.add_theme_font_size_override("font_size", 11)
+			stats_lbl.add_theme_color_override("font_color", COL_GREEN)
+			row.add_child(stats_lbl)
+			_telemetry_box.add_child(row)
