@@ -1,4 +1,23 @@
-# T-MINUS / APOGEX
+# T-MINUS / APOGEX — Toggle Wars (Flagsmith Experimentation Edition)
+
+> **Submitted by Team Toggle Titans (`KJ64VW`)** for **Toggle Wars: The Flagsmith Experimentation Hackathon** (WeMakeDevs × Flagsmith).
+
+## Flagsmith Integration & Live Experimentation
+
+APOGEX integrates **Flagsmith** natively in Godot 4.7 via the `FlagsmithManager` autoload (`scripts/flagsmith_manager.gd`) and the in-game **Flagsmith Experiment Inspector** (`scripts/flagsmith_hud.gd`):
+
+- **Live Configurable Key + Deterministic Fallback:** Connects to **Flagsmith Cloud Edge API** (`POST /api/v1/identities/` with `X-Environment-Key` + player traits) when configured via `FLAGSMITH_ENV_KEY`, `user://flagsmith.cfg`, or the in-game **⚑ FLAGS (`F9`)** inspector. Works immediately out-of-the-box in deterministic local fallback mode when offline or unconfigured.
+- **Multivariate Experiments (A/B/C):**
+  - `exp_extraction_balance` (`standard` | `fast_blitz` | `high_risk_double`) — tunes Science Flag extraction speed & score multiplier.
+  - `exp_combat_pacing` (`standard` | `turbo_clash` | `tactical_hardcore`) — tunes Arena Clash combat damage & respawn pacing.
+  - `exp_empire_economy` (`standard` | `overdrive_gold` | `scarce_frontier`) — tunes Planetary Empire treasury income & Golden Science Core value.
+- **Boolean Feature Flags:**
+  - `feature_moon_low_gravity` — toggles low-gravity movement on Planet C · Moon.
+  - `feature_quick_deploy_default` — remote-toggles Quick Deploy in the lobby.
+  - `feature_golden_science_cores` — remote kill-switch for two-point Golden Science Cores.
+- **Identity Traits & A/B Conversion Telemetry:** Persists player identity (`apogex_<id>`), syncs traits (`mode`, `coalition`, `matches_played`, `flags_delivered`, `eliminations`, `matches_won`), and displays live per-variant conversion metrics in the **`F9`** inspector.
+
+---
 
 T-MINUS is a Godot 4.7 game spanning two Earth spaceports, a shared space map, and a Moon arena.
 
