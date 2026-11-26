@@ -27,14 +27,17 @@ func _unhandled_input(event: InputEvent) -> void:
 func _build_ui() -> void:
 	var toggle_btn := Button.new()
 	toggle_btn.text = "⚑ FLAGS (F9)"
-	toggle_btn.position = Vector2(16, 16)
-	toggle_btn.custom_minimum_size = Vector2(126, 32)
+	toggle_btn.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	toggle_btn.offset_left = 18
+	toggle_btn.offset_right = 154
+	toggle_btn.offset_top = -52
+	toggle_btn.offset_bottom = -18
 	toggle_btn.pressed.connect(func(): _panel.visible = not _panel.visible)
 	add_child(toggle_btn)
 
 	_panel = PanelContainer.new()
 	_panel.visible = false
-	_panel.position = Vector2(16, 56)
+	_panel.position = Vector2(18, 96)
 	_panel.custom_minimum_size = Vector2(420, 460)
 	add_child(_panel)
 

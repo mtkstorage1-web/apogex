@@ -863,6 +863,11 @@ func _refresh_hud() -> void:
 
 
 func drive(a: Actor, dt: float, gravity := 22.0, speed_mul := 1.0) -> float:
+	if has_node("/root/FlagsmithManager"):
+		var fs_mods: Dictionary = get_node("/root/FlagsmithManager").get_modifiers()
+		if bool(fs_mods.get("moon_low_gravity", false)):
+			gravity *= 0.55
+			speed_mul *= 1.15
 	var f := Vector3(-sin(yaw), 0, -cos(yaw))
 	var r := Vector3(cos(yaw), 0, -sin(yaw))
 	var dir := Vector3.ZERO
@@ -1157,6 +1162,10 @@ func _run_start_match(ls: LoadingScreen) -> void:
 	sim.selected = _local_empire_assignment().get("seat_index", opts["selected"]) if net.mode == "CLIENT" else opts["selected"]
 	if arena_selected:
 		_start_arena_clash()
+	if has_node("/root/FlagsmithManager"):
+		var fsm := get_node("/root/FlagsmithManager")
+		fsm.set_trait("mode", "arena_clash" if arena_selected else "flag_warfare", false)
+		fsm.track_event("match_started")
 	sim.auto_build["enabled"] = arena_clash == null and opts["fast"]
 	sim.shop_open = arena_clash == null and not sim.all_parts_bought()   # modules are bought in the 3D parts shop
 	clear_menu()
@@ -2450,6 +2459,11 @@ func _record_profile_match(d: Dictionary) -> void:
 		"kos": int(m.get("stuns", 0)) + int(m.get("captures", 0)), "ship_hull": hull_pct,
 		"duration_s": int(sim.get("time")), "role": role_name,
 	}, settings_path)
+	if has_node("/root/FlagsmithManager"):
+		var fsm := get_node("/root/FlagsmithManager")
+		if delivered > 0:
+			fsm.track_event("flag_delivered", {"count": delivered})
+		fsm.track_event("match_ended", {"won": bool(d.get("victory", false))})
 
 
 func show_debrief() -> void:
@@ -2629,6 +2643,8 @@ func _arena_result() -> String:
 
 
 func _build_arena_debrief(v: VBoxContainer) -> void:
+	if has_node("/root/FlagsmithManager"):
+		get_node("/root/FlagsmithManager").track_event("match_ended", {"won": _arena_result() == "VICTORY"})
 	var score := arena_clash.get_score()
 	var seat := arena_clash.combatant("%s:%d" % [arena_clash.player_squad, sim.selected])
 	var winner := arena_clash.winner()
